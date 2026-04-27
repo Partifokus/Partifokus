@@ -550,7 +550,7 @@ export default function App() {
           <div style={{ background: "#fff", border: "1px solid #e8e8e6", padding: "18px 22px", marginBottom: 14 }}>
             <div style={{ fontFamily: "Georgia, serif", fontSize: 14, fontWeight: 700, marginBottom: 8 }}>⚖️ Juridisk information</div>
             <div style={{ fontSize: 12, color: "#555", lineHeight: 1.7 }}>
-              PartiFokus äger inte och har inte skapat något redaktionellt innehåll. Alla artiklar tillhör respektive källa och skyddas av upphovsrätten. PartiFokus är en nyhetsaggregator som hämtar offentliga RSS-flöden. Riksdagsdata hämtas via riksdagen.se öppna API. Kontakt: <strong>kontakt@partifokus.se</strong>
+              PartiFokus äger inte och har inte skapat något redaktionellt innehåll. Alla artiklar tillhör respektive källa och skyddas av upphovsrätten. PartiFokus är en nyhetsaggregator som hämtar offentliga RSS-flöden. Riksdagsdata hämtas via riksdagen.se öppna API. Kontakt: <strong>partifokus@gmail.com</strong>
             </div>
           </div>
           <div style={{ background: "#fff", border: "1px solid #e8e8e6", padding: "18px 22px", marginBottom: 14 }}>
