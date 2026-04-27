@@ -116,11 +116,26 @@ function timeAgo(dateStr) {
 
 async function fetchRSS(src) {
   try {
-    const url = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(src.url) + "&count=20";
+    const url = "/api/rss?url=" + encodeURIComponent(src.url);
     const res = await fetch(url);
-    const data = await res.json();
-    if (!data.items) return [];
-    return data.items.map(item => ({
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "text/xml");
+    const items = Array.from(xml.querySelectorAll("item"));
+    return items.slice(0, 20).map(item => ({
+      id: item.querySelector("guid")?.textContent || item.querySelector("link")?.textContent || "",
+      title: item.querySelector("title")?.textContent || "",
+      description: (item.querySelector("description")?.textContent || "").replace(/<[^>]+>/g, "").slice(0, 90),
+      link: item.querySelector("link")?.textContent || "#",
+      pubDate: item.querySelector("pubDate")?.textContent || "",
+      source: src.name,
+      party: src.party || null,
+      parties: src.party ? [src.party] : detectParties((item.querySelector("title")?.textContent || "") + " " + (item.querySelector("description")?.textContent || "")),
+    }));
+  } catch (e) {
+    return [];
+  }
+}
       id: item.guid || item.link,
       title: item.title || "",
       description: (item.description || "").replace(/<[^>]+>/g, "").slice(0, 90),
