@@ -136,19 +136,7 @@ async function fetchRSS(src) {
     return [];
   }
 }
-      id: item.guid || item.link,
-      title: item.title || "",
-      description: (item.description || "").replace(/<[^>]+>/g, "").slice(0, 90),
-      link: item.link || "#",
-      pubDate: item.pubDate,
-      source: src.name,
-      party: src.party || null,
-      parties: src.party ? [src.party] : detectParties((item.title || "") + " " + (item.description || "")),
-    }));
-  } catch (e) {
-    return [];
-  }
-}
+    
 
 // ─── SHARED COMPONENTS ────────────────────────────────────────────────────────
 
