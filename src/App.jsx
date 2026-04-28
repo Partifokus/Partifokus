@@ -1,11 +1,27 @@
 import { useState, useEffect } from "react";
 
 const GA_ID = "G-DB7QB8N6BE";
+const NAVY = "#0D1B2A";
+const BLUE = "#1D4ED8";
 const GOLD = "#C9A84C";
-const NAVY = "#1B2A4A";
+const GRAY = "#6B7280";
+const LIGHT = "#F9FAFB";
+
+// Category images from Unsplash (free)
+const CAT_IMAGES = {
+  "Ekonomi":      "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70",
+  "Migration":    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=70",
+  "Klimat":       "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=70",
+  "Kriminalitet": "https://images.unsplash.com/photo-1589578527966-fdac0f44566c?w=600&q=70",
+  "Sjukvård":     "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=70",
+  "Skola":        "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=70",
+  "Bostäder":     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=70",
+};
+
+const HERO_IMAGE = "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=900&q=80";
 
 const PARTIES = [
-  { id:"all", name:"Alla partier",        short:"ALLA", color:"#1a1a1a", bg:"#e0e0e0" },
+  { id:"all", name:"Alla partier",        short:"ALLA", color:"#374151", bg:"#E5E7EB" },
   { id:"M",   name:"Moderaterna",         short:"M",   color:"#fff",    bg:"#52BDEC" },
   { id:"SD",  name:"Sverigedemokraterna", short:"SD",  color:"#1a1a1a", bg:"#DDCF00" },
   { id:"KD",  name:"Kristdemokraterna",   short:"KD",  color:"#fff",    bg:"#005B8E" },
@@ -38,16 +54,14 @@ const CATEGORY_KEYWORDS = {
 };
 
 const TABS = [
-  { id:"hem",        label:"Hem" },
   { id:"nyheter",    label:"Nyheter" },
   { id:"press",      label:"Pressmeddelanden" },
   { id:"riksdagen",  label:"Riksdagen" },
   { id:"ledamoter",  label:"Ledamöter" },
   { id:"opinion",    label:"Opinion" },
-  { id:"valkompass", label:"🗳️ Valkompass" },
+  { id:"valkompass", label:"Valkompass" },
 ];
 
-// ─── 25 VALKOMPASS QUESTIONS ─────────────────────────────────────────────────
 const QUESTIONS = [
   { id:1,  text:"Invandringen till Sverige bör minskas kraftigt",                        cat:"Migration",    s:{M:1, SD:1, KD:0, L:-1,C:-1,S:0, V:-1,MP:-1} },
   { id:2,  text:"Sverige ska bygga ny kärnkraft",                                        cat:"Klimat",       s:{M:1, SD:1, KD:1, L:1, C:0, S:0, V:-1,MP:-1} },
@@ -76,39 +90,36 @@ const QUESTIONS = [
   { id:25, text:"Skolval och friskolereformen ska begränsas",                            cat:"Skola",        s:{M:-1,SD:-1,KD:-1,L:-1,C:-1,S:0, V:1, MP:1 } },
 ];
 
-// ─── MOCK DATA ───────────────────────────────────────────────────────────────
 const MOCK_NEWS = [
-  { id:"n1",  title:"Kristersson: Regeringen satsar på 2 000 fler poliser",            description:"Statsminister Ulf Kristersson presenterade en satsning på fler poliser i utsatta stadsdelar.",     link:"#", pubDate:new Date(Date.now()-1000*60*18).toISOString(),  source:"SVT",        parties:["M"],       category:"Kriminalitet" },
-  { id:"n2",  title:"Åkesson: SD kräver hårdare gränskontroller",                      description:"Sverigedemokraternas partiledare kräver skärpta regler för asylsökande efter helgens händelser.",   link:"#", pubDate:new Date(Date.now()-1000*60*45).toISOString(),  source:"Aftonbladet", parties:["SD"],      category:"Migration" },
-  { id:"n3",  title:"Ebba Busch: Familjen måste stå i centrum för politiken",          description:"Kristdemokraternas partiledare presenterade ett nytt familjepolitiskt paket med fokus på barn.",     link:"#", pubDate:new Date(Date.now()-1000*60*90).toISOString(),  source:"DN",         parties:["KD"],      category:"Ekonomi" },
-  { id:"n4",  title:"Liberalerna kräver utredning om AI i skolan",                     description:"Johan Pehrson presenterade ett skolpaket med fokus på digital kompetens och reglering av AI.",      link:"#", pubDate:new Date(Date.now()-1000*60*120).toISOString(), source:"SR",         parties:["L"],       category:"Skola" },
-  { id:"n5",  title:"Centerpartiet: Jordbruket kvävs av regelkrångel",                 description:"Muharrem Demirok kräver avreglering för att stärka svenska bönder mot europeisk konkurrens.",       link:"#", pubDate:new Date(Date.now()-1000*60*160).toISOString(), source:"Expressen",  parties:["C"],       category:"Ekonomi" },
-  { id:"n6",  title:"Socialdemokraterna vill återinföra värnskatten",                  description:"Partiet presenterar ekonomiskt alternativ där värnskatten återinförs för höginkomsttagare.",         link:"#", pubDate:new Date(Date.now()-1000*60*200).toISOString(), source:"SVT",        parties:["S"],       category:"Ekonomi" },
-  { id:"n7",  title:"Vänsterpartiet vill stoppa vinstuttag i välfärden",               description:"Nooshi Dadgostar presenterar lagförslag om förbud mot vinstuttag i skattefinansierad verksamhet.",   link:"#", pubDate:new Date(Date.now()-1000*60*240).toISOString(), source:"DN",         parties:["V"],       category:"Sjukvård" },
-  { id:"n8",  title:"Miljöpartiet kräver stopp för ny kärnkraft",                      description:"Per Bolund och MP avvisar regeringens planer som för dyra och för långsamma.",                      link:"#", pubDate:new Date(Date.now()-1000*60*280).toISOString(), source:"SR",         parties:["MP"],      category:"Klimat" },
-  { id:"n9",  title:"Moderaterna och KD oeniga om friskolornas vinstuttag",            description:"Intern spricka i Tidöalliansen synliggjordes när de två partierna gick emot varandra offentligt.",  link:"#", pubDate:new Date(Date.now()-1000*60*320).toISOString(), source:"Aftonbladet", parties:["M","KD"], category:"Skola" },
-  { id:"n10", title:"S och V samlar oppositionen kring ny bostadspolitik",             description:"Gemensamt program kräver återinförd hyresreglering och kraftigt ökat bostadsbyggande.",             link:"#", pubDate:new Date(Date.now()-1000*60*360).toISOString(), source:"SVT",        parties:["S","V"],   category:"Bostäder" },
-  { id:"n11", title:"Ny opinionsundersökning: SD störst – S tappar",                   description:"Novus mätning visar att Sverigedemokraterna för första gången går om Socialdemokraterna.",          link:"#", pubDate:new Date(Date.now()-1000*60*420).toISOString(), source:"DN",         parties:["SD","S"],  category:"Ekonomi" },
-  { id:"n12", title:"Riksdagen röstar om ny kriminalvårdslagstiftning",                description:"En bred majoritet väntas rösta för skärpta straff för återfallsförbrytare i veckan.",                link:"#", pubDate:new Date(Date.now()-1000*60*480).toISOString(), source:"SR",         parties:["M","SD","KD"], category:"Kriminalitet" },
+  { id:"n1",  title:"Kristersson: Regeringen satsar på 2 000 fler poliser",         description:"Statsminister Ulf Kristersson presenterade en satsning på fler poliser i utsatta stadsdelar.", link:"#", pubDate:new Date(Date.now()-1000*60*18).toISOString(),  source:"SVT",        parties:["M"],     category:"Kriminalitet" },
+  { id:"n2",  title:"Åkesson: SD kräver hårdare gränskontroller",                   description:"Sverigedemokraternas partiledare kräver skärpta regler för asylsökande efter helgens händelser.", link:"#", pubDate:new Date(Date.now()-1000*60*45).toISOString(),  source:"Aftonbladet",parties:["SD"],    category:"Migration" },
+  { id:"n3",  title:"Ebba Busch: Familjen måste stå i centrum för politiken",       description:"Kristdemokraternas partiledare presenterade ett nytt familjepolitiskt paket med fokus på barn.", link:"#", pubDate:new Date(Date.now()-1000*60*90).toISOString(),  source:"DN",         parties:["KD"],    category:"Ekonomi" },
+  { id:"n4",  title:"Liberalerna kräver utredning om AI i skolan",                  description:"Johan Pehrson presenterade ett skolpaket med fokus på digital kompetens och reglering av AI.", link:"#", pubDate:new Date(Date.now()-1000*60*120).toISOString(), source:"SR",         parties:["L"],     category:"Skola" },
+  { id:"n5",  title:"Centerpartiet: Jordbruket kvävs av regelkrångel",              description:"Muharrem Demirok kräver avreglering för att stärka svenska bönder mot europeisk konkurrens.", link:"#", pubDate:new Date(Date.now()-1000*60*160).toISOString(), source:"Expressen",  parties:["C"],     category:"Ekonomi" },
+  { id:"n6",  title:"Socialdemokraterna vill återinföra värnskatten",               description:"Partiet presenterar ekonomiskt alternativ där värnskatten återinförs för höginkomsttagare.", link:"#", pubDate:new Date(Date.now()-1000*60*200).toISOString(), source:"SVT",        parties:["S"],     category:"Ekonomi" },
+  { id:"n7",  title:"Vänsterpartiet vill stoppa vinstuttag i välfärden",            description:"Nooshi Dadgostar presenterar lagförslag om förbud mot vinstuttag i skattefinansierad verksamhet.", link:"#", pubDate:new Date(Date.now()-1000*60*240).toISOString(), source:"DN",      parties:["V"],     category:"Sjukvård" },
+  { id:"n8",  title:"Miljöpartiet kräver stopp för ny kärnkraft",                   description:"Per Bolund och MP avvisar regeringens planer som för dyra och för långsamma.", link:"#", pubDate:new Date(Date.now()-1000*60*280).toISOString(), source:"SR",         parties:["MP"],    category:"Klimat" },
+  { id:"n9",  title:"Moderaterna och KD oeniga om friskolornas vinstuttag",         description:"Intern spricka i Tidöalliansen synliggjordes när de två partierna gick emot varandra offentligt.", link:"#", pubDate:new Date(Date.now()-1000*60*320).toISOString(), source:"Aftonbladet",parties:["M","KD"],category:"Skola" },
+  { id:"n10", title:"S och V samlar oppositionen kring ny bostadspolitik",          description:"Gemensamt program kräver återinförd hyresreglering och kraftigt ökat bostadsbyggande.", link:"#", pubDate:new Date(Date.now()-1000*60*360).toISOString(), source:"SVT",        parties:["S","V"], category:"Bostäder" },
 ];
 
 const MOCK_PRESS = [
-  { id:"p1", title:"Moderaterna presenterar ny jobbpolitik för 2026",          description:"M vill sänka arbetsgivaravgifter för småföretag och förenkla anställningsregler.", link:"#", pubDate:new Date(Date.now()-1000*60*30).toISOString(),  source:"Moderaterna",        party:"M"  },
-  { id:"p2", title:"Socialdemokraterna: Välfärden ska inte säljas ut",         description:"S presenterar valmanifest med fokus på offentlig välfärd och stärkt sjukförsäkring.", link:"#", pubDate:new Date(Date.now()-1000*60*60).toISOString(),  source:"Socialdemokraterna", party:"S"  },
-  { id:"p3", title:"SD: Ge polisen mer befogenheter mot gängkriminalitet",      description:"Sverigedemokraterna lägger fram trygghetsprogram med utökad polismakt.", link:"#", pubDate:new Date(Date.now()-1000*60*100).toISOString(), source:"Sverigedemokraterna",party:"SD" },
-  { id:"p4", title:"KD kräver stärkt barnpolitik och fler familjecentraler",   description:"Kristdemokraterna presenterar familjepaket med fokus på tidiga insatser.", link:"#", pubDate:new Date(Date.now()-1000*60*140).toISOString(), source:"Kristdemokraterna",  party:"KD" },
-  { id:"p5", title:"Liberalerna: Skolan ska prioriteras i nästa budget",        description:"L vill öronmärka 5 miljarder extra till skolan i 2027 års budget.", link:"#", pubDate:new Date(Date.now()-1000*60*180).toISOString(), source:"Liberalerna",        party:"L"  },
-  { id:"p6", title:"Centerpartiet vill förenkla för landsbygdsföretagare",     description:"C presenterar 12-punktsprogram för stärkt företagande utanför storstäderna.", link:"#", pubDate:new Date(Date.now()-1000*60*220).toISOString(), source:"Centerpartiet",      party:"C"  },
-  { id:"p7", title:"Vänsterpartiet: Inför sex timmars arbetsdag",               description:"V lyfter återigen frågan om kortare arbetstid med bibehållen lön.", link:"#", pubDate:new Date(Date.now()-1000*60*260).toISOString(), source:"Vänsterpartiet",     party:"V"  },
-  { id:"p8", title:"Miljöpartiet kräver klimatlag med bindande mål",            description:"MP presenterar lagförslag som tvingar regeringen att nå klimatmålen.", link:"#", pubDate:new Date(Date.now()-1000*60*300).toISOString(), source:"Miljöpartiet",       party:"MP" },
+  { id:"p1", title:"Moderaterna presenterar ny jobbpolitik för 2026",        description:"M vill sänka arbetsgivaravgifter för småföretag och förenkla anställningsregler.", link:"#", pubDate:new Date(Date.now()-1000*60*30).toISOString(),  source:"Moderaterna",        party:"M"  },
+  { id:"p2", title:"Socialdemokraterna: Välfärden ska inte säljas ut",       description:"S presenterar valmanifest med fokus på offentlig välfärd och stärkt sjukförsäkring.", link:"#", pubDate:new Date(Date.now()-1000*60*60).toISOString(),  source:"Socialdemokraterna", party:"S"  },
+  { id:"p3", title:"SD: Ge polisen mer befogenheter mot gängkriminalitet",    description:"Sverigedemokraterna lägger fram trygghetsprogram med utökad polismakt.", link:"#", pubDate:new Date(Date.now()-1000*60*100).toISOString(), source:"Sverigedemokraterna",party:"SD" },
+  { id:"p4", title:"KD kräver stärkt barnpolitik och fler familjecentraler", description:"Kristdemokraterna presenterar familjepaket med fokus på tidiga insatser.", link:"#", pubDate:new Date(Date.now()-1000*60*140).toISOString(), source:"Kristdemokraterna",  party:"KD" },
+  { id:"p5", title:"Liberalerna: Skolan ska prioriteras i nästa budget",      description:"L vill öronmärka 5 miljarder extra till skolan i 2027 års budget.", link:"#", pubDate:new Date(Date.now()-1000*60*180).toISOString(), source:"Liberalerna",        party:"L"  },
+  { id:"p6", title:"Centerpartiet vill förenkla för landsbygdsföretagare",   description:"C presenterar 12-punktsprogram för stärkt företagande utanför storstäderna.", link:"#", pubDate:new Date(Date.now()-1000*60*220).toISOString(), source:"Centerpartiet",      party:"C"  },
+  { id:"p7", title:"Vänsterpartiet: Inför sex timmars arbetsdag",             description:"V lyfter återigen frågan om kortare arbetstid med bibehållen lön.", link:"#", pubDate:new Date(Date.now()-1000*60*260).toISOString(), source:"Vänsterpartiet",     party:"V"  },
+  { id:"p8", title:"Miljöpartiet kräver klimatlag med bindande mål",          description:"MP presenterar lagförslag som tvingar regeringen att nå klimatmålen.", link:"#", pubDate:new Date(Date.now()-1000*60*300).toISOString(), source:"Miljöpartiet",       party:"MP" },
 ];
 
 const MOCK_VOTES = [
-  { id:"v1", titel:"Sänkt skatt för pensionärer",       datum:"2026-04-24", ja:234, nej:115, beteckning:"2025/26:Sk12", parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Nej"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
-  { id:"v2", titel:"Utökat stöd till kommuner för välfärd", datum:"2026-04-23", ja:178, nej:171, beteckning:"2025/26:Fi8", parter:[{p:"M",r:"Nej"},{p:"SD",r:"Nej"},{p:"KD",r:"Nej"},{p:"L",r:"Nej"},{p:"C",r:"Nej"},{p:"S",r:"Ja"},{p:"V",r:"Ja"},{p:"MP",r:"Ja"}] },
-  { id:"v3", titel:"Skärpt straff för gängkriminalitet", datum:"2026-04-22", ja:289, nej:60,  beteckning:"2025/26:Ju5", parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Ja"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
-  { id:"v4", titel:"Förbud mot vinstuttag i välfärden",  datum:"2026-04-21", ja:115, nej:234, beteckning:"2025/26:So3", parter:[{p:"M",r:"Nej"},{p:"SD",r:"Nej"},{p:"KD",r:"Nej"},{p:"L",r:"Nej"},{p:"C",r:"Nej"},{p:"S",r:"Ja"},{p:"V",r:"Ja"},{p:"MP",r:"Ja"}] },
-  { id:"v5", titel:"Ny kärnkraftslag",                   datum:"2026-04-20", ja:221, nej:128, beteckning:"2025/26:N2", parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Nej"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
+  { id:"v1", titel:"Sänkt skatt för pensionärer",           datum:"2026-04-24", ja:234, nej:115, beteckning:"2025/26:Sk12", parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Nej"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
+  { id:"v2", titel:"Utökat stöd till kommuner för välfärd", datum:"2026-04-23", ja:178, nej:171, beteckning:"2025/26:Fi8",  parter:[{p:"M",r:"Nej"},{p:"SD",r:"Nej"},{p:"KD",r:"Nej"},{p:"L",r:"Nej"},{p:"C",r:"Nej"},{p:"S",r:"Ja"},{p:"V",r:"Ja"},{p:"MP",r:"Ja"}] },
+  { id:"v3", titel:"Skärpt straff för gängkriminalitet",    datum:"2026-04-22", ja:289, nej:60,  beteckning:"2025/26:Ju5",  parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Ja"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
+  { id:"v4", titel:"Förbud mot vinstuttag i välfärden",     datum:"2026-04-21", ja:115, nej:234, beteckning:"2025/26:So3",  parter:[{p:"M",r:"Nej"},{p:"SD",r:"Nej"},{p:"KD",r:"Nej"},{p:"L",r:"Nej"},{p:"C",r:"Nej"},{p:"S",r:"Ja"},{p:"V",r:"Ja"},{p:"MP",r:"Ja"}] },
+  { id:"v5", titel:"Ny kärnkraftslag",                      datum:"2026-04-20", ja:221, nej:128, beteckning:"2025/26:N2",   parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Nej"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
 ];
 
 const MOCK_DEBATES = [
@@ -133,7 +144,7 @@ const MOCK_MEMBERS = [
   { id:"m12",namn:"Anna Kinberg Batra",  parti:"M",  valkrets:"Stockholms kommun" },
 ];
 
-const MOCK_POLLS = [
+const MOCK_POLLS_DATA = [
   { id:"o1", datum:"April 2026", källa:"Novus", M:19.2, SD:20.1, KD:5.8, L:4.9, C:6.2, S:31.4, V:7.1, MP:5.3 },
   { id:"o2", datum:"Mars 2026",  källa:"Sifo",  M:18.8, SD:19.6, KD:5.5, L:5.1, C:6.5, S:32.1, V:6.9, MP:5.5 },
   { id:"o3", datum:"Feb 2026",   källa:"Novus", M:20.1, SD:18.9, KD:5.6, L:4.8, C:6.8, S:31.0, V:7.3, MP:5.5 },
@@ -184,62 +195,68 @@ async function fetchRSS(src) {
   try {
     const res = await fetch("/api/rss?url=" + encodeURIComponent(src.url));
     const text = await res.text();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(text, "text/xml");
-    const items = Array.from(xml.querySelectorAll("item"));
-    return items.slice(0, 20).map(item => {
+    const xml = new DOMParser().parseFromString(text, "text/xml");
+    return Array.from(xml.querySelectorAll("item")).slice(0, 20).map(item => {
       const title = item.querySelector("title")?.textContent || "";
-      const desc = (item.querySelector("description")?.textContent || "").replace(/<[^>]+>/g,"").slice(0,120);
+      const desc = (item.querySelector("description")?.textContent || "").replace(/<[^>]+>/g,"").slice(0,130);
       const link = item.querySelector("link")?.textContent || "#";
-      return {
-        id: item.querySelector("guid")?.textContent || link,
-        title, description: desc, link,
-        pubDate: item.querySelector("pubDate")?.textContent || "",
-        source: src.name, party: src.party || null,
-        parties: src.party ? [src.party] : detectParties(title + " " + desc),
-        category: detectCategory(title + " " + desc),
-      };
+      return { id: item.querySelector("guid")?.textContent || link, title, description: desc, link, pubDate: item.querySelector("pubDate")?.textContent || "", source: src.name, party: src.party || null, parties: src.party ? [src.party] : detectParties(title+" "+desc), category: detectCategory(title+" "+desc) };
     });
   } catch { return []; }
 }
 
-// ─── SHARED COMPONENTS ───────────────────────────────────────────────────────
+// ─── COMPONENTS ──────────────────────────────────────────────────────────────
 function Badge({ id, large }) {
-  const p = gp(id);
-  if (!p) return null;
-  return <span style={{ display:"inline-block", padding: large ? "3px 10px" : "2px 6px", borderRadius:3, fontSize: large ? 12 : 10, fontWeight:700, background:p.bg, color:p.color }}>{p.short}</span>;
+  const p = gp(id); if (!p) return null;
+  return <span style={{ display:"inline-block", padding: large?"3px 10px":"2px 7px", borderRadius:4, fontSize: large?12:10, fontWeight:700, background:p.bg, color:p.color }}>{p.short}</span>;
 }
 
-function CategoryTag({ cat }) {
-  const colors = { Ekonomi:"#6366f1", Migration:"#f59e0b", Klimat:"#10b981", Kriminalitet:"#ef4444", Sjukvård:"#3b82f6", Skola:"#8b5cf6", Bostäder:"#f97316" };
-  return <span style={{ fontSize:10, fontWeight:700, color: colors[cat] || "#6b7280", textTransform:"uppercase", letterSpacing:"1px" }}>{cat}</span>;
+function CategoryTag({ cat, dark }) {
+  const colors = { Ekonomi:"#4F46E5", Migration:"#D97706", Klimat:"#059669", Kriminalitet:"#DC2626", Sjukvård:"#2563EB", Skola:"#7C3AED", Bostäder:"#EA580C" };
+  return <span style={{ fontSize:11, fontWeight:700, color: dark ? "#fff" : (colors[cat]||"#6B7280"), textTransform:"uppercase", letterSpacing:"1px" }}>{cat}</span>;
 }
 
-function SectionTitle({ children }) {
-  return (
-    <div style={{ fontFamily:"Georgia,serif", fontSize:22, fontWeight:700, color:NAVY, borderBottom:`2px solid ${NAVY}`, paddingBottom:8, marginBottom:24 }}>
-      {children}
-    </div>
-  );
-}
-
-function NewsCard({ article, onClick }) {
+// News card with image - matches mockup
+function NewsCard({ article, onClick, featured }) {
   const [hov, setHov] = useState(false);
+  const img = CAT_IMAGES[article.category] || CAT_IMAGES["Ekonomi"];
+  if (featured) {
+    return (
+      <div onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+        style={{ background:"#fff", borderRadius:12, overflow:"hidden", cursor:"pointer", border:`1px solid ${hov?"#D1D5DB":"#E5E7EB"}`, boxShadow: hov?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)", transition:"all .2s", gridColumn:"span 2" }}>
+        <div style={{ position:"relative", height:220, overflow:"hidden" }}>
+          <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .3s", transform: hov?"scale(1.03)":"scale(1)" }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)" }} />
+          <div style={{ position:"absolute", bottom:16, left:16, right:16 }}>
+            <CategoryTag cat={article.category} dark />
+            <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:"#fff", lineHeight:1.3, marginTop:6 }}>{article.title}</div>
+          </div>
+        </div>
+        <div style={{ padding:"14px 18px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+          <div style={{ display:"flex", gap:4 }}>{article.parties.map(pid => <Badge key={pid} id={pid} />)}</div>
+          <span style={{ fontSize:11, color:GRAY }}>{article.source} · {timeAgo(article.pubDate)}</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ background:"#fff", border: hov ? `1px solid ${NAVY}` : "1px solid #e5e7eb", borderRadius:6, overflow:"hidden", cursor:"pointer", transition:"all .15s", boxShadow: hov ? `3px 3px 0 ${NAVY}` : "0 1px 3px rgba(0,0,0,0.06)", transform: hov ? "translate(-1px,-1px)" : "none" }}>
-      <div style={{ height:4, background: article.parties[0] ? gp(article.parties[0])?.bg || NAVY : NAVY }} />
-      <div style={{ padding:"16px 16px 14px" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10, flexWrap:"wrap" }}>
+      style={{ background:"#fff", borderRadius:12, overflow:"hidden", cursor:"pointer", border:`1px solid ${hov?"#D1D5DB":"#E5E7EB"}`, boxShadow: hov?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)", transition:"all .2s" }}>
+      <div style={{ position:"relative", height:160, overflow:"hidden" }}>
+        <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .3s", transform: hov?"scale(1.04)":"scale(1)" }} />
+      </div>
+      <div style={{ padding:"14px 16px 16px" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
           <CategoryTag cat={article.category} />
-          <span style={{ fontSize:10, color:"#9ca3af", marginLeft:"auto" }}>{timeAgo(article.pubDate)}</span>
+          <span style={{ fontSize:10, color:"#9CA3AF", marginLeft:"auto" }}>{timeAgo(article.pubDate)}</span>
         </div>
-        <div style={{ fontFamily:"Georgia,serif", fontSize:15, fontWeight:700, lineHeight:1.4, marginBottom:8, color:"#111" }}>{article.title}</div>
-        <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.5, marginBottom:12 }}>{article.description}…</div>
+        <div style={{ fontFamily:"Georgia,serif", fontSize:15, fontWeight:700, lineHeight:1.4, color:NAVY, marginBottom:8 }}>{article.title}</div>
+        <div style={{ fontSize:12, color:GRAY, lineHeight:1.5, marginBottom:12 }}>{article.description}…</div>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div style={{ display:"flex", gap:4 }}>{article.parties.map(pid => <Badge key={pid} id={pid} />)}</div>
-          <span style={{ fontSize:11, color:"#9ca3af" }}>{article.source}</span>
+          <span style={{ fontSize:11, color:"#9CA3AF" }}>{article.source}</span>
         </div>
+        <div style={{ marginTop:10, fontSize:12, fontWeight:600, color:BLUE }}>Läs mer →</div>
       </div>
     </div>
   );
@@ -249,58 +266,53 @@ function NewsCard({ article, onClick }) {
 function ArticleOverlay({ article, onClose }) {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (!article) return;
     document.body.style.overflow = "hidden";
     if (article.link && article.link !== "#") {
       fetch(`/api/rewrite?url=${encodeURIComponent(article.link)}&title=${encodeURIComponent(article.title)}`)
-        .then(r => r.json()).then(data => { setContent(data.text || null); setLoading(false); })
+        .then(r => r.json()).then(d => { setContent(d.text||null); setLoading(false); })
         .catch(() => setLoading(false));
-    } else { setLoading(false); }
+    } else setLoading(false);
     return () => { document.body.style.overflow = ""; };
   }, [article]);
-
   if (!article) return null;
+  const img = CAT_IMAGES[article.category] || CAT_IMAGES["Ekonomi"];
   return (
-    <div style={{ position:"fixed", inset:0, zIndex:1000, background:"rgba(0,0,0,0.65)", display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"24px 16px", overflowY:"auto" }} onClick={onClose}>
-      <div style={{ background:"#fff", maxWidth:740, width:"100%", borderRadius:8, overflow:"hidden" }} onClick={e => e.stopPropagation()}>
-        <div style={{ background:NAVY, padding:"16px 24px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-            {article.parties.map(pid => <Badge key={pid} id={pid} large />)}
-            <span style={{ fontSize:11, color:"rgba(255,255,255,0.5)", alignSelf:"center", marginLeft:8 }}>{article.source}</span>
-          </div>
-          <button onClick={onClose} style={{ background:"none", border:"none", color:"#fff", fontSize:24, cursor:"pointer" }}>×</button>
+    <div style={{ position:"fixed", inset:0, zIndex:1000, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"32px 16px", overflowY:"auto" }} onClick={onClose}>
+      <div style={{ background:"#fff", maxWidth:740, width:"100%", borderRadius:16, overflow:"hidden" }} onClick={e => e.stopPropagation()}>
+        <div style={{ position:"relative", height:220 }}>
+          <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.4)" }} />
+          <button onClick={onClose} style={{ position:"absolute", top:16, right:16, background:"rgba(255,255,255,0.9)", border:"none", borderRadius:"50%", width:36, height:36, fontSize:20, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>×</button>
+          <div style={{ position:"absolute", bottom:16, left:20, display:"flex", gap:6 }}>{article.parties.map(pid => <Badge key={pid} id={pid} large />)}</div>
         </div>
-        <div style={{ padding:"28px 28px 32px" }}>
-          <div style={{ display:"flex", gap:10, alignItems:"center", marginBottom:14 }}>
+        <div style={{ padding:"24px 28px 32px" }}>
+          <div style={{ display:"flex", gap:10, marginBottom:12 }}>
             <CategoryTag cat={article.category} />
-            <span style={{ fontSize:11, color:"#9ca3af" }}>{timeAgo(article.pubDate)}</span>
+            <span style={{ fontSize:11, color:GRAY }}>· {article.source} · {timeAgo(article.pubDate)}</span>
           </div>
-          <h1 style={{ fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, lineHeight:1.35, marginBottom:20, color:"#111" }}>{article.title}</h1>
+          <h1 style={{ fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, lineHeight:1.35, marginBottom:20, color:NAVY }}>{article.title}</h1>
           {loading ? (
             <div style={{ textAlign:"center", padding:"40px 0" }}>
-              <div style={{ width:32, height:32, border:"3px solid #e5e7eb", borderTopColor:GOLD, borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 12px" }} />
-              <div style={{ fontSize:13, color:"#9ca3af" }}>Hämtar artikel…</div>
-              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+              <div style={{ width:32, height:32, border:"3px solid #E5E7EB", borderTopColor:BLUE, borderRadius:"50%", animation:"spin .8s linear infinite", margin:"0 auto 12px" }} />
+              <div style={{ fontSize:13, color:GRAY }}>Hämtar artikel…</div>
+              <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             </div>
           ) : content ? (
             <div style={{ fontSize:15, lineHeight:1.8, color:"#374151", fontFamily:"Georgia,serif" }}>
-              {content.split("\n\n").map((p, i) => <p key={i} style={{ marginBottom:16 }}>{p}</p>)}
+              {content.split("\n\n").map((p,i) => <p key={i} style={{ marginBottom:16 }}>{p}</p>)}
             </div>
           ) : (
-            <div style={{ fontSize:15, lineHeight:1.8, color:"#374151", fontFamily:"Georgia,serif" }}>
-              <p>{article.description}</p>
-              <p style={{ marginTop:16, fontSize:13, color:"#9ca3af" }}>Aktivera AI-omskrivning via Groq för att läsa hela artikeln direkt här.</p>
+            <div>
+              <p style={{ fontSize:15, lineHeight:1.8, color:"#374151", fontFamily:"Georgia,serif" }}>{article.description}</p>
+              <p style={{ marginTop:16, fontSize:13, color:GRAY }}>AI-omskrivning aktiveras när Groq API-nyckel läggs till.</p>
             </div>
           )}
-          <div style={{ marginTop:24, paddingTop:20, borderTop:"1px solid #e5e7eb" }}>
-            <div style={{ fontSize:11, color:"#9ca3af", marginBottom:6 }}>Källa</div>
-            {article.link && article.link !== "#" ? (
-              <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ color:NAVY, fontSize:13, fontWeight:600, textDecoration:"none", borderBottom:`1px solid ${GOLD}` }}>
-                Läs originalartikeln på {article.source} →
-              </a>
-            ) : <span style={{ fontSize:13, color:"#9ca3af" }}>{article.source}</span>}
+          <div style={{ marginTop:24, paddingTop:20, borderTop:"1px solid #F3F4F6" }}>
+            {article.link && article.link !== "#"
+              ? <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ color:BLUE, fontSize:14, fontWeight:600, textDecoration:"none" }}>Läs originalartikeln på {article.source} →</a>
+              : <span style={{ fontSize:13, color:GRAY }}>{article.source}</span>}
           </div>
         </div>
       </div>
@@ -310,92 +322,65 @@ function ArticleOverlay({ article, onClose }) {
 
 // ─── POLL WIDGET ─────────────────────────────────────────────────────────────
 function PollWidget() {
-  const [selected, setSelected] = useState(null);
-  const [voted, setVoted] = useState(() => localStorage.getItem("pf_voted2") || null);
-  const [votes, setVotes] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("pf_votes2")) || {}; } catch { return {}; }
-  });
-
   const POLL_PARTIES = [
-    { id:"S",      label:"Socialdemokraterna" },
-    { id:"SD",     label:"Sverigedemokraterna" },
-    { id:"M",      label:"Moderaterna" },
-    { id:"V",      label:"Vänsterpartiet" },
-    { id:"C",      label:"Centerpartiet" },
-    { id:"MP",     label:"Miljöpartiet" },
-    { id:"KD",     label:"Kristdemokraterna" },
-    { id:"L",      label:"Liberalerna" },
-    { id:"vetej",  label:"Vet ej / Röstar inte" },
+    { id:"S",     label:"Socialdemokraterna" },
+    { id:"SD",    label:"Sverigedemokraterna" },
+    { id:"M",     label:"Moderaterna" },
+    { id:"V",     label:"Vänsterpartiet" },
+    { id:"C",     label:"Centerpartiet" },
+    { id:"MP",    label:"Miljöpartiet" },
+    { id:"KD",    label:"Kristdemokraterna" },
+    { id:"L",     label:"Liberalerna" },
+    { id:"vetej", label:"Vet ej / Röstar inte" },
   ];
+  const [sel, setSel] = useState(null);
+  const [voted, setVoted] = useState(() => localStorage.getItem("pf_v3") || null);
+  const [votes, setVotes] = useState(() => { try { return JSON.parse(localStorage.getItem("pf_vs3")) || {}; } catch { return {}; } });
 
-  function submitVote() {
-    if (!selected || voted) return;
-    const newVotes = { ...votes, [selected]: (votes[selected] || 0) + 1 };
-    setVotes(newVotes);
-    setVoted(selected);
-    localStorage.setItem("pf_voted2", selected);
-    localStorage.setItem("pf_votes2", JSON.stringify(newVotes));
+  function submit() {
+    if (!sel || voted) return;
+    const nv = { ...votes, [sel]: (votes[sel]||0)+1 };
+    setVotes(nv); setVoted(sel);
+    localStorage.setItem("pf_v3", sel);
+    localStorage.setItem("pf_vs3", JSON.stringify(nv));
   }
 
-  const total = Object.values(votes).reduce((a, b) => a + b, 0);
+  const total = Object.values(votes).reduce((a,b)=>a+b,0);
 
   return (
-    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:"20px 24px", marginBottom:32 }}>
-      <div style={{ fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:NAVY, marginBottom:4 }}>
-        Var lutar din röst inför valet 2026?
-      </div>
-      <div style={{ fontSize:11, color:"#9ca3af", marginBottom:18 }}>
-        {total > 0 ? `${total} röster` : "Bli den första att rösta"} · Helt anonym
-      </div>
-
+    <div style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:"24px 24px 20px" }}>
+      <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:NAVY, marginBottom:4 }}>Var lutar din röst inför valet 2026?</div>
+      <div style={{ fontSize:12, color:GRAY, marginBottom:18 }}>{total > 0 ? `${total.toLocaleString()} röster` : "Bli den första att rösta"} · Helt anonym</div>
       {!voted ? (
         <>
-          <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
-            {POLL_PARTIES.map(({ id, label }) => {
-              const p = gp(id);
-              const isSelected = selected === id;
-              return (
-                <div key={id} onClick={() => setSelected(id)}
-                  style={{ display:"flex", alignItems:"center", gap:12, padding:"8px 12px", borderRadius:6, border: isSelected ? `1px solid ${NAVY}` : "1px solid #e5e7eb", background: isSelected ? "#f0f4ff" : "#fafafa", cursor:"pointer", transition:"all .1s" }}>
-                  {/* Radio circle */}
-                  <div style={{ width:18, height:18, borderRadius:"50%", border: isSelected ? `5px solid ${NAVY}` : "2px solid #d1d5db", background:"#fff", flexShrink:0, transition:"all .1s" }} />
-                  {/* Party badge */}
-                  {p && <span style={{ display:"inline-block", padding:"2px 7px", borderRadius:3, fontSize:11, fontWeight:700, background:p.bg, color:p.color, flexShrink:0 }}>{p.short}</span>}
-                  {/* Name */}
-                  <span style={{ fontSize:13, color:"#374151", fontWeight: isSelected ? 600 : 400 }}>{label}</span>
-                </div>
-              );
-            })}
-          </div>
-          <button onClick={submitVote} disabled={!selected}
-            style={{ background: selected ? NAVY : "#e5e7eb", color: selected ? "#fff" : "#9ca3af", border:"none", borderRadius:6, padding:"10px 28px", fontSize:14, fontWeight:700, cursor: selected ? "pointer" : "not-allowed", transition:"all .15s" }}>
-            Rösta
-          </button>
-        </>
-      ) : (
-        <>
-          <div style={{ fontSize:13, color:NAVY, fontWeight:600, marginBottom:14 }}>
-            ✓ Du röstade på: {POLL_PARTIES.find(p => p.id === voted)?.label}
-          </div>
           {POLL_PARTIES.map(({ id, label }) => {
-            const p = gp(id);
-            const count = votes[id] || 0;
-            const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-            const isVoted = voted === id;
+            const p = gp(id); const isSel = sel === id;
             return (
-              <div key={id} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:7 }}>
-                <div style={{ width:36, flexShrink:0 }}>
-                  {p ? <span style={{ display:"inline-block", padding:"2px 5px", borderRadius:2, fontSize:10, fontWeight:700, background:p.bg, color:p.color }}>{p.short}</span>
-                     : <span style={{ fontSize:10, color:"#9ca3af" }}>–</span>}
-                </div>
-                <div style={{ flex:1, height:18, background:"#f3f4f6", borderRadius:3, overflow:"hidden" }}>
-                  <div style={{ width:`${pct}%`, height:"100%", background: isVoted ? GOLD : (p?.bg || "#9ca3af"), minWidth:2, transition:"width 0.4s ease" }} />
-                </div>
-                <div style={{ width:36, fontSize:12, fontWeight:700, textAlign:"right", color: isVoted ? GOLD : "#374151" }}>{pct}%</div>
+              <div key={id} onClick={() => setSel(id)} style={{ display:"flex", alignItems:"center", gap:12, padding:"9px 12px", borderRadius:8, border: isSel?`2px solid ${BLUE}`:"1px solid #E5E7EB", background: isSel?"#EFF6FF":"#FAFAFA", cursor:"pointer", marginBottom:6, transition:"all .1s" }}>
+                <div style={{ width:18, height:18, borderRadius:"50%", border: isSel?`5px solid ${BLUE}`:"2px solid #D1D5DB", background:"#fff", flexShrink:0 }} />
+                {p && <span style={{ display:"inline-block", padding:"2px 7px", borderRadius:4, fontSize:11, fontWeight:700, background:p.bg, color:p.color, flexShrink:0 }}>{p.short}</span>}
+                <span style={{ fontSize:13, color: isSel?NAVY:"#374151", fontWeight: isSel?600:400 }}>{label}</span>
               </div>
             );
           })}
-          <div style={{ marginTop:10, fontSize:11, color:"#9ca3af" }}>Röstning är anonym och kan inte spåras till dig.</div>
+          <button onClick={submit} disabled={!sel} style={{ marginTop:12, background: sel?NAVY:"#E5E7EB", color: sel?"#fff":"#9CA3AF", border:"none", borderRadius:8, padding:"11px 28px", fontSize:14, fontWeight:700, cursor: sel?"pointer":"not-allowed", transition:"all .15s" }}>Rösta</button>
+        </>
+      ) : (
+        <>
+          <div style={{ fontSize:13, color:NAVY, fontWeight:600, marginBottom:14 }}>✓ Du röstade på: {POLL_PARTIES.find(p=>p.id===voted)?.label}</div>
+          {POLL_PARTIES.map(({ id, label }) => {
+            const p = gp(id); const pct = total>0?Math.round(((votes[id]||0)/total)*100):0; const isV = voted===id;
+            return (
+              <div key={id} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:7 }}>
+                <div style={{ width:36, flexShrink:0 }}>{p?<span style={{ display:"inline-block", padding:"2px 5px", borderRadius:3, fontSize:10, fontWeight:700, background:p.bg, color:p.color }}>{p.short}</span>:<span style={{ fontSize:10, color:GRAY }}>–</span>}</div>
+                <div style={{ flex:1, height:16, background:"#F3F4F6", borderRadius:3, overflow:"hidden" }}>
+                  <div style={{ width:`${pct}%`, height:"100%", background: isV?GOLD:(p?.bg||"#9CA3AF"), minWidth:2, transition:"width .4s" }} />
+                </div>
+                <div style={{ width:34, fontSize:12, fontWeight:700, textAlign:"right", color: isV?GOLD:"#374151" }}>{pct}%</div>
+              </div>
+            );
+          })}
+          <div style={{ marginTop:8, fontSize:11, color:GRAY }}>Röstning är anonym och kan inte spåras till dig.</div>
         </>
       )}
     </div>
@@ -410,212 +395,240 @@ function Valkompass() {
   const currentQ = QUESTIONS.find(q => answers[q.id] === undefined);
 
   function answer(qid, val) {
-    const newAnswers = { ...answers, [qid]: val };
-    setAnswers(newAnswers);
-    if (Object.keys(newAnswers).length === QUESTIONS.length) {
+    const na = { ...answers, [qid]: val };
+    setAnswers(na);
+    if (Object.keys(na).length === QUESTIONS.length) {
       const scores = {};
-      PARTIES.filter(p => p.id !== "all").forEach(p => { scores[p.id] = 0; });
+      PARTIES.filter(p=>p.id!=="all").forEach(p => { scores[p.id]=0; });
       QUESTIONS.forEach(q => {
-        const ua = newAnswers[q.id];
-        if (ua === 0) return;
-        PARTIES.filter(p => p.id !== "all").forEach(p => { scores[p.id] += ua * (q.s[p.id] || 0); });
+        const ua = na[q.id]; if (ua===0) return;
+        PARTIES.filter(p=>p.id!=="all").forEach(p => { scores[p.id] += ua*(q.s[p.id]||0); });
       });
-      const vals = Object.values(scores);
-      const min = Math.min(...vals), max = Math.max(...vals), range = max - min || 1;
+      const vals = Object.values(scores), mn=Math.min(...vals), mx=Math.max(...vals), rng=mx-mn||1;
       const norm = {};
-      Object.entries(scores).forEach(([pid, sc]) => { norm[pid] = Math.round(((sc - min) / range) * 100); });
-      setResult(Object.entries(norm).sort((a,b) => b[1]-a[1]));
+      Object.entries(scores).forEach(([pid,sc]) => { norm[pid]=Math.round(((sc-mn)/rng)*100); });
+      setResult(Object.entries(norm).sort((a,b)=>b[1]-a[1]));
     }
   }
 
-  function reset() { setAnswers({}); setResult(null); }
-
   if (result) {
-    const winner = result[0];
-    const wp = gp(winner[0]);
+    const wp = gp(result[0][0]);
     return (
       <div style={{ maxWidth:580, margin:"0 auto" }}>
-        <div style={{ background:NAVY, borderRadius:8, padding:28, marginBottom:24, textAlign:"center" }}>
+        <div style={{ background:NAVY, borderRadius:12, padding:32, marginBottom:24, textAlign:"center" }}>
           <div style={{ fontSize:11, color:GOLD, letterSpacing:"2px", textTransform:"uppercase", marginBottom:10 }}>Ditt resultat</div>
           <div style={{ fontFamily:"Georgia,serif", fontSize:26, fontWeight:700, color:"#fff", marginBottom:16 }}>Du passar bäst med {wp?.name}</div>
-          <div style={{ width:56, height:56, borderRadius:"50%", background:wp?.bg, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <span style={{ color:wp?.color, fontWeight:700, fontSize:20 }}>{wp?.short}</span>
+          <div style={{ width:60, height:60, borderRadius:"50%", background:wp?.bg, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <span style={{ color:wp?.color, fontWeight:700, fontSize:22 }}>{wp?.short}</span>
           </div>
         </div>
-        {result.map(([pid, score], i) => {
-          const p = gp(pid);
+        {result.map(([pid,score],i) => {
+          const p=gp(pid);
           return (
             <div key={pid} style={{ display:"flex", alignItems:"center", gap:12, marginBottom:10 }}>
-              <div style={{ width:20, fontSize:11, color:"#9ca3af", textAlign:"right" }}>{i+1}</div>
-              <div style={{ width:42 }}><Badge id={pid} large /></div>
-              <div style={{ flex:1, height:22, background:"#f3f4f6", borderRadius:3, overflow:"hidden" }}>
-                <div style={{ width:`${score}%`, height:"100%", background: i===0 ? GOLD : (p?.bg || "#e5e7eb"), opacity: i===0 ? 1 : 0.7 }} />
+              <div style={{ width:24, fontSize:11, color:GRAY, textAlign:"right" }}>{i+1}</div>
+              <div style={{ width:44 }}><Badge id={pid} large /></div>
+              <div style={{ flex:1, height:22, background:"#F3F4F6", borderRadius:4, overflow:"hidden" }}>
+                <div style={{ width:`${score}%`, height:"100%", background:i===0?GOLD:(p?.bg||"#E5E7EB"), opacity:i===0?1:0.75 }} />
               </div>
-              <div style={{ width:40, fontSize:13, fontWeight:700, textAlign:"right", color: i===0 ? GOLD : "#374151" }}>{score}%</div>
+              <div style={{ width:40, fontSize:13, fontWeight:700, textAlign:"right", color:i===0?GOLD:"#374151" }}>{score}%</div>
             </div>
           );
         })}
         <div style={{ marginTop:24, textAlign:"center" }}>
-          <button onClick={reset} style={{ background:NAVY, color:"#fff", border:"none", borderRadius:6, padding:"12px 28px", fontSize:14, fontWeight:600, cursor:"pointer" }}>Gör om testet</button>
+          <button onClick={() => { setAnswers({}); setResult(null); }} style={{ background:NAVY, color:"#fff", border:"none", borderRadius:8, padding:"12px 28px", fontSize:14, fontWeight:600, cursor:"pointer" }}>Gör om testet</button>
         </div>
-        <div style={{ marginTop:12, fontSize:11, color:"#9ca3af", textAlign:"center" }}>Resultatet är ett ungefärligt underlag och inte en exakt bild av partiernas politik.</div>
+        <div style={{ marginTop:12, fontSize:11, color:GRAY, textAlign:"center" }}>Resultatet är ett ungefärligt underlag och inte en exakt bild av partiernas politik.</div>
       </div>
     );
   }
-
   if (!currentQ) return null;
   return (
     <div style={{ maxWidth:580, margin:"0 auto" }}>
       <div style={{ marginBottom:20 }}>
-        <div style={{ display:"flex", justifyContent:"space-between", fontSize:12, color:"#6b7280", marginBottom:8 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", fontSize:12, color:GRAY, marginBottom:8 }}>
           <span>Fråga {progress+1} av {QUESTIONS.length}</span>
           <span>{Math.round((progress/QUESTIONS.length)*100)}% klart</span>
         </div>
-        <div style={{ height:6, background:"#f3f4f6", borderRadius:3, overflow:"hidden" }}>
-          <div style={{ width:`${(progress/QUESTIONS.length)*100}%`, height:"100%", background:GOLD, transition:"width 0.3s" }} />
+        <div style={{ height:6, background:"#E5E7EB", borderRadius:3, overflow:"hidden" }}>
+          <div style={{ width:`${(progress/QUESTIONS.length)*100}%`, height:"100%", background:BLUE, transition:"width .3s" }} />
         </div>
       </div>
-      <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:28, marginBottom:14 }}>
-        <div style={{ fontSize:11, color:GOLD, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", marginBottom:12 }}>{currentQ.cat}</div>
-        <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:"#111", lineHeight:1.4, marginBottom:28 }}>{currentQ.text}</div>
+      <div style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:28, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div style={{ fontSize:11, color:BLUE, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", marginBottom:12 }}>{currentQ.cat}</div>
+        <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:NAVY, lineHeight:1.4, marginBottom:28 }}>{currentQ.text}</div>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10 }}>
-          {[{label:"Ja",val:1,bg:NAVY,color:"#fff"},{label:"Vet ej",val:0,bg:"#f3f4f6",color:"#374151"},{label:"Nej",val:-1,bg:"#fee2e2",color:"#dc2626"}].map(opt => (
-            <button key={opt.val} onClick={() => answer(currentQ.id, opt.val)}
-              style={{ background:opt.bg, color:opt.color, border:"none", borderRadius:6, padding:"14px 8px", fontWeight:700, fontSize:15, cursor:"pointer" }}>
-              {opt.label}
+          {[{label:"Ja",val:1,bg:NAVY,color:"#fff"},{label:"Vet ej",val:0,bg:"#F3F4F6",color:"#374151"},{label:"Nej",val:-1,bg:"#FEE2E2",color:"#DC2626"}].map(o => (
+            <button key={o.val} onClick={() => answer(currentQ.id, o.val)} style={{ background:o.bg, color:o.color, border:"none", borderRadius:8, padding:"14px 8px", fontWeight:700, fontSize:15, cursor:"pointer", transition:"opacity .1s" }}
+              onMouseEnter={e=>e.target.style.opacity="0.85"} onMouseLeave={e=>e.target.style.opacity="1"}>
+              {o.label}
             </button>
           ))}
         </div>
       </div>
-      <div style={{ fontSize:12, color:"#9ca3af", textAlign:"center" }}>Svara på alla {QUESTIONS.length} frågor för att se ditt resultat</div>
+      <div style={{ fontSize:12, color:GRAY, textAlign:"center", marginTop:12 }}>Svara på alla {QUESTIONS.length} frågor för att se ditt resultat</div>
     </div>
   );
 }
 
-// ─── HOME PAGE ───────────────────────────────────────────────────────────────
-function HomePage({ onTabChange }) {
+// ─── HOME PAGE ────────────────────────────────────────────────────────────────
+function HomePage({ articles, onArticleClick, onTabChange }) {
+  const top4 = articles.slice(0, 4);
   return (
     <div>
-      {/* FEATURES */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:20, marginBottom:40 }}>
-        {[
-          { icon:"⚖️", title:"Oberoende", desc:"Inga kopplingar. Inga agendor. Alla partier behandlas lika." },
-          { icon:"📊", title:"Faktabaserat", desc:"Data, källor och konsekvenser. Vi låter fakta tala." },
-          { icon:"🔔", title:"Alltid uppdaterat", desc:"Automatiska nyheter dygnet runt från alla stora medier." },
-        ].map(f => (
-          <div key={f.title} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:24 }}>
-            <div style={{ fontSize:28, marginBottom:10 }}>{f.icon}</div>
-            <div style={{ fontFamily:"Georgia,serif", fontSize:16, fontWeight:700, color:NAVY, marginBottom:6 }}>{f.title}</div>
-            <div style={{ fontSize:13, color:"#6b7280", lineHeight:1.5 }}>{f.desc}</div>
+      {/* HERO */}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:48, alignItems:"center", marginBottom:64 }}>
+        <div>
+          <div style={{ fontSize:12, color:BLUE, fontWeight:700, letterSpacing:"2px", textTransform:"uppercase", marginBottom:16 }}>Oberoende politisk analys</div>
+          <h1 style={{ fontFamily:"Georgia,serif", fontSize:48, fontWeight:700, color:NAVY, lineHeight:1.15, marginBottom:16 }}>
+            Fakta före vägval.<br/>Fokus före åsikt.
+          </h1>
+          <p style={{ fontSize:17, color:GRAY, lineHeight:1.6, marginBottom:24 }}>
+            Vi granskar politiken bakom rubrikerna – och konsekvenserna du inte ser.
+          </p>
+          <div style={{ display:"flex", gap:16, marginBottom:32 }}>
+            {[{icon:"⚖️",t:"Oberoende",d:"Inga kopplingar. Inga agendor."},{icon:"📊",t:"Faktabaserat",d:"Data, källor och konsekvenser."},{icon:"🔔",t:"För alla",d:"Komplext blir förståeligt."}].map(f=>(
+              <div key={f.t}>
+                <div style={{ fontSize:20, marginBottom:4 }}>{f.icon}</div>
+                <div style={{ fontSize:13, fontWeight:700, color:NAVY, marginBottom:2 }}>{f.t}</div>
+                <div style={{ fontSize:12, color:GRAY, lineHeight:1.4 }}>{f.d}</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* POLL */}
-      <PollWidget />
-
-      {/* EXPLORE CARDS */}
-      <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:NAVY, marginBottom:20 }}>Utforska politik på ditt sätt</div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:20, marginBottom:40 }}>
-        <div onClick={() => onTabChange("nyheter")} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:24, cursor:"pointer", transition:"all .15s" }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor=NAVY; e.currentTarget.style.boxShadow=`3px 3px 0 ${NAVY}`; e.currentTarget.style.transform="translate(-1px,-1px)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor="#e5e7eb"; e.currentTarget.style.boxShadow="none"; e.currentTarget.style.transform="none"; }}>
-          <div style={{ fontSize:28, marginBottom:10 }}>📰</div>
-          <div style={{ fontFamily:"Georgia,serif", fontSize:16, fontWeight:700, color:NAVY, marginBottom:6 }}>Senaste nyheterna</div>
-          <div style={{ fontSize:13, color:"#6b7280", lineHeight:1.5 }}>Alla politiska nyheter samlade på ett ställe. Filtrera per parti och ämne.</div>
-          <div style={{ marginTop:14, fontSize:13, fontWeight:600, color:NAVY }}>Läs nyheter →</div>
+          <button onClick={() => onTabChange("nyheter")} style={{ background:NAVY, color:"#fff", border:"none", borderRadius:8, padding:"14px 28px", fontSize:15, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", gap:8 }}>
+            Senaste nyheterna →
+          </button>
         </div>
-        <div onClick={() => onTabChange("valkompass")} style={{ background:NAVY, border:`1px solid ${NAVY}`, borderRadius:8, padding:24, cursor:"pointer", transition:"all .15s" }}
-          onMouseEnter={e => { e.currentTarget.style.opacity="0.9"; }}
-          onMouseLeave={e => { e.currentTarget.style.opacity="1"; }}>
-          <div style={{ fontSize:28, marginBottom:10 }}>🗳️</div>
-          <div style={{ fontFamily:"Georgia,serif", fontSize:16, fontWeight:700, color:"#fff", marginBottom:6 }}>Din politiska profil</div>
-          <div style={{ fontSize:13, color:"rgba(255,255,255,0.7)", lineHeight:1.5 }}>Svara på 25 frågor och se vilket parti du stämmer bäst överens med.</div>
-          <div style={{ marginTop:14, fontSize:13, fontWeight:600, color:GOLD }}>Gör testet →</div>
-        </div>
-        <div onClick={() => onTabChange("opinion")} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:24, cursor:"pointer", transition:"all .15s" }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor=NAVY; e.currentTarget.style.boxShadow=`3px 3px 0 ${NAVY}`; e.currentTarget.style.transform="translate(-1px,-1px)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor="#e5e7eb"; e.currentTarget.style.boxShadow="none"; e.currentTarget.style.transform="none"; }}>
-          <div style={{ fontSize:28, marginBottom:10 }}>📈</div>
-          <div style={{ fontFamily:"Georgia,serif", fontSize:16, fontWeight:700, color:NAVY, marginBottom:6 }}>Opinionsmätningar</div>
-          <div style={{ fontSize:13, color:"#6b7280", lineHeight:1.5 }}>Se hur partierna ligger i opinionen just nu. Uppdateras varje månad.</div>
-          <div style={{ marginTop:14, fontSize:13, fontWeight:600, color:NAVY }}>Se mätningar →</div>
+
+        {/* Hero image card */}
+        <div style={{ position:"relative", borderRadius:16, overflow:"hidden", boxShadow:"0 20px 60px rgba(0,0,0,0.15)" }}>
+          <img src={HERO_IMAGE} alt="Stockholm" style={{ width:"100%", height:420, objectFit:"cover" }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(13,27,42,0.85) 0%, transparent 50%)" }} />
+          {top4[0] && (
+            <div onClick={() => onArticleClick(top4[0])} style={{ position:"absolute", bottom:0, left:0, right:0, padding:24, cursor:"pointer" }}>
+              <div style={{ fontSize:10, color:GOLD, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", marginBottom:8 }}>NY ANALYS</div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:"#fff", lineHeight:1.3, marginBottom:8 }}>{top4[0].title}</div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,0.75)", marginBottom:12 }}>{top4[0].description}</div>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                <span style={{ fontSize:12, color:"rgba(255,255,255,0.5)" }}>⏱ {timeAgo(top4[0].pubDate)}</span>
+                <span style={{ fontSize:13, color:GOLD, fontWeight:600, cursor:"pointer" }}>Läs analysen →</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* POPULAR TOPICS */}
-      <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:NAVY, marginBottom:16 }}>Populära ämnen</div>
-      <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:40 }}>
-        {["Ekonomi","Migration","Klimat","Kriminalitet","Sjukvård","Skola","Bostäder"].map(cat => (
-          <button key={cat} onClick={() => onTabChange("nyheter")}
-            style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:20, padding:"8px 18px", fontSize:13, fontWeight:500, color:"#374151", cursor:"pointer", transition:"all .1s" }}
-            onMouseEnter={e => { e.target.style.borderColor=NAVY; e.target.style.color=NAVY; e.target.style.fontWeight="600"; }}
-            onMouseLeave={e => { e.target.style.borderColor="#e5e7eb"; e.target.style.color="#374151"; e.target.style.fontWeight="500"; }}>
-            {cat}
+      {/* DET HÄNDER JUST NU */}
+      <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:20 }}>
+        <div style={{ fontFamily:"Georgia,serif", fontSize:26, fontWeight:700, color:NAVY }}>Det händer just nu</div>
+        <button onClick={() => onTabChange("nyheter")} style={{ background:"none", border:"none", color:BLUE, fontSize:13, fontWeight:600, cursor:"pointer" }}>Visa alla →</button>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:20, marginBottom:64 }}>
+        {top4.slice(1,5).map(a => <NewsCard key={a.id} article={a} onClick={() => onArticleClick(a)} />)}
+      </div>
+
+      {/* UTFORSKA */}
+      <div style={{ fontFamily:"Georgia,serif", fontSize:26, fontWeight:700, color:NAVY, marginBottom:20 }}>Utforska politik på ditt sätt</div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:20, marginBottom:40 }}>
+        <div style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:24, cursor:"pointer" }} onClick={() => onTabChange("valkompass")}>
+          <div style={{ fontSize:32, marginBottom:12 }}>🗳️</div>
+          <div style={{ fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:NAVY, marginBottom:8 }}>Din politiska profil</div>
+          <div style={{ fontSize:13, color:GRAY, lineHeight:1.5, marginBottom:16 }}>Svara på 25 frågor och se vilket parti du stämmer bäst överens med.</div>
+          <span style={{ fontSize:13, fontWeight:600, color:BLUE }}>Gör testet →</span>
+        </div>
+        <div style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:24 }}>
+          <div style={{ fontSize:32, marginBottom:12 }}>📊</div>
+          <div style={{ fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:NAVY, marginBottom:8 }}>Så tycker väljarna</div>
+          <div style={{ fontSize:13, color:GRAY, lineHeight:1.5, marginBottom:16 }}>Se vad väljarna tycker i viktiga frågor – just nu.</div>
+          <PollMini />
+        </div>
+        <div style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:24, cursor:"pointer" }} onClick={() => onTabChange("opinion")}>
+          <div style={{ fontSize:32, marginBottom:12 }}>📈</div>
+          <div style={{ fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:NAVY, marginBottom:8 }}>Jämför partier</div>
+          <div style={{ fontSize:13, color:GRAY, lineHeight:1.5, marginBottom:16 }}>Opinionsmätningar och partiernas ställning i opinionen.</div>
+          {["S","SD","M","V"].map(pid => {
+            const p=gp(pid); const pct=MOCK_POLLS_DATA[0][pid];
+            return (
+              <div key={pid} style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                <Badge id={pid} />
+                <div style={{ flex:1, height:10, background:"#F3F4F6", borderRadius:2, overflow:"hidden" }}>
+                  <div style={{ width:`${pct*2.5}%`, height:"100%", background:p?.bg }} />
+                </div>
+                <span style={{ fontSize:11, fontWeight:700, width:36, textAlign:"right" }}>{pct}%</span>
+              </div>
+            );
+          })}
+          <span style={{ fontSize:13, fontWeight:600, color:BLUE, marginTop:10, display:"block" }}>Se resultat →</span>
+        </div>
+      </div>
+
+      {/* POPULÄRA ÄMNEN */}
+      <div style={{ fontFamily:"Georgia,serif", fontSize:26, fontWeight:700, color:NAVY, marginBottom:20 }}>Populära ämnen</div>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:48 }}>
+        {[{cat:"Ekonomi",icon:"💰"},{cat:"Skola",icon:"📚"},{cat:"Klimat",icon:"🌿"},{cat:"Sjukvård",icon:"🏥"},{cat:"Migration",icon:"🌍"},{cat:"Kriminalitet",icon:"🔒"},{cat:"Bostäder",icon:"🏠"}].map(({cat,icon}) => (
+          <button key={cat} onClick={() => onTabChange("nyheter")} style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:24, padding:"9px 18px", fontSize:13, fontWeight:500, color:"#374151", cursor:"pointer", display:"flex", alignItems:"center", gap:6, transition:"all .1s" }}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor=NAVY;e.currentTarget.style.background=NAVY;e.currentTarget.style.color="#fff";}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor="#E5E7EB";e.currentTarget.style.background="#fff";e.currentTarget.style.color="#374151";}}>
+            {icon} {cat}
           </button>
         ))}
       </div>
+
+      {/* NEWSLETTER */}
+      <div style={{ background:NAVY, borderRadius:16, padding:40, marginBottom:16, display:"flex", alignItems:"center", justifyContent:"space-between", gap:32 }}>
+        <div>
+          <div style={{ fontFamily:"Georgia,serif", fontSize:22, fontWeight:700, color:"#fff", marginBottom:8 }}>Håll dig uppdaterad</div>
+          <div style={{ fontSize:14, color:"rgba(255,255,255,0.6)" }}>Få de viktigaste analyserna och insikterna direkt i din inkorg varje vecka.</div>
+        </div>
+        <div style={{ display:"flex", gap:10, flexShrink:0 }}>
+          <input placeholder="Din e-postadress" style={{ padding:"12px 16px", borderRadius:8, border:"none", fontSize:14, width:240, outline:"none" }} />
+          <button style={{ background:GOLD, color:NAVY, border:"none", borderRadius:8, padding:"12px 20px", fontSize:14, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>Prenumerera</button>
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── NEWS TABS ────────────────────────────────────────────────────────────────
-function NewsTab({ party, onArticleClick }) {
-  const [articles, setArticles] = useState(MOCK_NEWS);
+function PollMini() {
+  const voted = localStorage.getItem("pf_v3");
+  if (!voted) return <span style={{ fontSize:13, fontWeight:600, color:BLUE, display:"block" }}>Rösta nu →</span>;
+  const p = gp(voted);
+  return <div style={{ fontSize:13, color:GRAY }}>Du röstade på {p?.name || voted}</div>;
+}
+
+// ─── OTHER TABS ───────────────────────────────────────────────────────────────
+function SectionTitle({ children }) {
+  return <div style={{ fontFamily:"Georgia,serif", fontSize:22, fontWeight:700, color:NAVY, borderBottom:`2px solid ${NAVY}`, paddingBottom:8, marginBottom:24 }}>{children}</div>;
+}
+
+function NewsTab({ party, onArticleClick, articles, loading }) {
   const [catFilter, setCatFilter] = useState("Alla");
-
-  useEffect(() => {
-    Promise.allSettled(NEWS_SOURCES.map(fetchRSS)).then(results => {
-      const fetched = results.filter(r => r.status === "fulfilled").flatMap(r => r.value).filter(a => a.parties.length > 0);
-      const sevenDays = Date.now() - 7*24*60*60*1000;
-      const all = [...MOCK_NEWS, ...fetched];
-      const seen = new Set();
-      const deduped = all.filter(a => { const k = a.title.slice(0,40).toLowerCase(); if(seen.has(k))return false; seen.add(k); return new Date(a.pubDate) > sevenDays; });
-      deduped.sort((a,b) => new Date(b.pubDate)-new Date(a.pubDate));
-      setArticles(deduped);
-    });
-  }, []);
-
   const cats = ["Alla", ...Object.keys(CATEGORY_KEYWORDS)];
-  let filtered = party === "all" ? articles : articles.filter(a => a.parties.includes(party));
-  if (catFilter !== "Alla") filtered = filtered.filter(a => a.category === catFilter);
-
+  let filtered = party==="all" ? articles : articles.filter(a => a.parties.includes(party));
+  if (catFilter!=="Alla") filtered = filtered.filter(a => a.category===catFilter);
   return (
     <div>
       <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:20 }}>
         {cats.map(cat => (
-          <button key={cat} onClick={() => setCatFilter(cat)}
-            style={{ background: catFilter===cat ? NAVY : "#f3f4f6", color: catFilter===cat ? "#fff" : "#374151", border:"none", borderRadius:20, padding:"6px 14px", fontSize:12, fontWeight:600, cursor:"pointer" }}>
+          <button key={cat} onClick={() => setCatFilter(cat)} style={{ background:catFilter===cat?NAVY:"#fff", color:catFilter===cat?"#fff":"#374151", border:`1px solid ${catFilter===cat?NAVY:"#E5E7EB"}`, borderRadius:20, padding:"6px 14px", fontSize:12, fontWeight:600, cursor:"pointer" }}>
             {cat}
           </button>
         ))}
       </div>
-      <SectionTitle>{party==="all" ? "Alla nyheter" : gp(party)?.name} <span style={{ fontFamily:"sans-serif", fontSize:13, fontWeight:400, color:"#9ca3af", marginLeft:8 }}>{filtered.length} artiklar</span></SectionTitle>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:16 }}>
+      <SectionTitle>{party==="all"?"Alla nyheter":gp(party)?.name} <span style={{ fontFamily:"sans-serif", fontSize:13, fontWeight:400, color:GRAY, marginLeft:8 }}>{filtered.length} artiklar</span></SectionTitle>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:20 }}>
         {filtered.map(a => <NewsCard key={a.id} article={a} onClick={() => onArticleClick(a)} />)}
       </div>
     </div>
   );
 }
 
-function PressTab({ party, onArticleClick }) {
-  const [items, setItems] = useState(MOCK_PRESS);
-  useEffect(() => {
-    Promise.allSettled(PRESS_SOURCES.map(fetchRSS)).then(results => {
-      const fetched = results.filter(r => r.status === "fulfilled").flatMap(r => r.value);
-      if (fetched.length > 0) {
-        const seen = new Set();
-        const all = [...fetched,...MOCK_PRESS].filter(a => { const k=a.title.slice(0,40).toLowerCase(); if(seen.has(k))return false; seen.add(k); return true; });
-        all.sort((a,b) => new Date(b.pubDate)-new Date(a.pubDate));
-        setItems(all);
-      }
-    });
-  }, []);
+function PressTab({ party, onArticleClick, items }) {
   const filtered = party==="all" ? items : items.filter(a => a.party===party);
   return (
     <div>
-      <SectionTitle>Pressmeddelanden <span style={{ fontFamily:"sans-serif", fontSize:13, fontWeight:400, color:"#9ca3af", marginLeft:8 }}>{filtered.length} st</span></SectionTitle>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:16 }}>
+      <SectionTitle>Pressmeddelanden <span style={{ fontFamily:"sans-serif", fontSize:13, fontWeight:400, color:GRAY, marginLeft:8 }}>{filtered.length} st</span></SectionTitle>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:20 }}>
         {filtered.map(a => <NewsCard key={a.id} article={{...a, parties:a.party?[a.party]:[], category:"Ekonomi"}} onClick={() => onArticleClick(a)} />)}
       </div>
     </div>
@@ -627,31 +640,32 @@ function RiksdagenTab() {
     <div>
       <SectionTitle>Senaste omröstningar</SectionTitle>
       {MOCK_VOTES.map(v => {
-        const tot = v.ja+v.nej, jaPct = Math.round(v.ja/tot*100);
+        const tot=v.ja+v.nej, jaPct=Math.round(v.ja/tot*100);
         return (
-          <div key={v.id} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:20, marginBottom:14 }}>
-            <div style={{ fontFamily:"Georgia,serif", fontSize:16, fontWeight:700, marginBottom:10, color:"#111" }}>{v.titel}</div>
-            <div style={{ display:"flex", gap:16, fontSize:12, color:"#6b7280", marginBottom:8 }}>
-              <span style={{ color:"#10b981", fontWeight:700 }}>✓ Ja: {v.ja}</span>
-              <span style={{ color:"#ef4444", fontWeight:700 }}>✗ Nej: {v.nej}</span>
+          <div key={v.id} style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:20, marginBottom:14 }}>
+            <div style={{ fontFamily:"Georgia,serif", fontSize:16, fontWeight:700, marginBottom:10, color:NAVY }}>{v.titel}</div>
+            <div style={{ display:"flex", gap:16, fontSize:12, color:GRAY, marginBottom:8 }}>
+              <span style={{ color:"#059669", fontWeight:700 }}>✓ Ja: {v.ja}</span>
+              <span style={{ color:"#DC2626", fontWeight:700 }}>✗ Nej: {v.nej}</span>
               <span style={{ marginLeft:"auto" }}>{v.datum} · {v.beteckning}</span>
             </div>
-            <div style={{ height:8, background:"#f3f4f6", borderRadius:2, overflow:"hidden", display:"flex", marginBottom:14 }}>
-              <div style={{ width:`${jaPct}%`, background:"#10b981" }} /><div style={{ width:`${100-jaPct}%`, background:"#ef4444" }} />
+            <div style={{ height:8, background:"#F3F4F6", borderRadius:2, overflow:"hidden", display:"flex", marginBottom:14 }}>
+              <div style={{ width:`${jaPct}%`, background:"#059669" }} />
+              <div style={{ width:`${100-jaPct}%`, background:"#DC2626" }} />
             </div>
             <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-              {v.parter.map(({p,r}) => <span key={p} style={{ display:"flex", alignItems:"center", gap:3 }}><Badge id={p} /><span style={{ fontSize:11, color:r==="Ja"?"#10b981":"#ef4444", fontWeight:700 }}>{r}</span></span>)}
+              {v.parter.map(({p,r}) => <span key={p} style={{ display:"flex", alignItems:"center", gap:3 }}><Badge id={p} /><span style={{ fontSize:11, color:r==="Ja"?"#059669":"#DC2626", fontWeight:700 }}>{r}</span></span>)}
             </div>
           </div>
         );
       })}
       <SectionTitle style={{ marginTop:32 }}>Kommande debatter</SectionTitle>
       {MOCK_DEBATES.map(d => (
-        <div key={d.id} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:6, padding:"14px 20px", marginBottom:10, display:"flex", alignItems:"center", gap:16 }}>
-          <div style={{ fontFamily:"Georgia,serif", fontWeight:700, color:GOLD, minWidth:56, fontSize:13 }}>{d.datum.slice(5)}</div>
+        <div key={d.id} style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:10, padding:"14px 20px", marginBottom:10, display:"flex", alignItems:"center", gap:16 }}>
+          <div style={{ fontFamily:"Georgia,serif", fontWeight:700, color:GOLD, minWidth:60, fontSize:13 }}>{d.datum.slice(5)}</div>
           <div>
-            <div style={{ fontFamily:"Georgia,serif", fontSize:15, fontWeight:700, color:"#111" }}>{d.titel}</div>
-            <div style={{ fontSize:11, color:"#9ca3af", textTransform:"uppercase", letterSpacing:"1px", marginTop:2 }}>{d.typ} · {d.tid}</div>
+            <div style={{ fontFamily:"Georgia,serif", fontSize:15, fontWeight:700, color:NAVY }}>{d.titel}</div>
+            <div style={{ fontSize:11, color:GRAY, textTransform:"uppercase", letterSpacing:"1px", marginTop:2 }}>{d.typ} · {d.tid}</div>
           </div>
         </div>
       ))}
@@ -660,22 +674,22 @@ function RiksdagenTab() {
 }
 
 function LedamoterTab({ party }) {
-  const filtered = party==="all" ? MOCK_MEMBERS : MOCK_MEMBERS.filter(m => m.parti===party);
+  const filtered = party==="all"?MOCK_MEMBERS:MOCK_MEMBERS.filter(m=>m.parti===party);
   const initials = n => n.split(" ").map(x=>x[0]).join("").slice(0,2);
   return (
     <div>
       <SectionTitle>Riksdagsledamöter</SectionTitle>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:14 }}>
         {filtered.map(m => {
-          const p = gp(m.parti);
+          const p=gp(m.parti);
           return (
-            <div key={m.id} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:16, textAlign:"center" }}>
-              <div style={{ width:52, height:52, borderRadius:"50%", background:p?.bg, margin:"0 auto 10px", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <div key={m.id} style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:20, textAlign:"center" }}>
+              <div style={{ width:56, height:56, borderRadius:"50%", background:p?.bg, margin:"0 auto 12px", display:"flex", alignItems:"center", justifyContent:"center" }}>
                 <span style={{ color:p?.color, fontWeight:700, fontFamily:"Georgia,serif", fontSize:18 }}>{initials(m.namn)}</span>
               </div>
-              <div style={{ fontFamily:"Georgia,serif", fontSize:14, fontWeight:700, marginBottom:5 }}>{m.namn}</div>
-              <div style={{ marginBottom:5 }}><Badge id={m.parti} large /></div>
-              <div style={{ fontSize:11, color:"#9ca3af" }}>{m.valkrets}</div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:14, fontWeight:700, marginBottom:6, color:NAVY }}>{m.namn}</div>
+              <div style={{ marginBottom:6 }}><Badge id={m.parti} large /></div>
+              <div style={{ fontSize:11, color:GRAY }}>{m.valkrets}</div>
             </div>
           );
         })}
@@ -685,44 +699,41 @@ function LedamoterTab({ party }) {
 }
 
 function OpinionTab() {
-  const pids = ["M","SD","KD","L","C","S","V","MP"];
-  const latest = MOCK_POLLS[0];
+  const pids=["M","SD","KD","L","C","S","V","MP"], latest=MOCK_POLLS_DATA[0];
   return (
     <div>
       <SectionTitle>Opinionsmätningar</SectionTitle>
-      <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:8, padding:24, marginBottom:24 }}>
+      <div style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:12, padding:24, marginBottom:24 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:20 }}>
           <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:NAVY }}>Senaste – {latest.datum}</div>
-          <div style={{ fontSize:12, color:"#9ca3af" }}>{latest.källa}</div>
+          <div style={{ fontSize:12, color:GRAY }}>{latest.källa}</div>
         </div>
         {pids.map(pid => {
-          const p = gp(pid);
-          const pct = latest[pid];
+          const p=gp(pid), pct=latest[pid];
           return (
             <div key={pid} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:9 }}>
-              <div style={{ width:38 }}><Badge id={pid} large /></div>
-              <div style={{ flex:1, height:22, background:"#f3f4f6", borderRadius:2, overflow:"hidden" }}>
+              <div style={{ width:40 }}><Badge id={pid} large /></div>
+              <div style={{ flex:1, height:22, background:"#F3F4F6", borderRadius:3, overflow:"hidden" }}>
                 <div style={{ width:`${pct*2.8}%`, height:"100%", background:p?.bg, minWidth:4 }} />
               </div>
-              <div style={{ fontSize:13, fontWeight:700, minWidth:40, textAlign:"right" }}>{pct}%</div>
+              <div style={{ fontSize:13, fontWeight:700, minWidth:40, textAlign:"right", color:NAVY }}>{pct}%</div>
             </div>
           );
         })}
-        <div style={{ marginTop:14, fontSize:12, color:"#9ca3af", borderTop:"1px solid #f3f4f6", paddingTop:12 }}>
+        <div style={{ marginTop:14, fontSize:12, color:GRAY, borderTop:"1px solid #F3F4F6", paddingTop:12 }}>
           Högerblocket: <strong>{(latest.M+latest.SD+latest.KD+latest.L+latest.C).toFixed(1)}%</strong>
           <span style={{ margin:"0 12px" }}>·</span>
           Vänsterblocket: <strong>{(latest.S+latest.V+latest.MP).toFixed(1)}%</strong>
         </div>
       </div>
-      <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:NAVY, marginBottom:16 }}>Historik</div>
-      {MOCK_POLLS.map(poll => (
-        <div key={poll.id} style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:6, padding:"14px 20px", marginBottom:10 }}>
+      {MOCK_POLLS_DATA.map(poll => (
+        <div key={poll.id} style={{ background:"#fff", border:"1px solid #E5E7EB", borderRadius:10, padding:"14px 20px", marginBottom:10 }}>
           <div style={{ display:"flex", justifyContent:"space-between", marginBottom:10 }}>
-            <div style={{ fontFamily:"Georgia,serif", fontWeight:700 }}>{poll.datum}</div>
-            <div style={{ fontSize:11, color:"#9ca3af" }}>{poll.källa}</div>
+            <div style={{ fontFamily:"Georgia,serif", fontWeight:700, color:NAVY }}>{poll.datum}</div>
+            <div style={{ fontSize:11, color:GRAY }}>{poll.källa}</div>
           </div>
           <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-            {pids.map(pid => <span key={pid} style={{ display:"flex", alignItems:"center", gap:3 }}><Badge id={pid} /><span style={{ fontSize:12, fontWeight:700 }}>{poll[pid]}%</span></span>)}
+            {pids.map(pid => <span key={pid} style={{ display:"flex", alignItems:"center", gap:3 }}><Badge id={pid} /><span style={{ fontSize:12, fontWeight:700, color:NAVY }}>{poll[pid]}%</span></span>)}
           </div>
         </div>
       ))}
@@ -735,130 +746,121 @@ export default function App() {
   const [tab, setTab] = useState("hem");
   const [party, setParty] = useState("all");
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [news, setNews] = useState(MOCK_NEWS);
+  const [press, setPress] = useState(MOCK_PRESS);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (window.gtag) window.gtag("config", GA_ID, { page_path: "/" + tab });
+    Promise.allSettled(NEWS_SOURCES.map(fetchRSS)).then(results => {
+      const fetched = results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(a=>a.parties.length>0);
+      const sevenDays = Date.now()-7*24*60*60*1000;
+      const all = [...MOCK_NEWS,...fetched];
+      const seen=new Set();
+      const deduped = all.filter(a=>{const k=a.title.slice(0,40).toLowerCase();if(seen.has(k))return false;seen.add(k);return new Date(a.pubDate)>sevenDays;});
+      deduped.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+      setNews(deduped);
+    });
+    Promise.allSettled(PRESS_SOURCES.map(fetchRSS)).then(results => {
+      const fetched = results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value);
+      if (fetched.length>0) {
+        const seen=new Set();
+        const all=[...fetched,...MOCK_PRESS].filter(a=>{const k=a.title.slice(0,40).toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+        all.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+        setPress(all);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (window.gtag) window.gtag("config", GA_ID, { page_path:"/"+tab });
   }, [tab]);
 
+  const showPartyFilter = !["hem","valkompass"].includes(tab);
+
   return (
-    <div style={{ fontFamily:"system-ui,sans-serif", background:"#f9fafb", minHeight:"100vh", color:"#111" }}>
+    <div style={{ fontFamily:"system-ui,sans-serif", background:LIGHT, minHeight:"100vh", color:NAVY }}>
+      <style>{`*{box-sizing:border-box;margin:0;padding:0;} @keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
       {selectedArticle && <ArticleOverlay article={selectedArticle} onClose={() => setSelectedArticle(null)} />}
 
       {/* HEADER */}
-      <header style={{ background:NAVY, position:"sticky", top:0, zIndex:100, boxShadow:"0 2px 12px rgba(0,0,0,0.2)" }}>
-        {/* Logo + nav */}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", height:56 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:48 }}>
-            <button onClick={() => setTab("hem")} style={{ background:"none", border:"none", cursor:"pointer", padding:0 }}>
-              <span style={{ fontFamily:"Georgia,serif", fontSize:22, fontWeight:900, color:"#fff", letterSpacing:"-0.5px" }}>
-                Parti<span style={{ color:GOLD }}>Fokus</span>
-              </span>
-            </button>
-            <nav style={{ display:"flex", gap:4 }}>
-              {TABS.filter(t => t.id !== "hem").map(t => (
-                <button key={t.id} onClick={() => setTab(t.id)}
-                  style={{ background:"none", border:"none", cursor:"pointer", padding:"0 12px", height:56, fontSize:13, fontWeight:600, color: tab===t.id ? "#fff" : "rgba(255,255,255,0.55)", borderBottom: tab===t.id ? `3px solid ${GOLD}` : "3px solid transparent", transition:"color .15s", whiteSpace:"nowrap" }}>
-                  {t.label}
-                </button>
-              ))}
-            </nav>
-          </div>
-          <div style={{ fontSize:11, color:"rgba(255,255,255,0.4)" }}>⚪ Redaktionellt neutral</div>
-        </div>
+      <header style={{ background:"#fff", borderBottom:"1px solid #E5E7EB", position:"sticky", top:0, zIndex:100 }}>
+        <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 32px", height:64, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+          {/* Logo */}
+          <button onClick={() => setTab("hem")} style={{ background:"none", border:"none", cursor:"pointer", padding:0 }}>
+            <span style={{ fontFamily:"Georgia,serif", fontSize:22, fontWeight:700, color:NAVY }}>
+              Parti<span style={{ color:BLUE, borderBottom:`2px solid ${BLUE}`, paddingBottom:1 }}>Fokus</span>
+            </span>
+          </button>
 
-        {/* Party filter - only show on non-home tabs */}
-        {tab !== "hem" && tab !== "valkompass" && (
-          <div style={{ display:"flex", overflowX:"auto", padding:"0 32px", background:"rgba(0,0,0,0.15)", scrollbarWidth:"none" }}>
-            {PARTIES.map(p => (
-              <button key={p.id} onClick={() => setParty(p.id)}
-                style={{ background:"none", border:"none", cursor:"pointer", padding:"9px 12px", fontSize:10, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", color: party===p.id ? "#fff" : "rgba(255,255,255,0.4)", borderBottom: party===p.id ? `2px solid ${GOLD}` : "2px solid transparent", whiteSpace:"nowrap", transition:"color .15s" }}>
-                {p.id !== "all" && <span style={{ display:"inline-block", padding:"1px 4px", borderRadius:2, fontSize:9, fontWeight:700, background:p.bg, color:p.color, marginRight:5 }}>{p.short}</span>}
-                {p.name}
+          {/* Nav */}
+          <nav style={{ display:"flex", gap:4 }}>
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)} style={{ background:"none", border:"none", cursor:"pointer", padding:"8px 14px", fontSize:14, fontWeight: tab===t.id?700:400, color: tab===t.id?NAVY:GRAY, borderBottom: tab===t.id?`2px solid ${NAVY}`:"2px solid transparent", whiteSpace:"nowrap" }}>
+                {t.label}
               </button>
             ))}
+          </nav>
+
+          {/* Right */}
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            <button style={{ background:"none", border:"none", fontSize:18, cursor:"pointer", color:GRAY }}>🔍</button>
+            <button onClick={() => setTab("nyheter")} style={{ background:NAVY, color:"#fff", border:"none", borderRadius:8, padding:"9px 20px", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+              Nyheter
+            </button>
+          </div>
+        </div>
+
+        {/* Party filter */}
+        {showPartyFilter && (
+          <div style={{ background:"#F9FAFB", borderTop:"1px solid #E5E7EB", overflowX:"auto", scrollbarWidth:"none" }}>
+            <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 32px", display:"flex" }}>
+              {PARTIES.map(p => (
+                <button key={p.id} onClick={() => setParty(p.id)} style={{ background:"none", border:"none", cursor:"pointer", padding:"8px 12px", fontSize:11, fontWeight:700, letterSpacing:"0.5px", textTransform:"uppercase", color: party===p.id?NAVY:GRAY, borderBottom: party===p.id?`2px solid ${NAVY}`:"2px solid transparent", whiteSpace:"nowrap" }}>
+                  {p.id!=="all" && <span style={{ display:"inline-block", padding:"1px 5px", borderRadius:3, fontSize:9, fontWeight:700, background:p.bg, color:p.color, marginRight:5 }}>{p.short}</span>}
+                  {p.name}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </header>
 
-      {/* HERO - only on home */}
-      {tab === "hem" && (
-        <div style={{ background:`linear-gradient(135deg, ${NAVY} 0%, #2d4a7a 100%)`, padding:"52px 32px" }}>
-          <div style={{ maxWidth:1100, margin:"0 auto", display:"grid", gridTemplateColumns:"1fr 1fr", gap:48, alignItems:"center" }}>
-            <div>
-              <div style={{ fontSize:11, color:GOLD, letterSpacing:"2px", textTransform:"uppercase", marginBottom:14 }}>Oberoende politisk analys</div>
-              <div style={{ fontFamily:"Georgia,serif", fontSize:42, fontWeight:700, color:"#fff", lineHeight:1.2, marginBottom:16 }}>
-                Fakta före vägval.<br/>Fokus före åsikt.
-              </div>
-              <div style={{ fontSize:16, color:"rgba(255,255,255,0.7)", lineHeight:1.6, marginBottom:28 }}>
-                Vi granskar politiken bakom rubrikerna och konsekvenserna du inte ser.
-              </div>
-              <div style={{ display:"flex", gap:12 }}>
-                <button onClick={() => setTab("nyheter")} style={{ background:GOLD, color:NAVY, border:"none", borderRadius:6, padding:"12px 24px", fontSize:14, fontWeight:700, cursor:"pointer" }}>
-                  Senaste nyheterna →
-                </button>
-                <button onClick={() => setTab("valkompass")} style={{ background:"transparent", color:"#fff", border:"2px solid rgba(255,255,255,0.4)", borderRadius:6, padding:"12px 24px", fontSize:14, fontWeight:600, cursor:"pointer" }}>
-                  🗳️ Valkompass
-                </button>
-              </div>
-            </div>
-            <div style={{ background:"rgba(255,255,255,0.08)", borderRadius:12, padding:28, backdropFilter:"blur(10px)" }}>
-              <div style={{ fontSize:12, color:GOLD, fontWeight:600, marginBottom:16, textTransform:"uppercase", letterSpacing:"1px" }}>Opinionsläget april 2026</div>
-              {["S","SD","M","V","C"].map(pid => {
-                const p = gp(pid);
-                const pct = MOCK_POLLS[0][pid];
-                return (
-                  <div key={pid} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
-                    <div style={{ width:32 }}><Badge id={pid} /></div>
-                    <div style={{ flex:1, height:16, background:"rgba(255,255,255,0.1)", borderRadius:2, overflow:"hidden" }}>
-                      <div style={{ width:`${pct*2.5}%`, height:"100%", background:p?.bg, minWidth:4 }} />
-                    </div>
-                    <div style={{ width:38, fontSize:12, fontWeight:700, color:"#fff", textAlign:"right" }}>{pct}%</div>
-                  </div>
-                );
-              })}
-              <div style={{ fontSize:11, color:"rgba(255,255,255,0.4)", marginTop:10 }}>Novus · April 2026</div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* MAIN */}
-      <main style={{ maxWidth:1100, margin:"0 auto", padding:"32px 24px" }}>
-        {tab === "hem"        && <HomePage onTabChange={setTab} />}
-        {tab === "nyheter"    && <NewsTab party={party} onArticleClick={setSelectedArticle} />}
-        {tab === "press"      && <PressTab party={party} onArticleClick={setSelectedArticle} />}
-        {tab === "riksdagen"  && <RiksdagenTab />}
-        {tab === "ledamoter"  && <LedamoterTab party={party} />}
-        {tab === "opinion"    && <OpinionTab />}
-        {tab === "valkompass" && (
-          <div>
-            <SectionTitle>Din politiska profil – Valkompass 2026</SectionTitle>
-            <Valkompass />
-          </div>
-        )}
+      <main style={{ maxWidth:1200, margin:"0 auto", padding:"40px 32px" }}>
+        {tab==="hem"        && <HomePage articles={news} onArticleClick={setSelectedArticle} onTabChange={setTab} />}
+        {tab==="nyheter"    && <NewsTab party={party} onArticleClick={setSelectedArticle} articles={news} />}
+        {tab==="press"      && <PressTab party={party} onArticleClick={setSelectedArticle} items={press} />}
+        {tab==="riksdagen"  && <RiksdagenTab />}
+        {tab==="ledamoter"  && <LedamoterTab party={party} />}
+        {tab==="opinion"    && <OpinionTab />}
+        {tab==="valkompass" && <div><SectionTitle>Din politiska profil – Valkompass 2026</SectionTitle><Valkompass /></div>}
       </main>
 
       {/* FOOTER */}
-      <footer style={{ background:NAVY, marginTop:48, padding:"32px 32px" }}>
-        <div style={{ maxWidth:1100, margin:"0 auto" }}>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:24, marginBottom:24 }}>
+      <footer style={{ background:NAVY, marginTop:64, padding:"48px 32px 32px" }}>
+        <div style={{ maxWidth:1200, margin:"0 auto" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr 1fr", gap:40, marginBottom:40 }}>
             <div>
-              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:"#fff", marginBottom:8 }}>Parti<span style={{ color:GOLD }}>Fokus</span></div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.45)", lineHeight:1.6 }}>Oberoende politisk nyhetstjänst. Partipolitiskt neutral. Alla artiklar tillhör respektive källa.</div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:"#fff", marginBottom:12 }}>
+                Parti<span style={{ color:GOLD }}>Fokus</span>
+              </div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,0.45)", lineHeight:1.7, marginBottom:16 }}>Oberoende politisk nyhetstjänst. Partipolitiskt neutral. Alla artiklar tillhör respektive källa.</div>
             </div>
-            <div>
-              <div style={{ fontSize:11, color:GOLD, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", marginBottom:10 }}>Juridiskt</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.45)", lineHeight:1.6 }}>PartiFokus äger inget redaktionellt innehåll. Alla artiklar länkas till originalkällan. Kontakt: partifokus@gmail.com</div>
-            </div>
-            <div>
-              <div style={{ fontSize:11, color:GOLD, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", marginBottom:10 }}>Källor</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.45)", lineHeight:1.6 }}>SVT · SR · DN · Aftonbladet · Expressen · Google News · Partiernas presskanaler · riksdagen.se</div>
-            </div>
+            {[
+              { title:"Utforska", links:["Nyheter","Pressmeddelanden","Riksdagen","Ledamöter","Opinion"] },
+              { title:"Om oss",   links:["Vår metod","Team","Källor","Integritet"] },
+              { title:"Mer",      links:["Valkompass","Kontakt","Vanliga frågor"] },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontSize:11, color:GOLD, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", marginBottom:12 }}>{col.title}</div>
+                {col.links.map(l => <div key={l} style={{ fontSize:13, color:"rgba(255,255,255,0.45)", marginBottom:8, cursor:"pointer" }}>{l}</div>)}
+              </div>
+            ))}
           </div>
-          <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:16, fontSize:11, color:"rgba(255,255,255,0.25)", display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:8 }}>
+          <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20, display:"flex", justifyContent:"space-between", fontSize:12, color:"rgba(255,255,255,0.25)", flexWrap:"wrap", gap:8 }}>
             <span>© {new Date().getFullYear()} PartiFokus. Drivs ideellt.</span>
-            <span>Utgivningsbevis sökt hos MPRT · Redaktionellt neutral</span>
+            <span>Utgivningsbevis sökt hos MPRT · Redaktionellt neutral · partifokus@gmail.com</span>
           </div>
         </div>
       </footer>
