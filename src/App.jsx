@@ -1,4 +1,4 @@
-9+import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const GA_ID = "G-DB7QB8N6BE";
 const GOLD = "#C9A84C";
