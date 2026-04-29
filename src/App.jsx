@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 const GA_ID = "G-DB7QB8N6BE";
 const NAVY = "#0D1B2A";
@@ -6,7 +6,6 @@ const BLUE = "#1D4ED8";
 const GOLD = "#C9A84C";
 const GRAY = "#6B7280";
 
-// ─── MULTIPLE IMAGES PER CATEGORY ────────────────────────────────────────────
 const CAT_IMAGES = {
   Ekonomi:      ["https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70","https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=600&q=70","https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=70","https://images.unsplash.com/photo-1638913662295-9630035ef770?w=600&q=70","https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&q=70"],
   Migration:    ["https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=70","https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=70","https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=70","https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&q=70"],
@@ -58,12 +57,12 @@ const CATEGORY_KEYWORDS = {
 };
 
 const TABS = [
-  { id:"nyheter",    label:"Nyheter" },
-  { id:"press",      label:"Pressmeddelanden" },
+  { id:"nyheter",      label:"Nyheter" },
+  { id:"press",        label:"Pressmeddelanden" },
   { id:"omrostningar", label:"Omröstningar" },
-  { id:"ledamoter",  label:"Ledamöter" },
-  { id:"opinion",    label:"Opinion" },
-  { id:"valkompass", label:"Valkompass" },
+  { id:"ledamoter",    label:"Ledamöter" },
+  { id:"opinion",      label:"Opinion" },
+  { id:"valkompass",   label:"Valkompass" },
 ];
 
 const QUESTIONS = [
@@ -97,40 +96,40 @@ const QUESTIONS = [
 const FAQ_ITEMS = [
   { q:"Vad är PartiFokus?", a:"PartiFokus är en oberoende politisk nyhetstjänst som samlar all svensk politik på ett ställe. Vi aggregerar nyheter från stora svenska medier och presenterar dem neutralt utan politisk vinkling." },
   { q:"Är PartiFokus partipolitiskt bunden?", a:"Nej. PartiFokus är helt partipolitiskt obunden. Alla riksdagspartier behandlas lika och ges samma utrymme. Vi tar inte ställning i politiska frågor." },
-  { q:"Varifrån kommer nyheterna?", a:"Vi hämtar nyheter från SVT, Sveriges Radio, Dagens Nyheter, Aftonbladet, Expressen, Google News samt partiernas egna presskanaler via deras offentliga RSS-flöden." },
+  { q:"Varifrån kommer nyheterna?", a:"Vi hämtar nyheter från SVT, Sveriges Radio, Dagens Nyheter, Aftonbladet, Expressen, Omni, Google News samt partiernas egna presskanaler via deras offentliga RSS-flöden." },
   { q:"Äger PartiFokus artiklarna?", a:"Nej. Alla artiklar tillhör respektive ursprungskälla och skyddas av upphovsrätten. PartiFokus visar endast rubrik och kort ingress, och länkar alltid till originalkällan." },
   { q:"Hur fungerar valkompassen?", a:"Valkompassen innehåller 25 politiska frågor inom olika ämnesområden. Du svarar Ja, Nej eller Vet ej på varje fråga, och vi jämför dina svar med partiernas officiella ståndpunkter. Resultatet är ett ungefärligt underlag – inte en exakt politisk analys." },
-  { q:"Är pollen anonym?", a:"Ja, helt anonym. Vi sparar inga personuppgifter och det går inte att spåra din röst till dig. Vi använder enbart webbläsarens lokala lagring för att förhindra att du röstar flera gånger." },
-  { q:"Hur uppdateras nyheterna?", a:"Nyheterna uppdateras automatiskt var 5:e minut dygnet runt. Du behöver inte ladda om sidan för att se de senaste nyheterna." },
+  { q:"Är pollen anonym?", a:"Ja, helt anonym. Vi sparar inga personuppgifter och det går inte att spåra din röst till dig." },
+  { q:"Hur uppdateras nyheterna?", a:"Nyheterna uppdateras automatiskt var 5:e minut dygnet runt." },
   { q:"Kan jag kontakta PartiFokus?", a:"Ja! Skicka ett mail till partifokus@gmail.com så svarar vi så snart vi kan." },
   { q:"Har PartiFokus ett utgivningsbevis?", a:"Utgivningsbevis är sökt hos MPRT (Myndigheten för press, radio och tv). PartiFokus drivs ideellt." },
-  { q:"Varför ser jag ibland få nyheter om ett parti?", a:"Det beror på att det helt enkelt inte publicerats många nyheter om det partiet den senaste veckan. Vi filtrerar bara bort nyheter äldre än 7 dagar för att hålla innehållet aktuellt." },
+  { q:"Varför ser jag ibland få nyheter om ett parti?", a:"Det beror på att det helt enkelt inte publicerats många nyheter om det partiet den senaste veckan." },
 ];
 
 const MOCK_NEWS = [
-  { id:"n1",  title:"Kristersson: Regeringen satsar på 2 000 fler poliser",        description:"Statsminister Ulf Kristersson presenterade en satsning på fler poliser i utsatta stadsdelar.", link:"#", pubDate:new Date(Date.now()-1000*60*18).toISOString(),  source:"SVT",        parties:["M"],      category:"Kriminalitet" },
-  { id:"n2",  title:"Åkesson: SD kräver hårdare gränskontroller",                  description:"Sverigedemokraternas partiledare kräver skärpta regler för asylsökande.", link:"#", pubDate:new Date(Date.now()-1000*60*45).toISOString(),  source:"Aftonbladet",parties:["SD"],     category:"Migration" },
-  { id:"n3",  title:"Ebba Busch: Familjen måste stå i centrum",                    description:"Kristdemokraternas partiledare presenterade ett nytt familjepolitiskt paket.", link:"#", pubDate:new Date(Date.now()-1000*60*90).toISOString(),  source:"DN",         parties:["KD"],     category:"Ekonomi" },
-  { id:"n4",  title:"Liberalerna kräver utredning om AI i skolan",                 description:"Johan Pehrson presenterade ett skolpaket med fokus på digital kompetens.", link:"#", pubDate:new Date(Date.now()-1000*60*120).toISOString(), source:"SR",         parties:["L"],      category:"Skola" },
-  { id:"n5",  title:"Centerpartiet: Jordbruket kvävs av regelkrångel",             description:"Muharrem Demirok kräver avreglering för att stärka svenska bönder.", link:"#", pubDate:new Date(Date.now()-1000*60*160).toISOString(), source:"Expressen",  parties:["C"],      category:"Ekonomi" },
-  { id:"n6",  title:"Socialdemokraterna vill återinföra värnskatten",              description:"Partiet presenterar ekonomiskt alternativ där värnskatten återinförs.", link:"#", pubDate:new Date(Date.now()-1000*60*200).toISOString(), source:"SVT",        parties:["S"],      category:"Ekonomi" },
-  { id:"n7",  title:"Vänsterpartiet vill stoppa vinstuttag i välfärden",           description:"Nooshi Dadgostar presenterar lagförslag om förbud mot vinstuttag.", link:"#", pubDate:new Date(Date.now()-1000*60*240).toISOString(), source:"DN",         parties:["V"],      category:"Sjukvård" },
-  { id:"n8",  title:"Miljöpartiet kräver stopp för ny kärnkraft",                  description:"Per Bolund och MP avvisar regeringens planer som för dyra och för långsamma.", link:"#", pubDate:new Date(Date.now()-1000*60*280).toISOString(), source:"SR",      parties:["MP"],     category:"Klimat" },
-  { id:"n9",  title:"Moderaterna och KD oeniga om friskolornas vinstuttag",        description:"Intern spricka i Tidöalliansen om friskolors vinstuttag.", link:"#", pubDate:new Date(Date.now()-1000*60*320).toISOString(), source:"Aftonbladet",parties:["M","KD"],category:"Skola" },
-  { id:"n10", title:"S och V samlar oppositionen kring ny bostadspolitik",         description:"Gemensamt program kräver återinförd hyresreglering.", link:"#", pubDate:new Date(Date.now()-1000*60*360).toISOString(), source:"SVT",        parties:["S","V"],  category:"Bostäder" },
-  { id:"n11", title:"Ny opinionsundersökning: SD störst",                          description:"Novus mätning visar att Sverigedemokraterna för första gången går om S.", link:"#", pubDate:new Date(Date.now()-1000*60*420).toISOString(), source:"DN",      parties:["SD","S"], category:"Ekonomi" },
-  { id:"n12", title:"Riksdagen röstar om ny kriminalvårdslagstiftning",            description:"En bred majoritet väntas rösta för skärpta straff för återfallsförbrytare.", link:"#", pubDate:new Date(Date.now()-1000*60*480).toISOString(), source:"SR",    parties:["M","SD","KD"], category:"Kriminalitet" },
+  { id:"n1",  title:"Kristersson: Regeringen satsar på 2 000 fler poliser",        description:"Statsminister Ulf Kristersson presenterade en satsning på fler poliser i utsatta stadsdelar.", link:"https://svt.se", pubDate:new Date(Date.now()-1000*60*18).toISOString(),  source:"SVT",        parties:["M"],      category:"Kriminalitet", imgSeed:0 },
+  { id:"n2",  title:"Åkesson: SD kräver hårdare gränskontroller",                  description:"Sverigedemokraternas partiledare kräver skärpta regler för asylsökande.", link:"https://aftonbladet.se", pubDate:new Date(Date.now()-1000*60*45).toISOString(),  source:"Aftonbladet",parties:["SD"],     category:"Migration",    imgSeed:1 },
+  { id:"n3",  title:"Ebba Busch: Familjen måste stå i centrum",                    description:"Kristdemokraternas partiledare presenterade ett nytt familjepolitiskt paket.", link:"https://dn.se", pubDate:new Date(Date.now()-1000*60*90).toISOString(),  source:"DN",         parties:["KD"],     category:"Ekonomi",      imgSeed:2 },
+  { id:"n4",  title:"Liberalerna kräver utredning om AI i skolan",                 description:"Johan Pehrson presenterade ett skolpaket med fokus på digital kompetens.", link:"https://sverigesradio.se", pubDate:new Date(Date.now()-1000*60*120).toISOString(), source:"SR",      parties:["L"],      category:"Skola",        imgSeed:0 },
+  { id:"n5",  title:"Centerpartiet: Jordbruket kvävs av regelkrångel",             description:"Muharrem Demirok kräver avreglering för att stärka svenska bönder.", link:"https://expressen.se", pubDate:new Date(Date.now()-1000*60*160).toISOString(), source:"Expressen",  parties:["C"],      category:"Ekonomi",      imgSeed:3 },
+  { id:"n6",  title:"Socialdemokraterna vill återinföra värnskatten",              description:"Partiet presenterar ekonomiskt alternativ där värnskatten återinförs.", link:"https://svt.se", pubDate:new Date(Date.now()-1000*60*200).toISOString(), source:"SVT",        parties:["S"],      category:"Ekonomi",      imgSeed:1 },
+  { id:"n7",  title:"Vänsterpartiet vill stoppa vinstuttag i välfärden",           description:"Nooshi Dadgostar presenterar lagförslag om förbud mot vinstuttag.", link:"https://dn.se", pubDate:new Date(Date.now()-1000*60*240).toISOString(), source:"DN",         parties:["V"],      category:"Sjukvård",     imgSeed:2 },
+  { id:"n8",  title:"Miljöpartiet kräver stopp för ny kärnkraft",                  description:"Per Bolund och MP avvisar regeringens planer som för dyra och för långsamma.", link:"https://sverigesradio.se", pubDate:new Date(Date.now()-1000*60*280).toISOString(), source:"SR", parties:["MP"],     category:"Klimat",       imgSeed:3 },
+  { id:"n9",  title:"Moderaterna och KD oeniga om friskolornas vinstuttag",        description:"Intern spricka i Tidöalliansen om friskolors vinstuttag.", link:"https://aftonbladet.se", pubDate:new Date(Date.now()-1000*60*320).toISOString(), source:"Aftonbladet",parties:["M","KD"],category:"Skola",        imgSeed:1 },
+  { id:"n10", title:"S och V samlar oppositionen kring ny bostadspolitik",         description:"Gemensamt program kräver återinförd hyresreglering.", link:"https://svt.se", pubDate:new Date(Date.now()-1000*60*360).toISOString(), source:"SVT",        parties:["S","V"],  category:"Bostäder",     imgSeed:0 },
+  { id:"n11", title:"Ny opinionsundersökning: SD störst",                          description:"Novus mätning visar att Sverigedemokraterna för första gången går om S.", link:"https://dn.se", pubDate:new Date(Date.now()-1000*60*420).toISOString(), source:"DN",      parties:["SD","S"], category:"Ekonomi",      imgSeed:2 },
+  { id:"n12", title:"Riksdagen röstar om ny kriminalvårdslagstiftning",            description:"En bred majoritet väntas rösta för skärpta straff för återfallsförbrytare.", link:"https://sverigesradio.se", pubDate:new Date(Date.now()-1000*60*480).toISOString(), source:"SR", parties:["M","SD","KD"], category:"Kriminalitet", imgSeed:3 },
 ];
 
 const MOCK_PRESS = [
-  { id:"p1", title:"Moderaterna presenterar ny jobbpolitik för 2026",        description:"M vill sänka arbetsgivaravgifter och förenkla anställningsregler.", link:"#", pubDate:new Date(Date.now()-1000*60*30).toISOString(),  source:"Moderaterna",        party:"M"  },
-  { id:"p2", title:"Socialdemokraterna: Välfärden ska inte säljas ut",       description:"S presenterar valmanifest med fokus på offentlig välfärd.", link:"#", pubDate:new Date(Date.now()-1000*60*60).toISOString(),  source:"Socialdemokraterna", party:"S"  },
-  { id:"p3", title:"SD: Ge polisen mer befogenheter mot gängkriminalitet",    description:"SD lägger fram trygghetsprogram med utökad polismakt.", link:"#", pubDate:new Date(Date.now()-1000*60*100).toISOString(), source:"Sverigedemokraterna",party:"SD" },
-  { id:"p4", title:"KD kräver stärkt barnpolitik och fler familjecentraler", description:"KD presenterar familjepaket med fokus på tidiga insatser.", link:"#", pubDate:new Date(Date.now()-1000*60*140).toISOString(), source:"Kristdemokraterna",  party:"KD" },
-  { id:"p5", title:"Liberalerna: Skolan ska prioriteras i nästa budget",      description:"L vill öronmärka 5 miljarder extra till skolan.", link:"#", pubDate:new Date(Date.now()-1000*60*180).toISOString(), source:"Liberalerna",        party:"L"  },
-  { id:"p6", title:"Centerpartiet vill förenkla för landsbygdsföretagare",   description:"C presenterar 12-punktsprogram för stärkt företagande.", link:"#", pubDate:new Date(Date.now()-1000*60*220).toISOString(), source:"Centerpartiet",      party:"C"  },
-  { id:"p7", title:"Vänsterpartiet: Inför sex timmars arbetsdag",             description:"V lyfter frågan om kortare arbetstid med bibehållen lön.", link:"#", pubDate:new Date(Date.now()-1000*60*260).toISOString(), source:"Vänsterpartiet",     party:"V"  },
-  { id:"p8", title:"Miljöpartiet kräver klimatlag med bindande mål",          description:"MP presenterar lagförslag som tvingar regeringen att nå klimatmålen.", link:"#", pubDate:new Date(Date.now()-1000*60*300).toISOString(), source:"Miljöpartiet",   party:"MP" },
+  { id:"p1", title:"Moderaterna presenterar ny jobbpolitik för 2026",        description:"M vill sänka arbetsgivaravgifter och förenkla anställningsregler.", link:"https://moderaterna.se", pubDate:new Date(Date.now()-1000*60*30).toISOString(),  source:"Moderaterna",        party:"M",  imgSeed:0 },
+  { id:"p2", title:"Socialdemokraterna: Välfärden ska inte säljas ut",       description:"S presenterar valmanifest med fokus på offentlig välfärd.", link:"https://socialdemokraterna.se", pubDate:new Date(Date.now()-1000*60*60).toISOString(),  source:"Socialdemokraterna", party:"S",  imgSeed:1 },
+  { id:"p3", title:"SD: Ge polisen mer befogenheter mot gängkriminalitet",    description:"SD lägger fram trygghetsprogram med utökad polismakt.", link:"https://sd.se", pubDate:new Date(Date.now()-1000*60*100).toISOString(), source:"Sverigedemokraterna",party:"SD", imgSeed:0 },
+  { id:"p4", title:"KD kräver stärkt barnpolitik och fler familjecentraler", description:"KD presenterar familjepaket med fokus på tidiga insatser.", link:"https://kristdemokraterna.se", pubDate:new Date(Date.now()-1000*60*140).toISOString(), source:"Kristdemokraterna",  party:"KD", imgSeed:2 },
+  { id:"p5", title:"Liberalerna: Skolan ska prioriteras i nästa budget",      description:"L vill öronmärka 5 miljarder extra till skolan.", link:"https://liberalerna.se", pubDate:new Date(Date.now()-1000*60*180).toISOString(), source:"Liberalerna",        party:"L",  imgSeed:1 },
+  { id:"p6", title:"Centerpartiet vill förenkla för landsbygdsföretagare",   description:"C presenterar 12-punktsprogram för stärkt företagande.", link:"https://centerpartiet.se", pubDate:new Date(Date.now()-1000*60*220).toISOString(), source:"Centerpartiet",      party:"C",  imgSeed:0 },
+  { id:"p7", title:"Vänsterpartiet: Inför sex timmars arbetsdag",             description:"V lyfter frågan om kortare arbetstid med bibehållen lön.", link:"https://vansterpartiet.se", pubDate:new Date(Date.now()-1000*60*260).toISOString(), source:"Vänsterpartiet",     party:"V",  imgSeed:2 },
+  { id:"p8", title:"Miljöpartiet kräver klimatlag med bindande mål",          description:"MP presenterar lagförslag som tvingar regeringen att nå klimatmålen.", link:"https://mp.se", pubDate:new Date(Date.now()-1000*60*300).toISOString(), source:"Miljöpartiet",       party:"MP", imgSeed:1 },
 ];
 
 const MOCK_VOTES = [
@@ -175,6 +174,7 @@ const NEWS_SOURCES = [
   { name:"DN",          url:"https://www.dn.se/rss/" },
   { name:"Aftonbladet", url:"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/" },
   { name:"Expressen",   url:"https://feeds.expressen.se/nyheter/" },
+  { name:"Omni",        url:"https://omni.se/rss" },
   { name:"Google News", url:"https://news.google.com/rss/search?q=moderaterna+OR+socialdemokraterna+OR+sverigedemokraterna&hl=sv&gl=SE&ceid=SE:sv" },
   { name:"Google News", url:"https://news.google.com/rss/search?q=centerpartiet+OR+vänsterpartiet+OR+miljöpartiet+OR+kristdemokraterna&hl=sv&gl=SE&ceid=SE:sv" },
 ];
@@ -190,7 +190,6 @@ const PRESS_SOURCES = [
   { name:"Miljöpartiet",       party:"MP", url:"https://www.mp.se/feed" },
 ];
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function gp(id) { return PARTIES.find(p => p.id === id); }
 function detectParties(t) { const l=t.toLowerCase(); return Object.keys(PARTY_KEYWORDS).filter(k=>PARTY_KEYWORDS[k].some(kw=>l.includes(kw))); }
 function detectCategory(t) { const l=t.toLowerCase(); for(const [c,w] of Object.entries(CATEGORY_KEYWORDS)){if(w.some(x=>l.includes(x)))return c;} return "Ekonomi"; }
@@ -210,7 +209,6 @@ async function fetchRSS(src) {
   } catch { return []; }
 }
 
-// ─── MOBILE HOOK ─────────────────────────────────────────────────────────────
 function useIsMobile() {
   const [mobile, setMobile] = useState(window.innerWidth < 768);
   useEffect(() => {
@@ -221,22 +219,27 @@ function useIsMobile() {
   return mobile;
 }
 
-// ─── SHARED COMPONENTS ───────────────────────────────────────────────────────
 function Badge({ id, large }) {
   const p=gp(id); if(!p)return null;
   return <span style={{display:"inline-block",padding:large?"3px 10px":"2px 7px",borderRadius:4,fontSize:large?12:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>;
 }
+
 function CatTag({ cat, dark }) {
   const c={Ekonomi:"#4F46E5",Migration:"#D97706",Klimat:"#059669",Kriminalitet:"#DC2626",Sjukvård:"#2563EB",Skola:"#7C3AED",Bostäder:"#EA580C"};
   return <span style={{fontSize:11,fontWeight:700,color:dark?"#fff":(c[cat]||GRAY),textTransform:"uppercase",letterSpacing:"1px"}}>{cat}</span>;
 }
 
-// ─── EDITORIAL NEWS CARD ─────────────────────────────────────────────────────
-function BigCard({ article, onClick }) {
+function openArticle(article) {
+  if (article.link && article.link !== "#") {
+    window.open(article.link, "_blank", "noopener,noreferrer");
+  }
+}
+
+function BigCard({ article }) {
   const [h,setH]=useState(false);
   const img = getCatImage(article.category, article.imgSeed||0);
   return (
-    <div onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
       style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s",marginBottom:24}}>
       <div style={{position:"relative",height:340,overflow:"hidden"}}>
         <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.03)":"scale(1)"}}/>
@@ -255,11 +258,11 @@ function BigCard({ article, onClick }) {
   );
 }
 
-function MedCard({ article, onClick }) {
+function MedCard({ article }) {
   const [h,setH]=useState(false);
   const img = getCatImage(article.category, (article.imgSeed||0)+1);
   return (
-    <div onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
       style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s"}}>
       <div style={{position:"relative",height:180,overflow:"hidden"}}>
         <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
@@ -280,11 +283,11 @@ function MedCard({ article, onClick }) {
   );
 }
 
-function RowCard({ article, onClick }) {
+function RowCard({ article }) {
   const [h,setH]=useState(false);
   const img = getCatImage(article.category, (article.imgSeed||0)+2);
   return (
-    <div onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
       style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s",display:"flex",marginBottom:16}}>
       <div style={{width:160,flexShrink:0,overflow:"hidden"}}>
         <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
@@ -305,57 +308,6 @@ function RowCard({ article, onClick }) {
   );
 }
 
-// ─── ARTICLE OVERLAY ─────────────────────────────────────────────────────────
-function ArticleOverlay({ article, onClose }) {
-  const [content,setContent]=useState(null);
-  const [loading,setLoading]=useState(true);
-  useEffect(()=>{
-    if(!article)return;
-    document.body.style.overflow="hidden";
-    if(article.link&&article.link!=="#"){
-      fetch(`/api/rewrite?url=${encodeURIComponent(article.link)}&title=${encodeURIComponent(article.title)}`)
-        .then(r=>r.json()).then(d=>{setContent(d.text||null);setLoading(false);}).catch(()=>setLoading(false));
-    } else setLoading(false);
-    return()=>{document.body.style.overflow="";};
-  },[article]);
-  if(!article)return null;
-  const img = getCatImage(article.category, article.imgSeed||0);
-  return(
-    <div style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"32px 16px",overflowY:"auto"}} onClick={onClose}>
-      <div style={{background:"#fff",maxWidth:740,width:"100%",borderRadius:16,overflow:"hidden"}} onClick={e=>e.stopPropagation()}>
-        <div style={{position:"relative",height:200}}>
-          <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
-          <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.4)"}}/>
-          <button onClick={onClose} style={{position:"absolute",top:16,right:16,background:"rgba(255,255,255,0.9)",border:"none",borderRadius:"50%",width:36,height:36,fontSize:20,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
-          <div style={{position:"absolute",bottom:16,left:20,display:"flex",gap:6}}>{article.parties.map(p=><Badge key={p} id={p} large/>)}</div>
-        </div>
-        <div style={{padding:"24px 28px 32px"}}>
-          <div style={{display:"flex",gap:10,marginBottom:12}}><CatTag cat={article.category}/><span style={{fontSize:11,color:GRAY}}>· {article.source} · {timeAgo(article.pubDate)}</span></div>
-          <h1 style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,lineHeight:1.35,marginBottom:20,color:NAVY}}>{article.title}</h1>
-          {loading?(
-            <div style={{textAlign:"center",padding:"40px 0"}}>
-              <div style={{width:32,height:32,border:"3px solid #E5E7EB",borderTopColor:BLUE,borderRadius:"50%",animation:"spin .8s linear infinite",margin:"0 auto 12px"}}/>
-              <div style={{fontSize:13,color:GRAY}}>Skriver om med AI…</div>
-            </div>
-          ):content?(
-            <div style={{fontSize:15,lineHeight:1.8,color:"#374151",fontFamily:"Georgia,serif"}}>
-              {content.split("\n\n").map((p,i)=><p key={i} style={{marginBottom:16}}>{p}</p>)}
-            </div>
-          ):(
-            <div><p style={{fontSize:15,lineHeight:1.8,color:"#374151",fontFamily:"Georgia,serif"}}>{article.description}</p><p style={{marginTop:16,fontSize:13,color:GRAY}}>Groq AI-omskrivning aktiv – hämtning misslyckades för denna artikel.</p></div>
-          )}
-          <div style={{marginTop:24,paddingTop:20,borderTop:"1px solid #F3F4F6"}}>
-            {article.link&&article.link!=="#"
-              ?<a href={article.link} target="_blank" rel="noopener noreferrer" style={{color:BLUE,fontSize:14,fontWeight:600,textDecoration:"none"}}>Läs originalartikeln på {article.source} →</a>
-              :<span style={{fontSize:13,color:GRAY}}>{article.source}</span>}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── POLL WIDGET ─────────────────────────────────────────────────────────────
 function PollWidget({ compact }) {
   const PP=[{id:"S",label:"Socialdemokraterna"},{id:"SD",label:"Sverigedemokraterna"},{id:"M",label:"Moderaterna"},{id:"V",label:"Vänsterpartiet"},{id:"C",label:"Centerpartiet"},{id:"MP",label:"Miljöpartiet"},{id:"KD",label:"Kristdemokraterna"},{id:"L",label:"Liberalerna"},{id:"vetej",label:"Vet ej / Röstar inte"}];
   const [sel,setSel]=useState(null);
@@ -363,10 +315,7 @@ function PollWidget({ compact }) {
   const [votes,setVotes]=useState(()=>{try{return JSON.parse(localStorage.getItem("pf_vs4"))||{};}catch{return{};}});
   function submit(){if(!sel||voted)return;const nv={...votes,[sel]:(votes[sel]||0)+1};setVotes(nv);setVoted(sel);localStorage.setItem("pf_v4",sel);localStorage.setItem("pf_vs4",JSON.stringify(nv));}
   const total=Object.values(votes).reduce((a,b)=>a+b,0);
-  if(compact&&voted){
-    const p=gp(voted);
-    return <div style={{fontSize:13,color:GRAY}}>Du röstade: {p?.name||voted} <span style={{color:BLUE,cursor:"pointer",fontWeight:600}} onClick={()=>{localStorage.removeItem("pf_v4");localStorage.removeItem("pf_vs4");setVoted(null);setVotes({});setSel(null);}}>Rösta om</span></div>;
-  }
+  if(compact&&voted){const p=gp(voted);return <div style={{fontSize:13,color:GRAY}}>Du röstade: {p?.name||voted}</div>;}
   return(
     <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:compact?"20px":"24px"}}>
       {!compact&&<div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY,marginBottom:4}}>Var lutar din röst inför valet 2026?</div>}
@@ -380,7 +329,7 @@ function PollWidget({ compact }) {
               <span style={{fontSize:13,color:iS?NAVY:"#374151",fontWeight:iS?600:400}}>{label}</span>
             </div>
           );})}
-          <button onClick={submit} disabled={!sel} style={{marginTop:12,background:sel?NAVY:"#E5E7EB",color:sel?"#fff":"#9CA3AF",border:"none",borderRadius:8,padding:"11px 28px",fontSize:14,fontWeight:700,cursor:sel?"pointer":"not-allowed",transition:"all .15s"}}>Rösta</button>
+          <button onClick={submit} disabled={!sel} style={{marginTop:12,background:sel?NAVY:"#E5E7EB",color:sel?"#fff":"#9CA3AF",border:"none",borderRadius:8,padding:"11px 28px",fontSize:14,fontWeight:700,cursor:sel?"pointer":"not-allowed"}}>Rösta</button>
         </>
       ):(
         <>
@@ -399,7 +348,6 @@ function PollWidget({ compact }) {
   );
 }
 
-// ─── VALKOMPASS ──────────────────────────────────────────────────────────────
 function Valkompass() {
   const [answers,setAnswers]=useState({});
   const [result,setResult]=useState(null);
@@ -424,10 +372,9 @@ function Valkompass() {
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:16,padding:36,marginBottom:28,textAlign:"center",boxShadow:"0 12px 40px rgba(13,27,42,0.3)"}}>
           <div style={{fontSize:11,color:GOLD,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>🎉 Ditt resultat</div>
           <div style={{fontFamily:"Georgia,serif",fontSize:28,fontWeight:700,color:"#fff",marginBottom:20}}>Du passar bäst med<br/>{wp?.name}</div>
-          <div style={{width:64,height:64,borderRadius:"50%",background:wp?.bg,margin:"0 auto 16px",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px rgba(0,0,0,0.3)"}}>
+          <div style={{width:64,height:64,borderRadius:"50%",background:wp?.bg,margin:"0 auto 16px",display:"flex",alignItems:"center",justifyContent:"center"}}>
             <span style={{color:wp?.color,fontWeight:700,fontSize:24}}>{wp?.short}</span>
           </div>
-          <div style={{fontSize:13,color:"rgba(255,255,255,0.6)"}}>Baserat på dina svar på {QUESTIONS.length} frågor</div>
         </div>
         {result.map(([pid,score],i)=>{const p=gp(pid);return(
           <div key={pid} style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
@@ -463,8 +410,8 @@ function Valkompass() {
         <div style={{display:"inline-block",background:catColors[currentQ.cat]||BLUE,color:"#fff",fontSize:11,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",padding:"3px 10px",borderRadius:20,marginBottom:16}}>{currentQ.cat}</div>
         <div style={{fontFamily:"Georgia,serif",fontSize:21,fontWeight:700,color:NAVY,lineHeight:1.4,marginBottom:32}}>{currentQ.text}</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
-          {[{label:"Ja ✓",val:1,bg:NAVY,color:"#fff",hover:"#1e3a5f"},{label:"Vet ej",val:0,bg:"#F3F4F6",color:"#374151"},{label:"Nej ✗",val:-1,bg:"#FEE2E2",color:"#DC2626"}].map(o=>(
-            <button key={o.val} onClick={()=>answer(currentQ.id,o.val)} style={{background:o.bg,color:o.color,border:"none",borderRadius:10,padding:"16px 8px",fontWeight:700,fontSize:16,cursor:"pointer",transition:"transform .1s, opacity .1s"}}
+          {[{label:"Ja ✓",val:1,bg:NAVY,color:"#fff"},{label:"Vet ej",val:0,bg:"#F3F4F6",color:"#374151"},{label:"Nej ✗",val:-1,bg:"#FEE2E2",color:"#DC2626"}].map(o=>(
+            <button key={o.val} onClick={()=>answer(currentQ.id,o.val)} style={{background:o.bg,color:o.color,border:"none",borderRadius:10,padding:"16px 8px",fontWeight:700,fontSize:16,cursor:"pointer",transition:"opacity .1s"}}
               onMouseEnter={e=>e.target.style.opacity="0.85"} onMouseLeave={e=>e.target.style.opacity="1"}>{o.label}</button>
           ))}
         </div>
@@ -474,12 +421,11 @@ function Valkompass() {
   );
 }
 
-// ─── MODALS ──────────────────────────────────────────────────────────────────
 function Modal({ onClose, children }) {
   useEffect(()=>{document.body.style.overflow="hidden";return()=>{document.body.style.overflow="";};},[]);
   return(
     <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"32px 16px",overflowY:"auto"}} onClick={onClose}>
-      <div style={{background:"#fff",maxWidth:700,width:"100%",borderRadius:16,overflow:"hidden"}} onClick={e=>e.stopPropagation()}>
+      <div style={{background:"#fff",maxWidth:700,width:"100%",borderRadius:16,overflow:"hidden",position:"relative"}} onClick={e=>e.stopPropagation()}>
         <button onClick={onClose} style={{position:"absolute",top:16,right:20,background:"none",border:"none",fontSize:24,cursor:"pointer",color:GRAY,zIndex:10}}>×</button>
         {children}
       </div>
@@ -493,11 +439,10 @@ function FAQModal({ onClose }) {
     <Modal onClose={onClose}>
       <div style={{background:NAVY,padding:"28px 32px"}}>
         <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff"}}>Vanliga frågor</div>
-        <div style={{fontSize:13,color:"rgba(255,255,255,0.6)",marginTop:4}}>Allt du behöver veta om PartiFokus</div>
       </div>
       <div style={{padding:"24px 32px 32px"}}>
         {FAQ_ITEMS.map((item,i)=>(
-          <div key={i} style={{borderBottom:"1px solid #F3F4F6",marginBottom:0}}>
+          <div key={i} style={{borderBottom:"1px solid #F3F4F6"}}>
             <button onClick={()=>setOpen(open===i?null:i)} style={{width:"100%",textAlign:"left",background:"none",border:"none",padding:"16px 0",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <span style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{item.q}</span>
               <span style={{fontSize:18,color:GRAY,marginLeft:12}}>{open===i?"−":"+"}</span>
@@ -518,51 +463,23 @@ function PrivacyModal({ onClose }) {
         <div style={{fontSize:12,color:"rgba(255,255,255,0.5)",marginTop:4}}>Senast uppdaterad: April 2026</div>
       </div>
       <div style={{padding:"24px 32px 32px",fontSize:14,color:"#374151",lineHeight:1.8}}>
-        {[
-          ["1. Personuppgiftsansvarig","PartiFokus (partifokus@gmail.com) är personuppgiftsansvarig för behandlingen av dina personuppgifter."],
-          ["2. Vilka uppgifter samlar vi in?","PartiFokus samlar inte in några personuppgifter. Vi använder Google Analytics för anonym besöksstatistik (antal besökare, sidvisningar, trafikkällor). Inga uppgifter som kan identifiera dig personligen samlas in eller lagras."],
-          ["3. Poll och valkompass","Din röst i pollen och dina svar i valkompassen lagras endast lokalt i din webbläsare (localStorage). Vi skickar inte dessa uppgifter till någon server och kan inte koppla dem till dig."],
-          ["4. Cookies","Vi använder Google Analytics-cookies för anonym statistik. Inga marknadsföringscookies eller spårningscookies från tredje part används."],
-          ["5. Google Analytics","Vi använder Google Analytics för att förstå hur sajten används. All data är anonymiserad. IP-adresser anonymiseras innan de behandlas. Du kan stänga av spårning via din webbläsares inställningar."],
-          ["6. Dina rättigheter","Du har rätt att begära information om vilka uppgifter vi har om dig, begära rättelse eller radering. Kontakta oss på partifokus@gmail.com."],
-          ["7. Ändringar","Vi förbehåller oss rätten att uppdatera denna policy. Väsentliga ändringar kommuniceras på sajten."],
-        ].map(([h,t])=><div key={h} style={{marginBottom:20}}><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:NAVY,marginBottom:6}}>{h}</div><div>{t}</div></div>)}
+        {[["1. Personuppgiftsansvarig","PartiFokus (partifokus@gmail.com) är personuppgiftsansvarig."],["2. Vilka uppgifter samlar vi in?","PartiFokus samlar inte in några personuppgifter. Vi använder Google Analytics för anonym besöksstatistik."],["3. Poll och valkompass","Din röst och dina svar lagras endast lokalt i din webbläsare. Vi skickar inte dessa uppgifter till någon server."],["4. Cookies","Vi använder Google Analytics-cookies för anonym statistik. Inga marknadsföringscookies används."],["5. Dina rättigheter","Du har rätt att begära information om vilka uppgifter vi har om dig. Kontakta oss på partifokus@gmail.com."]].map(([h,t])=><div key={h} style={{marginBottom:20}}><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:NAVY,marginBottom:6}}>{h}</div><div>{t}</div></div>)}
       </div>
     </Modal>
   );
 }
 
 function SourcesModal({ onClose }) {
-  const sources=[
-    {name:"SVT Nyheter",url:"https://www.svt.se",desc:"Sveriges Television – public service TV"},
-    {name:"Sveriges Radio",url:"https://www.sverigesradio.se",desc:"Public service radio – Ekot och P1"},
-    {name:"Dagens Nyheter",url:"https://www.dn.se",desc:"Oberoende liberal morgontidning"},
-    {name:"Aftonbladet",url:"https://www.aftonbladet.se",desc:"Socialdemokratisk kvällstidning"},
-    {name:"Expressen",url:"https://www.expressen.se",desc:"Liberal kvällstidning"},
-    {name:"Google News",url:"https://news.google.com",desc:"Nyhetsaggregator – fångar upp artiklar från hundratals svenska medier"},
-    {name:"Moderaterna",url:"https://moderaterna.se",desc:"Partiets officiella presskanal"},
-    {name:"Socialdemokraterna",url:"https://www.socialdemokraterna.se",desc:"Partiets officiella presskanal"},
-    {name:"Sverigedemokraterna",url:"https://sd.se",desc:"Partiets officiella presskanal"},
-    {name:"Kristdemokraterna",url:"https://kristdemokraterna.se",desc:"Partiets officiella presskanal"},
-    {name:"Liberalerna",url:"https://www.liberalerna.se",desc:"Partiets officiella presskanal"},
-    {name:"Centerpartiet",url:"https://www.centerpartiet.se",desc:"Partiets officiella presskanal"},
-    {name:"Vänsterpartiet",url:"https://www.vansterpartiet.se",desc:"Partiets officiella presskanal"},
-    {name:"Miljöpartiet",url:"https://www.mp.se",desc:"Partiets officiella presskanal"},
-    {name:"riksdagen.se",url:"https://www.riksdagen.se",desc:"Riksdagens öppna data – omröstningar och debatter"},
-  ];
+  const sources=[{name:"SVT Nyheter",url:"https://www.svt.se",desc:"Public service TV"},{name:"Sveriges Radio",url:"https://www.sverigesradio.se",desc:"Public service radio"},{name:"Dagens Nyheter",url:"https://www.dn.se",desc:"Oberoende liberal morgontidning"},{name:"Aftonbladet",url:"https://www.aftonbladet.se",desc:"Kvällstidning"},{name:"Expressen",url:"https://www.expressen.se",desc:"Liberal kvällstidning"},{name:"Omni",url:"https://omni.se",desc:"Nyhetsaggregator"},{name:"Google News",url:"https://news.google.com",desc:"Fångar upp artiklar från hundratals svenska medier"},{name:"Moderaterna",url:"https://moderaterna.se",desc:"Partiets officiella presskanal"},{name:"Socialdemokraterna",url:"https://www.socialdemokraterna.se",desc:"Partiets officiella presskanal"},{name:"Sverigedemokraterna",url:"https://sd.se",desc:"Partiets officiella presskanal"},{name:"Kristdemokraterna",url:"https://kristdemokraterna.se",desc:"Partiets officiella presskanal"},{name:"Liberalerna",url:"https://www.liberalerna.se",desc:"Partiets officiella presskanal"},{name:"Centerpartiet",url:"https://www.centerpartiet.se",desc:"Partiets officiella presskanal"},{name:"Vänsterpartiet",url:"https://www.vansterpartiet.se",desc:"Partiets officiella presskanal"},{name:"Miljöpartiet",url:"https://www.mp.se",desc:"Partiets officiella presskanal"},{name:"riksdagen.se",url:"https://www.riksdagen.se",desc:"Riksdagens öppna data"}];
   return(
     <Modal onClose={onClose}>
       <div style={{background:NAVY,padding:"28px 32px"}}>
         <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff"}}>Källförteckning</div>
-        <div style={{fontSize:13,color:"rgba(255,255,255,0.6)",marginTop:4}}>Alla källor vi hämtar nyheter från</div>
       </div>
       <div style={{padding:"24px 32px 32px"}}>
         {sources.map(s=>(
           <div key={s.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 0",borderBottom:"1px solid #F3F4F6"}}>
-            <div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:14,fontWeight:700,color:NAVY}}>{s.name}</div>
-              <div style={{fontSize:12,color:GRAY,marginTop:2}}>{s.desc}</div>
-            </div>
+            <div><div style={{fontFamily:"Georgia,serif",fontSize:14,fontWeight:700,color:NAVY}}>{s.name}</div><div style={{fontSize:12,color:GRAY,marginTop:2}}>{s.desc}</div></div>
             <a href={s.url} target="_blank" rel="noopener noreferrer" style={{fontSize:12,color:BLUE,fontWeight:600,textDecoration:"none",whiteSpace:"nowrap",marginLeft:16}}>Besök →</a>
           </div>
         ))}
@@ -574,106 +491,18 @@ function SourcesModal({ onClose }) {
 function ContactModal({ onClose }) {
   return(
     <Modal onClose={onClose}>
-      <div style={{background:NAVY,padding:"28px 32px"}}>
-        <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff"}}>Kontakta oss</div>
-        <div style={{fontSize:13,color:"rgba(255,255,255,0.6)",marginTop:4}}>Vi svarar så snart vi kan</div>
-      </div>
+      <div style={{background:NAVY,padding:"28px 32px"}}><div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff"}}>Kontakta oss</div></div>
       <div style={{padding:"32px 32px 40px",textAlign:"center"}}>
         <div style={{fontSize:48,marginBottom:16}}>✉️</div>
         <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:8}}>Hör av dig!</div>
-        <div style={{fontSize:14,color:GRAY,lineHeight:1.7,marginBottom:28,maxWidth:400,margin:"0 auto 28px"}}>
-          Har du frågor, synpunkter eller vill du samarbeta med PartiFokus? Skicka ett mail så återkommer vi.
-        </div>
-        <a href="mailto:partifokus@gmail.com" style={{display:"inline-block",background:NAVY,color:"#fff",borderRadius:8,padding:"14px 32px",fontSize:15,fontWeight:700,textDecoration:"none"}}>
-          partifokus@gmail.com
-        </a>
-        <div style={{marginTop:16,fontSize:12,color:GRAY}}>Eller klicka för att öppna i din e-postklient</div>
+        <div style={{fontSize:14,color:GRAY,lineHeight:1.7,marginBottom:28,maxWidth:400,margin:"0 auto 28px"}}>Har du frågor, synpunkter eller vill samarbeta? Skicka ett mail!</div>
+        <a href="mailto:partifokus@gmail.com" style={{display:"inline-block",background:NAVY,color:"#fff",borderRadius:8,padding:"14px 32px",fontSize:15,fontWeight:700,textDecoration:"none"}}>partifokus@gmail.com</a>
       </div>
     </Modal>
   );
 }
 
-// ─── HOME PAGE ────────────────────────────────────────────────────────────────
-function HomePage({ articles, onArticleClick, onTabChange }) {
-  const mobile = useIsMobile();
-  const top = articles.slice(0,5);
-  return(
-    <div>
-      {/* HERO */}
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:mobile?24:48,alignItems:"center",marginBottom:56}}>
-        <div>
-          <div style={{fontSize:12,color:BLUE,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:16}}>Oberoende politisk analys</div>
-          <h1 style={{fontFamily:"Georgia,serif",fontSize:mobile?36:50,fontWeight:700,color:NAVY,lineHeight:1.15,marginBottom:16}}>Fakta före vägval.<br/>Fokus före åsikt.</h1>
-          <div style={{display:"flex",gap:mobile?16:28,marginBottom:28}}>
-            {[{icon:"⚖️",t:"Oberoende",d:"Inga kopplingar. Inga agendor."},{icon:"⚡",t:"Realtid",d:"Senaste nyheterna. Dygnet runt."},{icon:"🗂️",t:"Samlat",d:"All svensk politik på ett ställe."}].map(f=>(
-              <div key={f.t} style={{flex:1}}>
-                <div style={{fontSize:22,marginBottom:4}}>{f.icon}</div>
-                <div style={{fontSize:13,fontWeight:700,color:NAVY,marginBottom:2}}>{f.t}</div>
-                <div style={{fontSize:11,color:GRAY,lineHeight:1.4}}>{f.d}</div>
-              </div>
-            ))}
-          </div>
-          <button onClick={()=>onTabChange("nyheter")} style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"14px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Senaste nyheterna →</button>
-        </div>
-        {!mobile&&top[0]&&(
-          <div style={{position:"relative",borderRadius:16,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.15)",cursor:"pointer"}} onClick={()=>onArticleClick(top[0])}>
-            <img src={HERO_IMAGE} alt="" style={{width:"100%",height:420,objectFit:"cover"}}/>
-            <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(13,27,42,0.85) 0%,transparent 50%)"}}/>
-            <div style={{position:"absolute",bottom:0,left:0,right:0,padding:24}}>
-              <div style={{fontSize:10,color:GOLD,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",marginBottom:8}}>SENASTE NYHET</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:8}}>{top[0].title}</div>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <span style={{fontSize:12,color:"rgba(255,255,255,0.5)"}}>{timeAgo(top[0].pubDate)}</span>
-                <span style={{fontSize:13,color:GOLD,fontWeight:600}}>Läs artikeln →</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* DET HÄNDER JUST NU */}
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:20}}>
-        <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Det händer just nu</div>
-        <button onClick={()=>onTabChange("nyheter")} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>Visa alla →</button>
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(4,1fr)",gap:20,marginBottom:56}}>
-        {top.slice(1,5).map(a=><MedCard key={a.id} article={a} onClick={()=>onArticleClick(a)}/>)}
-      </div>
-
-      {/* UTFORSKA – 2 kort (valkompass + poll) */}
-      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:20}}>Utforska politik på ditt sätt</div>
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:24,marginBottom:56}}>
-        {/* Valkompass card */}
-        <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:16,padding:32,cursor:"pointer",position:"relative",overflow:"hidden"}} onClick={()=>onTabChange("valkompass")}>
-          <div style={{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
-          <div style={{position:"absolute",bottom:-30,left:-10,width:160,height:160,borderRadius:"50%",background:"rgba(255,255,255,0.03)"}}/>
-          <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>🗳️ Valkompass 2026</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:12}}>
-            Osäker på var du står<br/>inför valet 2026?
-          </div>
-          <div style={{fontSize:14,color:"rgba(255,255,255,0.7)",lineHeight:1.6,marginBottom:20}}>
-            Svara på 25 frågor och ta reda på vilket parti du stämmer bäst överens med.
-          </div>
-          <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:24}}>
-            {["M","SD","S","V","C","MP","KD","L"].map(pid=><Badge key={pid} id={pid}/>)}
-          </div>
-          <button style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"13px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Gör testet nu →</button>
-        </div>
-
-        {/* Poll card */}
-        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:32}}>
-          <div style={{fontSize:11,color:BLUE,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>📊 Folkopinionen</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,lineHeight:1.3,marginBottom:8}}>Vart lutar din röst<br/>inför valet 2026?</div>
-          <div style={{fontSize:13,color:GRAY,marginBottom:20}}>Rösta anonymt och se vad andra tycker – just nu.</div>
-          <PollWidget compact/>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── NEWS TABS ────────────────────────────────────────────────────────────────
-function NewsTab({ party, onArticleClick, articles }) {
+function NewsTab({ party, articles }) {
   const mobile = useIsMobile();
   const [catFilter,setCatFilter]=useState("Alla");
   const cats=["Alla",...Object.keys(CATEGORY_KEYWORDS)];
@@ -684,44 +513,30 @@ function NewsTab({ party, onArticleClick, articles }) {
   return(
     <div>
       <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:20}}>
-        {cats.map(cat=>(
-          <button key={cat} onClick={()=>setCatFilter(cat)} style={{background:catFilter===cat?NAVY:"#fff",color:catFilter===cat?"#fff":"#374151",border:`1px solid ${catFilter===cat?NAVY:"#E5E7EB"}`,borderRadius:20,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>{cat}</button>
-        ))}
+        {cats.map(cat=><button key={cat} onClick={()=>setCatFilter(cat)} style={{background:catFilter===cat?NAVY:"#fff",color:catFilter===cat?"#fff":"#374151",border:`1px solid ${catFilter===cat?NAVY:"#E5E7EB"}`,borderRadius:20,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>{cat}</button>)}
       </div>
       <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>
         {party==="all"?"Alla nyheter":gp(party)?.name} <span style={{fontFamily:"sans-serif",fontSize:13,fontWeight:400,color:GRAY,marginLeft:8}}>{filtered.length} artiklar</span>
       </div>
-      {first&&<BigCard article={first} onClick={()=>onArticleClick(first)}/>}
-      {(second||third)&&(
-        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:20,marginBottom:24}}>
-          {second&&<MedCard article={second} onClick={()=>onArticleClick(second)}/>}
-          {third&&<MedCard article={third} onClick={()=>onArticleClick(third)}/>}
-        </div>
-      )}
-      {remaining.map(a=><RowCard key={a.id} article={a} onClick={()=>onArticleClick(a)}/>)}
+      {first&&<BigCard article={first}/>}
+      {(second||third)&&<div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:20,marginBottom:24}}>{second&&<MedCard article={second}/>}{third&&<MedCard article={third}/>}</div>}
+      {remaining.map(a=><RowCard key={a.id} article={a}/>)}
     </div>
   );
 }
 
-function PressTab({ party, onArticleClick, items }) {
+function PressTab({ party, items }) {
   const mobile = useIsMobile();
   let filtered=party==="all"?items:items.filter(a=>a.party===party);
-  const withCat = filtered.map(a=>({...a,parties:a.party?[a.party]:[],category:"Ekonomi"}));
+  const withCat=filtered.map(a=>({...a,parties:a.party?[a.party]:[],category:"Ekonomi"}));
   const [first,...rest]=withCat;
   const [second,third,...remaining]=rest;
   return(
     <div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>
-        Pressmeddelanden <span style={{fontFamily:"sans-serif",fontSize:13,fontWeight:400,color:GRAY,marginLeft:8}}>{filtered.length} st</span>
-      </div>
-      {first&&<BigCard article={first} onClick={()=>onArticleClick(first)}/>}
-      {(second||third)&&(
-        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:20,marginBottom:24}}>
-          {second&&<MedCard article={second} onClick={()=>onArticleClick(second)}/>}
-          {third&&<MedCard article={third} onClick={()=>onArticleClick(third)}/>}
-        </div>
-      )}
-      {remaining.map(a=><RowCard key={a.id} article={a} onClick={()=>onArticleClick(a)}/>)}
+      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>Pressmeddelanden <span style={{fontFamily:"sans-serif",fontSize:13,fontWeight:400,color:GRAY,marginLeft:8}}>{filtered.length} st</span></div>
+      {first&&<BigCard article={first}/>}
+      {(second||third)&&<div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:20,marginBottom:24}}>{second&&<MedCard article={second}/>}{third&&<MedCard article={third}/>}</div>}
+      {remaining.map(a=><RowCard key={a.id} article={a}/>)}
     </div>
   );
 }
@@ -733,27 +548,16 @@ function OmrostningarTab() {
       {MOCK_VOTES.map(v=>{const tot=v.ja+v.nej,jaPct=Math.round(v.ja/tot*100);return(
         <div key={v.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,marginBottom:14}}>
           <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,marginBottom:10,color:NAVY}}>{v.titel}</div>
-          <div style={{display:"flex",gap:16,fontSize:12,color:GRAY,marginBottom:8}}>
-            <span style={{color:"#059669",fontWeight:700}}>✓ Ja: {v.ja}</span>
-            <span style={{color:"#DC2626",fontWeight:700}}>✗ Nej: {v.nej}</span>
-            <span style={{marginLeft:"auto"}}>{v.datum} · {v.beteckning}</span>
-          </div>
-          <div style={{height:8,background:"#F3F4F6",borderRadius:2,overflow:"hidden",display:"flex",marginBottom:14}}>
-            <div style={{width:`${jaPct}%`,background:"#059669"}}/><div style={{width:`${100-jaPct}%`,background:"#DC2626"}}/>
-          </div>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            {v.parter.map(({p,r})=><span key={p} style={{display:"flex",alignItems:"center",gap:3}}><Badge id={p}/><span style={{fontSize:11,color:r==="Ja"?"#059669":"#DC2626",fontWeight:700}}>{r}</span></span>)}
-          </div>
+          <div style={{display:"flex",gap:16,fontSize:12,color:GRAY,marginBottom:8}}><span style={{color:"#059669",fontWeight:700}}>✓ Ja: {v.ja}</span><span style={{color:"#DC2626",fontWeight:700}}>✗ Nej: {v.nej}</span><span style={{marginLeft:"auto"}}>{v.datum} · {v.beteckning}</span></div>
+          <div style={{height:8,background:"#F3F4F6",borderRadius:2,overflow:"hidden",display:"flex",marginBottom:14}}><div style={{width:`${jaPct}%`,background:"#059669"}}/><div style={{width:`${100-jaPct}%`,background:"#DC2626"}}/></div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{v.parter.map(({p,r})=><span key={p} style={{display:"flex",alignItems:"center",gap:3}}><Badge id={p}/><span style={{fontSize:11,color:r==="Ja"?"#059669":"#DC2626",fontWeight:700}}>{r}</span></span>)}</div>
         </div>
       );})}
       <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24,marginTop:32}}>Kommande debatter</div>
       {MOCK_DEBATES.map(d=>(
         <div key={d.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:10,padding:"14px 20px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
           <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:GOLD,minWidth:60,fontSize:13}}>{d.datum.slice(5)}</div>
-          <div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{d.titel}</div>
-            <div style={{fontSize:11,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginTop:2}}>{d.typ} · {d.tid}</div>
-          </div>
+          <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{d.titel}</div><div style={{fontSize:11,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginTop:2}}>{d.typ} · {d.tid}</div></div>
         </div>
       ))}
     </div>
@@ -769,9 +573,7 @@ function LedamoterTab({ party }) {
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:14}}>
         {filtered.map(m=>{const p=gp(m.parti);return(
           <div key={m.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,textAlign:"center"}}>
-            <div style={{width:56,height:56,borderRadius:"50%",background:p?.bg,margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <span style={{color:p?.color,fontWeight:700,fontFamily:"Georgia,serif",fontSize:18}}>{initials(m.namn)}</span>
-            </div>
+            <div style={{width:56,height:56,borderRadius:"50%",background:p?.bg,margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:p?.color,fontWeight:700,fontFamily:"Georgia,serif",fontSize:18}}>{initials(m.namn)}</span></div>
             <div style={{fontFamily:"Georgia,serif",fontSize:14,fontWeight:700,marginBottom:6,color:NAVY}}>{m.namn}</div>
             <div style={{marginBottom:6}}><Badge id={m.parti} large/></div>
             <div style={{fontSize:11,color:GRAY}}>{m.valkrets}</div>
@@ -788,46 +590,84 @@ function OpinionTab() {
     <div>
       <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>Opinionsmätningar</div>
       <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:24,marginBottom:24}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:20}}>
-          <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY}}>Senaste – {latest.datum}</div>
-          <div style={{fontSize:12,color:GRAY}}>{latest.källa}</div>
-        </div>
-        {pids.map(pid=>{const p=gp(pid),pct=latest[pid];return(
-          <div key={pid} style={{display:"flex",alignItems:"center",gap:10,marginBottom:9}}>
-            <div style={{width:40}}><Badge id={pid} large/></div>
-            <div style={{flex:1,height:22,background:"#F3F4F6",borderRadius:2,overflow:"hidden"}}><div style={{width:`${pct*2.8}%`,height:"100%",background:p?.bg,minWidth:4}}/></div>
-            <div style={{fontSize:13,fontWeight:700,minWidth:40,textAlign:"right",color:NAVY}}>{pct}%</div>
-          </div>
-        );})}
-        <div style={{marginTop:14,fontSize:12,color:GRAY,borderTop:"1px solid #F3F4F6",paddingTop:12}}>
-          Högerblocket: <strong>{(latest.M+latest.SD+latest.KD+latest.L+latest.C).toFixed(1)}%</strong>
-          <span style={{margin:"0 12px"}}>·</span>
-          Vänsterblocket: <strong>{(latest.S+latest.V+latest.MP).toFixed(1)}%</strong>
-        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:20}}><div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY}}>Senaste – {latest.datum}</div><div style={{fontSize:12,color:GRAY}}>{latest.källa}</div></div>
+        {pids.map(pid=>{const p=gp(pid),pct=latest[pid];return(<div key={pid} style={{display:"flex",alignItems:"center",gap:10,marginBottom:9}}><div style={{width:40}}><Badge id={pid} large/></div><div style={{flex:1,height:22,background:"#F3F4F6",borderRadius:2,overflow:"hidden"}}><div style={{width:`${pct*2.8}%`,height:"100%",background:p?.bg,minWidth:4}}/></div><div style={{fontSize:13,fontWeight:700,minWidth:40,textAlign:"right",color:NAVY}}>{pct}%</div></div>);})}
+        <div style={{marginTop:14,fontSize:12,color:GRAY,borderTop:"1px solid #F3F4F6",paddingTop:12}}>Högerblocket: <strong>{(latest.M+latest.SD+latest.KD+latest.L+latest.C).toFixed(1)}%</strong><span style={{margin:"0 12px"}}>·</span>Vänsterblocket: <strong>{(latest.S+latest.V+latest.MP).toFixed(1)}%</strong></div>
       </div>
       {MOCK_POLLS_DATA.map(poll=>(
         <div key={poll.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:10,padding:"14px 20px",marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-            <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:NAVY}}>{poll.datum}</div>
-            <div style={{fontSize:11,color:GRAY}}>{poll.källa}</div>
-          </div>
-          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-            {pids.map(pid=><span key={pid} style={{display:"flex",alignItems:"center",gap:3}}><Badge id={pid}/><span style={{fontSize:12,fontWeight:700,color:NAVY}}>{poll[pid]}%</span></span>)}
-          </div>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}><div style={{fontFamily:"Georgia,serif",fontWeight:700,color:NAVY}}>{poll.datum}</div><div style={{fontSize:11,color:GRAY}}>{poll.källa}</div></div>
+          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{pids.map(pid=><span key={pid} style={{display:"flex",alignItems:"center",gap:3}}><Badge id={pid}/><span style={{fontSize:12,fontWeight:700,color:NAVY}}>{poll[pid]}%</span></span>)}</div>
         </div>
       ))}
     </div>
   );
 }
 
-// ─── APP ─────────────────────────────────────────────────────────────────────
+function HomePage({ articles, onTabChange }) {
+  const mobile = useIsMobile();
+  const top = articles.slice(0,5);
+  return(
+    <div>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:mobile?24:48,alignItems:"center",marginBottom:56}}>
+        <div>
+          <div style={{fontSize:12,color:BLUE,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:16}}>Oberoende politisk analys</div>
+          <h1 style={{fontFamily:"Georgia,serif",fontSize:mobile?36:50,fontWeight:700,color:NAVY,lineHeight:1.15,marginBottom:16}}>Fakta före vägval.<br/>Fokus före åsikt.</h1>
+          <div style={{display:"flex",gap:mobile?16:28,marginBottom:28}}>
+            {[{icon:"⚖️",t:"Oberoende",d:"Inga kopplingar. Inga agendor."},{icon:"⚡",t:"Realtid",d:"Senaste nyheterna. Dygnet runt."},{icon:"🗂️",t:"Samlat",d:"All svensk politik på ett ställe."}].map(f=>(
+              <div key={f.t} style={{flex:1}}><div style={{fontSize:22,marginBottom:4}}>{f.icon}</div><div style={{fontSize:13,fontWeight:700,color:NAVY,marginBottom:2}}>{f.t}</div><div style={{fontSize:11,color:GRAY,lineHeight:1.4}}>{f.d}</div></div>
+            ))}
+          </div>
+          <button onClick={()=>onTabChange("nyheter")} style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"14px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Senaste nyheterna →</button>
+        </div>
+        {!mobile&&top[0]&&(
+          <div style={{position:"relative",borderRadius:16,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.15)",cursor:"pointer"}} onClick={()=>openArticle(top[0])}>
+            <img src={HERO_IMAGE} alt="" style={{width:"100%",height:420,objectFit:"cover"}}/>
+            <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(13,27,42,0.85) 0%,transparent 50%)"}}/>
+            <div style={{position:"absolute",bottom:0,left:0,right:0,padding:24}}>
+              <div style={{fontSize:10,color:GOLD,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",marginBottom:8}}>SENASTE NYHET</div>
+              <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:8}}>{top[0].title}</div>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><span style={{fontSize:12,color:"rgba(255,255,255,0.5)"}}>{timeAgo(top[0].pubDate)}</span><span style={{fontSize:13,color:GOLD,fontWeight:600}}>Läs artikeln →</span></div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:20}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Det händer just nu</div>
+        <button onClick={()=>onTabChange("nyheter")} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>Visa alla →</button>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(4,1fr)",gap:20,marginBottom:56}}>
+        {top.slice(1,5).map(a=><MedCard key={a.id} article={a}/>)}
+      </div>
+
+      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:20}}>Utforska politik på ditt sätt</div>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:24,marginBottom:56}}>
+        <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:16,padding:32,cursor:"pointer",position:"relative",overflow:"hidden"}} onClick={()=>onTabChange("valkompass")}>
+          <div style={{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
+          <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>🗳️ Valkompass 2026</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:12}}>Osäker på var du står<br/>inför valet 2026?</div>
+          <div style={{fontSize:14,color:"rgba(255,255,255,0.7)",lineHeight:1.6,marginBottom:20}}>Svara på 25 frågor och ta reda på vilket parti du stämmer bäst överens med.</div>
+          <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:24}}>{["M","SD","S","V","C","MP","KD","L"].map(pid=><Badge key={pid} id={pid}/>)}</div>
+          <button style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"13px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Gör testet nu →</button>
+        </div>
+        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:32}}>
+          <div style={{fontSize:11,color:BLUE,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>📊 Folkopinionen</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,lineHeight:1.3,marginBottom:8}}>Vart lutar din röst<br/>inför valet 2026?</div>
+          <div style={{fontSize:13,color:GRAY,marginBottom:20}}>Rösta anonymt och se vad andra tycker – just nu.</div>
+          <PollWidget compact/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [tab,setTab]=useState("hem");
   const [party,setParty]=useState("all");
-  const [selectedArticle,setSelectedArticle]=useState(null);
   const [news,setNews]=useState(MOCK_NEWS);
   const [press,setPress]=useState(MOCK_PRESS);
-  const [modal,setModal]=useState(null); // "faq"|"privacy"|"sources"|"contact"
+  const [modal,setModal]=useState(null);
   const mobile = useIsMobile();
 
   useEffect(()=>{
@@ -848,45 +688,26 @@ export default function App() {
 
   useEffect(()=>{if(window.gtag)window.gtag("config",GA_ID,{page_path:"/"+tab});},[tab]);
 
-  function changeTab(newTab) {
-    setTab(newTab);
-    setParty("all"); // reset party filter on tab change
-  }
-
+  function changeTab(newTab){setTab(newTab);setParty("all");}
   const showPartyFilter=!["hem","valkompass","omrostningar","ledamoter","opinion"].includes(tab);
 
   return(
     <div style={{fontFamily:"system-ui,sans-serif",background:"#F9FAFB",minHeight:"100vh",color:NAVY}}>
-      <style>{`*{box-sizing:border-box;margin:0;padding:0;}@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style>{`*{box-sizing:border-box;margin:0;padding:0;}`}</style>
 
-      {selectedArticle&&<ArticleOverlay article={selectedArticle} onClose={()=>setSelectedArticle(null)}/>}
       {modal==="faq"&&<FAQModal onClose={()=>setModal(null)}/>}
       {modal==="privacy"&&<PrivacyModal onClose={()=>setModal(null)}/>}
       {modal==="sources"&&<SourcesModal onClose={()=>setModal(null)}/>}
       {modal==="contact"&&<ContactModal onClose={()=>setModal(null)}/>}
 
-      {/* HEADER */}
       <header style={{background:"#fff",borderBottom:"1px solid #E5E7EB",position:"sticky",top:0,zIndex:100}}>
         <div style={{maxWidth:1200,margin:"0 auto",padding:`0 ${mobile?16:32}px`,height:64,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <button onClick={()=>changeTab("hem")} style={{background:"none",border:"none",cursor:"pointer",padding:0,textAlign:"left"}}>
             <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY}}>Parti<span style={{color:BLUE,borderBottom:`2px solid ${BLUE}`,paddingBottom:1}}>Fokus</span></div>
             <div style={{fontSize:10,color:GRAY,letterSpacing:"1px",marginTop:1}}>Politik. Inget annat.</div>
           </button>
-          {!mobile&&(
-            <nav style={{display:"flex",gap:2}}>
-              {TABS.map(t=>(
-                <button key={t.id} onClick={()=>changeTab(t.id)} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:GRAY,borderBottom:tab===t.id?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>
-                  {t.label}
-                </button>
-              ))}
-            </nav>
-          )}
-          {mobile&&(
-            <select value={tab} onChange={e=>changeTab(e.target.value)} style={{border:"1px solid #E5E7EB",borderRadius:8,padding:"6px 10px",fontSize:13,color:NAVY,background:"#fff"}}>
-              <option value="hem">Hem</option>
-              {TABS.map(t=><option key={t.id} value={t.id}>{t.label}</option>)}
-            </select>
-          )}
+          {!mobile&&<nav style={{display:"flex",gap:2}}>{TABS.map(t=><button key={t.id} onClick={()=>changeTab(t.id)} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:GRAY,borderBottom:tab===t.id?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>{t.label}</button>)}</nav>}
+          {mobile&&<select value={tab} onChange={e=>changeTab(e.target.value)} style={{border:"1px solid #E5E7EB",borderRadius:8,padding:"6px 10px",fontSize:13,color:NAVY,background:"#fff"}}><option value="hem">Hem</option>{TABS.map(t=><option key={t.id} value={t.id}>{t.label}</option>)}</select>}
         </div>
         {showPartyFilter&&(
           <div style={{background:"#F9FAFB",borderTop:"1px solid #E5E7EB",overflowX:"auto",scrollbarWidth:"none"}}>
@@ -902,23 +723,16 @@ export default function App() {
         )}
       </header>
 
-      {/* MAIN */}
       <main style={{maxWidth:1200,margin:"0 auto",padding:`${mobile?24:40}px ${mobile?16:32}px`}}>
-        {tab==="hem"         &&<HomePage articles={news} onArticleClick={setSelectedArticle} onTabChange={changeTab}/>}
-        {tab==="nyheter"     &&<NewsTab party={party} onArticleClick={setSelectedArticle} articles={news}/>}
-        {tab==="press"       &&<PressTab party={party} onArticleClick={setSelectedArticle} items={press}/>}
+        {tab==="hem"         &&<HomePage articles={news} onTabChange={changeTab}/>}
+        {tab==="nyheter"     &&<NewsTab party={party} articles={news}/>}
+        {tab==="press"       &&<PressTab party={party} items={press}/>}
         {tab==="omrostningar"&&<OmrostningarTab/>}
         {tab==="ledamoter"   &&<LedamoterTab party={party}/>}
         {tab==="opinion"     &&<OpinionTab/>}
-        {tab==="valkompass"  &&(
-          <div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:28}}>Din politiska profil – Valkompass 2026</div>
-            <Valkompass/>
-          </div>
-        )}
+        {tab==="valkompass"  &&<div><div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:28}}>Din politiska profil – Valkompass 2026</div><Valkompass/></div>}
       </main>
 
-      {/* FOOTER */}
       <footer style={{background:NAVY,marginTop:64,padding:`48px ${mobile?20:32}px 32px`}}>
         <div style={{maxWidth:1200,margin:"0 auto"}}>
           <div style={{display:"grid",gridTemplateColumns:mobile?"1fr 1fr":"2fr 1fr 1fr 1fr",gap:mobile?24:40,marginBottom:40}}>
@@ -930,22 +744,19 @@ export default function App() {
             <div>
               <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",marginBottom:12}}>Utforska</div>
               {[["nyheter","Nyheter"],["press","Pressmeddelanden"],["omrostningar","Omröstningar"],["ledamoter","Ledamöter"],["opinion","Opinion"],["valkompass","Valkompass"]].map(([id,label])=>(
-                <div key={id} onClick={()=>changeTab(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}}
-                  onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
+                <div key={id} onClick={()=>changeTab(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}} onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
               ))}
             </div>
             <div>
               <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",marginBottom:12}}>Om oss</div>
               {[["sources","Källor"],["privacy","Integritetspolicy"]].map(([id,label])=>(
-                <div key={id} onClick={()=>setModal(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}}
-                  onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
+                <div key={id} onClick={()=>setModal(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}} onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
               ))}
             </div>
             <div>
               <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",marginBottom:12}}>Mer</div>
               {[["contact","Kontakt"],["faq","Vanliga frågor"]].map(([id,label])=>(
-                <div key={id} onClick={()=>setModal(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}}
-                  onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
+                <div key={id} onClick={()=>setModal(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}} onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
               ))}
             </div>
           </div>
