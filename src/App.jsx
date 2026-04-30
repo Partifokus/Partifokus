@@ -388,7 +388,7 @@ function PollWidget({ compact }) {
         <div style={{fontSize:11,color:GRAY,marginBottom:10}}>{total>0?`${total.toLocaleString()} röster totalt`:""}</div>
         {PP.map(({id})=>{const p=gp(id);const pct=total>0?Math.round(((votes[id]||0)/total)*100):0;const isV=voted===id;return(
           <div key={id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <div style={{width:compact?28:36,flexShrink:0}}>{p?<span style={{display:"inline-block",padding:"1px 4px",borderRadius:3,fontSize:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>:<span style={{fontSize:10,color:GRAY}}>–</span>}</div>
+            <div style={{width:compact?28:36,flexShrink:0}}>{p?<span style={{display:"inline-block",padding:"1px 4px",borderRadius:3,fontSize:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>:<span style={{fontSize:10,color:"#374151",fontWeight:600}}>{PP.find(x=>x.id===id)?.label||"–"}</span>}</div>
             <div style={{flex:1,height:compact?14:16,background:"#F3F4F6",borderRadius:3,overflow:"hidden"}}><div style={{width:`${pct}%`,height:"100%",background:isV?GOLD:(p?.bg||"#9CA3AF"),minWidth:2,transition:"width .4s"}}/></div>
             <div style={{width:30,fontSize:11,fontWeight:700,textAlign:"right",color:isV?GOLD:"#374151"}}>{pct}%</div>
           </div>
@@ -681,7 +681,10 @@ function RowCard({ article }) {
         <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,lineHeight:1.4,color:NAVY,marginBottom:6}}>{article.title}</div>
         <div style={{fontSize:13,color:GRAY,lineHeight:1.5,marginBottom:10}}>{article.description}…</div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <div style={{display:"flex",gap:4}}>{article.parties.map(p=><Badge key={p} id={p}/>)}</div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            {article.parties.map(p=><Badge key={p} id={p}/>)}
+            <span style={{fontSize:11,color:"#9CA3AF"}}>{article.source}</span>
+          </div>
           <span style={{fontSize:12,color:BLUE,fontWeight:600}}>Läs mer →</span>
         </div>
       </div>
