@@ -381,18 +381,25 @@ function PollWidget({ compact }) {
     );
   }
 
-  if(voted||(compact&&voted)){
+  // Visa alltid live-resultat ovanför röstningsformuläret
+  const ResultBar = () => (
+    <div style={{marginBottom:voted?0:16}}>
+      <div style={{fontSize:11,color:GRAY,marginBottom:8,fontWeight:600}}>{total>0?`${total.toLocaleString("sv-SE")} röster totalt · Uppdateras i realtid`:"Inga röster än — bli den första!"}</div>
+      {PP.map(({id})=>{const p=gp(id);const pct=total>0?Math.round(((votes[id]||0)/total)*100):0;const isV=voted===id;return(
+        <div key={id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
+          <div style={{width:compact?28:36,flexShrink:0}}>{p?<span style={{display:"inline-block",padding:"1px 4px",borderRadius:3,fontSize:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>:<span style={{fontSize:10,color:"#374151",fontWeight:600,whiteSpace:"nowrap"}}>{PP.find(x=>x.id===id)?.label||"–"}</span>}</div>
+          <div style={{flex:1,height:compact?12:16,background:"#F3F4F6",borderRadius:3,overflow:"hidden"}}><div style={{width:`${pct}%`,height:"100%",background:isV?GOLD:(p?.bg||"#9CA3AF"),minWidth:pct>0?2:0,transition:"width .6s"}}/></div>
+          <div style={{width:32,fontSize:11,fontWeight:700,textAlign:"right",color:isV?GOLD:"#374151"}}>{pct}%</div>
+        </div>
+      );})}
+    </div>
+  );
+
+  if(voted){
     return(
       <div>
-        {voted&&<div style={{fontSize:12,color:NAVY,fontWeight:600,marginBottom:10}}>✓ Du röstade: {PP.find(p=>p.id===voted)?.label}</div>}
-        <div style={{fontSize:11,color:GRAY,marginBottom:10}}>{total>0?`${total.toLocaleString()} röster totalt`:""}</div>
-        {PP.map(({id})=>{const p=gp(id);const pct=total>0?Math.round(((votes[id]||0)/total)*100):0;const isV=voted===id;return(
-          <div key={id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <div style={{width:compact?28:36,flexShrink:0}}>{p?<span style={{display:"inline-block",padding:"1px 4px",borderRadius:3,fontSize:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>:<span style={{fontSize:10,color:"#374151",fontWeight:600}}>{PP.find(x=>x.id===id)?.label||"–"}</span>}</div>
-            <div style={{flex:1,height:compact?14:16,background:"#F3F4F6",borderRadius:3,overflow:"hidden"}}><div style={{width:`${pct}%`,height:"100%",background:isV?GOLD:(p?.bg||"#9CA3AF"),minWidth:2,transition:"width .4s"}}/></div>
-            <div style={{width:30,fontSize:11,fontWeight:700,textAlign:"right",color:isV?GOLD:"#374151"}}>{pct}%</div>
-          </div>
-        );})}
+        <div style={{fontSize:12,color:"#16A34A",fontWeight:700,marginBottom:10}}>✓ Du röstade: {PP.find(p=>p.id===voted)?.label}</div>
+        <ResultBar/>
         {compact&&<div style={{marginTop:6,fontSize:10,color:GRAY}}>Anonym · kan inte spåras</div>}
       </div>
     );
@@ -400,7 +407,8 @@ function PollWidget({ compact }) {
 
   return(
     <div>
-      <div style={{fontSize:12,color:GRAY,marginBottom:16}}>{total>0?`${total.toLocaleString()} röster`:"Bli den första att rösta"} · Helt anonym</div>
+      <ResultBar/>
+      <div style={{fontSize:12,color:GRAY,marginBottom:12}}>Din röst är helt anonym</div>
       {PP.map(({id,label})=>{const p=gp(id);const iS=sel===id;return(
         <div key={id} onClick={()=>setSel(id)} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 12px",borderRadius:8,border:iS?`2px solid ${BLUE}`:"1px solid #E5E7EB",background:iS?"#EFF6FF":"#FAFAFA",cursor:"pointer",marginBottom:6,transition:"all .1s"}}>
           <div style={{width:18,height:18,borderRadius:"50%",border:iS?`5px solid ${BLUE}`:"2px solid #D1D5DB",background:"#fff",flexShrink:0}}/>
@@ -413,6 +421,14 @@ function PollWidget({ compact }) {
   );
 }
 
+// ─── VALKOMPASS COUNTER ──────────────────────────────────────────────────────
+function ValkompasCounter() {
+  const [count,setCount]=useState(null);
+  useEffect(()=>{ getValkompasCount().then(n=>{ if(n!==null) setCount(n); }); },[]);
+  if(count===null||count===0) return null;
+  return <div style={{fontSize:11,color:"rgba(255,255,255,0.4)",marginBottom:8,textAlign:"center"}}>🗳️ {count.toLocaleString("sv-SE")} har gjort valkompassen</div>;
+}
+
 // ─── VALKOMPASS ──────────────────────────────────────────────────────────────
 function Valkompass() {
   const [answers,setAnswers]=useState({});
@@ -420,6 +436,10 @@ function Valkompass() {
   const [totalCount,setTotalCount]=useState(null);
   const progress=Object.keys(answers).length;
   const currentQ=QUESTIONS.find(q=>answers[q.id]===undefined);
+
+  useEffect(()=>{
+    getValkompasCount().then(n=>{ if(n!==null) setTotalCount(n); });
+  },[]);
 
   function answer(qid,val){
     const na={...answers,[qid]:val};
@@ -1123,10 +1143,18 @@ function FinalExam({ onBack }) {
 
 function PolitikskolaTab({ activeKat, setActiveKat }) {
   const [showExam,setShowExam]=useState(false);
-  const [completed,setCompleted]=useState(new Set());
+  const [completed,setCompleted]=useState(()=>{
+    try{ const s=localStorage.getItem("ps_completed"); return s?new Set(JSON.parse(s)):new Set(); }catch{ return new Set(); }
+  });
   const allDone=completed.size===POLITIKSKOLA.length;
 
-  function handleComplete(id){ setCompleted(prev=>new Set([...prev,id])); }
+  function handleComplete(id){
+    setCompleted(prev=>{
+      const next=new Set([...prev,id]);
+      try{ localStorage.setItem("ps_completed",JSON.stringify([...next])); }catch{}
+      return next;
+    });
+  }
 
   if(showExam) return <FinalExam onBack={()=>setShowExam(false)}/>;
 
@@ -1294,6 +1322,7 @@ function HomePage({ articles, onTabChange, loading }) {
               <defs><filter id="ms" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.25"/></filter></defs>
             </svg>
           </div>
+          <ValkompasCounter/>
           <button style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Gör testet nu →</button>
         </div>
 
