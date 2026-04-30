@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 const GA_ID = "G-DB7QB8N6BE";
 // ── Supabase – fyll i dina uppgifter ──────────────────────────────────────────
-const SUPABASE_URL  = "https://DIN-PROJEKT-ID.supabase.co";
-const SUPABASE_KEY  = "DIN-ANON-KEY";
+const SUPABASE_URL  = "https://lkegqtofaxbxzlxxweew.supabase.co";
+const SUPABASE_KEY  = "sb_publishable_ICF5j4eq8IkQC2LuCw41uA_uWLJFAPY";
 const STATS_TABLE   = "valkompass_stats";
 // ─────────────────────────────────────────────────────────────────────────────
 const NAVY = "#0D1B2A";
@@ -312,18 +312,54 @@ function CompassSVG() {
 }
 
 // ─── SHARED POLL COMPONENT ────────────────────────────────────────────────────
+const SB_POLL_TABLE = "poll_votes";
+
+async function sbFetchVotes() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_POLL_TABLE}?select=party,votes`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await r.json();
+    const obj = {};
+    (rows||[]).forEach(row => { obj[row.party] = row.votes || 0; });
+    return obj;
+  } catch { return {}; }
+}
+
+async function sbIncrementVote(party) {
+  try {
+    // Hämta nuvarande
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_POLL_TABLE}?party=eq.${party}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await r.json();
+    const current = rows[0]?.votes || 0;
+    await fetch(`${SUPABASE_URL}/rest/v1/${SB_POLL_TABLE}?party=eq.${party}`, {
+      method: "PATCH",
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ votes: current + 1 })
+    });
+    return current + 1;
+  } catch { return null; }
+}
+
 function PollWidget({ compact }) {
   const PP=[{id:"S",label:"Socialdemokraterna"},{id:"SD",label:"Sverigedemokraterna"},{id:"M",label:"Moderaterna"},{id:"V",label:"Vänsterpartiet"},{id:"C",label:"Centerpartiet"},{id:"MP",label:"Miljöpartiet"},{id:"KD",label:"Kristdemokraterna"},{id:"L",label:"Liberalerna"},{id:"ovriga",label:"Övriga partier"},{id:"vetej",label:"Vet ej / Röstar inte"}];
   const [sel,setSel]=useState(null);
   const [voted,setVoted]=useState(getPollVoted);
-  const [votes,setVotes]=useState(getPollData);
+  const [votes,setVotes]=useState({});
 
-  function submit(){
+  useEffect(()=>{
+    sbFetchVotes().then(v=>{ if(Object.keys(v).length>0) setVotes(v); else setVotes(getPollData()); });
+  },[]);
+
+  async function submit(){
     if(!sel||voted)return;
-    const nv={...votes,[sel]:(votes[sel]||0)+1};
-    setVotes(nv);setVoted(sel);
-    localStorage.setItem(POLL_KEY,JSON.stringify(nv));
-    localStorage.setItem(POLL_VOTED_KEY,sel);
+    await sbIncrementVote(sel);
+    const fresh = await sbFetchVotes();
+    setVotes(fresh);
+    setVoted(sel);
+    localStorage.setItem(POLL_VOTED_KEY, sel);
   }
 
   const total=Object.values(votes).reduce((a,b)=>a+b,0);
@@ -892,13 +928,53 @@ const POLITIKSKOLA = [
   },
 ];
 
-function PolitikskolaQuiz({ quiz }) {
+const SB_QUIZ_TABLE = "quiz_stats";
+
+async function sbIncrementQuiz(id) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await r.json();
+    const current = rows[0]?.completions || 0;
+    await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}`, {
+      method: "PATCH",
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ completions: current + 1 })
+    });
+    return current + 1;
+  } catch { return null; }
+}
+
+async function sbGetQuizCount(id) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}&select=completions`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await r.json();
+    return rows[0]?.completions || 0;
+  } catch { return null; }
+}
+
+function PolitikskolaQuiz({ quiz, quizId }) {
   const [answers,setAnswers]=useState({});
   const [submitted,setSubmitted]=useState(false);
+  const [count,setCount]=useState(null);
   const score=submitted?quiz.filter((q,i)=>answers[i]===q.svar).length:0;
+
+  useEffect(()=>{ sbGetQuizCount(quizId).then(n=>{ if(n!==null) setCount(n); }); },[quizId]);
+
+  function handleSubmit(){
+    setSubmitted(true);
+    sbIncrementQuiz(quizId).then(n=>{ if(n!==null) setCount(n); });
+  }
+
   return(
     <div style={{background:"#F9FAFB",borderRadius:16,padding:24,marginTop:32,border:"1px solid #E5E7EB"}}>
-      <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY,marginBottom:4}}>🧠 Testa dina kunskaper</div>
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY}}>🧠 Testa dina kunskaper</div>
+        {count!==null&&<div style={{fontSize:11,color:GRAY}}>{count.toLocaleString("sv-SE")} har gjort detta quiz</div>}
+      </div>
       <div style={{fontSize:13,color:GRAY,marginBottom:24}}>Välj rätt svar på varje fråga.</div>
       {quiz.map((q,qi)=>(
         <div key={qi} style={{marginBottom:20}}>
@@ -919,7 +995,7 @@ function PolitikskolaQuiz({ quiz }) {
         </div>
       ))}
       {!submitted?(
-        <button onClick={()=>setSubmitted(true)} disabled={Object.keys(answers).length<quiz.length}
+        <button onClick={handleSubmit} disabled={Object.keys(answers).length<quiz.length}
           style={{background:Object.keys(answers).length<quiz.length?"#E5E7EB":NAVY,color:Object.keys(answers).length<quiz.length?"#9CA3AF":"#fff",border:"none",borderRadius:10,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:Object.keys(answers).length<quiz.length?"not-allowed":"pointer",marginTop:8}}>
           Kolla svaren
         </button>
@@ -954,7 +1030,7 @@ function PolitikskolaTab() {
             <div style={{fontSize:15,color:"#374151",lineHeight:1.8}}>{a.text}</div>
           </div>
         ))}
-        <PolitikskolaQuiz quiz={kat.quiz}/>
+        <PolitikskolaQuiz quiz={kat.quiz} quizId={kat.id}/>
       </div>
     );
   }
