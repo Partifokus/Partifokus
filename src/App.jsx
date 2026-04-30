@@ -34,11 +34,11 @@ const PARTY_KEYWORDS = {
   M:  ["moderaterna","ulf kristersson","kristersson"],
   SD: ["sverigedemokraterna","jimmie åkesson","åkesson"],
   KD: ["kristdemokraterna","ebba busch"],
-  L:  ["liberalerna","lotta edholm","edholm"],
-  C:  ["centerpartiet","muharrem demirok","demirok"],
+  L:  ["liberalerna","simona mohamsson","mohamsson"],
+  C:  ["centerpartiet","elisabeth thand ringqvist","thand ringqvist"],
   S:  ["socialdemokraterna","magdalena andersson","sossarna"],
   V:  ["vänsterpartiet","nooshi dadgostar","dadgostar"],
-  MP: ["miljöpartiet","per bolund","bolund","märta stenevi","stenevi"],
+  MP: ["miljöpartiet","daniel helldén","helldén","amanda lind"],
 };
 
 const CATEGORY_KEYWORDS = {
@@ -65,11 +65,12 @@ const PARTY_LEADERS = [
   { id:"m1",  namn:"Ulf Kristersson",     parti:"M",  valkrets:"Stockholms län",    roll:"Partiledare, statsminister", wiki:"https://sv.wikipedia.org/wiki/Ulf_Kristersson",    foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ulf_Kristersson%2C_Tid%C3%B6_Agreement_2022.jpg/240px-Ulf_Kristersson%2C_Tid%C3%B6_Agreement_2022.jpg" },
   { id:"m2",  namn:"Jimmie Åkesson",      parti:"SD", valkrets:"Jönköpings län",    roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/Jimmie_%C3%85kesson",  foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Jimmie_%C3%85kesson_2022%2C_Tidö_Agreement.jpg/240px-Jimmie_%C3%85kesson_2022%2C_Tidö_Agreement.jpg" },
   { id:"m3",  namn:"Ebba Busch",          parti:"KD", valkrets:"Uppsala län",        roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/Ebba_Busch",           foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ebba_Busch_Thor_2022.jpg/240px-Ebba_Busch_Thor_2022.jpg" },
-  { id:"m4",  namn:"Lotta Edholm",        parti:"L",  valkrets:"Stockholms kommun",  roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/Lotta_Edholm",         foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Lotta_Edholm_2022.jpg/240px-Lotta_Edholm_2022.jpg" },
-  { id:"m5",  namn:"Muharrem Demirok",    parti:"C",  valkrets:"Östergötlands län",  roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/Muharrem_Demirok",     foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Muharrem_Demirok_2023.jpg/240px-Muharrem_Demirok_2023.jpg" },
+  { id:"m4",  namn:"Simona Mohamsson",     parti:"L",  valkrets:"Stockholms kommun",  roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/Simona_Mohamsson",     foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Simona_Mohamsson_riksdagen.jpg/240px-Simona_Mohamsson_riksdagen.jpg" },
+  { id:"m5",  namn:"Elisabeth Thand Ringqvist", parti:"C", valkrets:"Stockholms län", roll:"Partiledare",                wiki:"https://sv.wikipedia.org/wiki/Elisabeth_Thand_Ringqvist", foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Elisabeth_Thand_Ringqvist_riksdagen.jpg/240px-Elisabeth_Thand_Ringqvist_riksdagen.jpg" },
   { id:"m6",  namn:"Magdalena Andersson", parti:"S",  valkrets:"Skåne läns västra",  roll:"Partiledare, f.d. statsminister", wiki:"https://sv.wikipedia.org/wiki/Magdalena_Andersson", foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Magdalena_Andersson_2021.jpg/240px-Magdalena_Andersson_2021.jpg" },
   { id:"m7",  namn:"Nooshi Dadgostar",    parti:"V",  valkrets:"Stockholms kommun",  roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/Nooshi_Dadgostar",     foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Nooshi_Dadgostar_2020.jpg/240px-Nooshi_Dadgostar_2020.jpg" },
-  { id:"m8",  namn:"Märta Stenevi",       parti:"MP", valkrets:"Skåne läns södra",   roll:"Partiledare",                 wiki:"https://sv.wikipedia.org/wiki/M%C3%A4rta_Stenevi",   foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/M%C3%A4rta_Stenevi_2021.jpg/240px-M%C3%A4rta_Stenevi_2021.jpg" },
+  { id:"m8",  namn:"Daniel Helldén",        parti:"MP", valkrets:"Stockholms kommun",  roll:"Partiledare (språkrör)",       wiki:"https://sv.wikipedia.org/wiki/Daniel_Helld%C3%A9n",   foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Daniel_Helld%C3%A9n_riksdagen.jpg/240px-Daniel_Helld%C3%A9n_riksdagen.jpg" },
+  { id:"m9",  namn:"Amanda Lind",           parti:"MP", valkrets:"Stockholms läns norra", roll:"Partiledare (språkrör)",      wiki:"https://sv.wikipedia.org/wiki/Amanda_Lind",           foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Amanda_Lind_riksdagen.jpg/240px-Amanda_Lind_riksdagen.jpg" },
 ];
 
 const QUESTIONS = [
@@ -109,7 +110,6 @@ const FAQ_ITEMS = [
   { q:"Är pollen anonym?", a:"Ja, helt anonym. Vi sparar inga personuppgifter och det går inte att spåra din röst." },
   { q:"Hur uppdateras nyheterna?", a:"Nyheterna uppdateras automatiskt var 5:e minut dygnet runt." },
   { q:"Kan jag kontakta PartiFokus?", a:"Ja! Skicka ett mail till partifokus@gmail.com." },
-  { q:"Har PartiFokus ett utgivningsbevis?", a:"Utgivningsbevis är sökt hos MPRT. PartiFokus drivs ideellt." },
   { q:"Varför ser jag ibland få nyheter om ett parti?", a:"Det beror på att det inte publicerats många nyheter om det partiet den senaste veckan." },
 ];
 
@@ -201,7 +201,15 @@ function cleanText(t) {
     .replace(/\s+/g," ").trim();
 }
 
-async function fetchRSS(src) {
+function isHomepageLink(url) {
+  try {
+    if (!url || url === "#") return true;
+    const u = new URL(url);
+    return u.pathname === "/" || u.pathname === "";
+  } catch { return false; }
+}
+
+
   try {
     const res = await fetch("/api/rss?url="+encodeURIComponent(src.url));
     const text = await res.text();
@@ -822,7 +830,7 @@ export default function App() {
 
   useEffect(()=>{
     Promise.allSettled(NEWS_SOURCES.map(fetchRSS)).then(results=>{
-      const fetched=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(a=>a.parties.length>0);
+      const fetched=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(a=>a.parties.length>0&&!isHomepageLink(a.link));
       const sevenDays=Date.now()-7*24*60*60*1000;
       const all=[...MOCK_NEWS,...fetched];
       const seen=new Set();
@@ -831,14 +839,14 @@ export default function App() {
       setNews(deduped);
     });
     Promise.allSettled(PRESS_SOURCES.map(fetchRSS)).then(results=>{
-      const fetched=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value);
+      const fetched=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(a=>!isHomepageLink(a.link));
       if(fetched.length>0){const seen=new Set();const all=[...fetched,...MOCK_PRESS].filter(a=>{const k=a.title.slice(0,40).toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});all.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));setPress(all);}
     });
   },[]);
 
   useEffect(()=>{if(window.gtag)window.gtag("config",GA_ID,{page_path:"/"+tab});},[tab]);
 
-  function changeTab(newTab){setTab(newTab);setParty("all");}
+  function changeTab(newTab){setTab(newTab);setParty("all");window.scrollTo({top:0,behavior:"smooth"});}
   const showPartyFilter=!["hem","valkompass","omrostningar","ledamoter","opinion"].includes(tab);
 
   return(
@@ -884,14 +892,38 @@ export default function App() {
         {tab==="opinion"     &&<OpinionTab/>}
         {tab==="valkompass"  &&(
           <div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:32}}>Din politiska profil – Valkompass 2026</div>
-            {/* Poll on valkompass tab */}
-            <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:24,marginBottom:32}}>
-              <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY,marginBottom:4}}>Var lutar din röst inför valet 2026?</div>
-              <div style={{fontSize:13,color:GRAY,marginBottom:20}}>Rösta anonymt och se vad andra tycker.</div>
-              <PollWidget/>
+            {/* Hero-header för valkompassen */}
+            <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:20,padding:mobile?"32px 24px":"48px 56px",marginBottom:40,display:"flex",flexDirection:mobile?"column":"row",alignItems:"center",gap:32,overflow:"hidden",position:"relative"}}>
+              <div style={{position:"absolute",top:-40,right:-40,width:240,height:240,borderRadius:"50%",background:"rgba(201,168,76,0.06)"}}/> 
+              <div style={{position:"absolute",bottom:-60,left:-20,width:180,height:180,borderRadius:"50%",background:"rgba(201,168,76,0.04)"}}/>
+              <div style={{flex:1,position:"relative"}}>
+                <div style={{display:"inline-block",background:"rgba(201,168,76,0.15)",borderRadius:20,padding:"5px 14px",fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:16}}>🗳️ Valkompass 2026</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:mobile?28:38,fontWeight:700,color:"#fff",lineHeight:1.25,marginBottom:14}}>Var står du<br/>inför valet?</div>
+                <div style={{fontSize:15,color:"rgba(255,255,255,0.65)",lineHeight:1.65,marginBottom:0,maxWidth:420}}>Svara på 25 frågor om aktuella politiska frågor och se hur väl du stämmer överens med riksdagspartierna.</div>
+              </div>
+              <div style={{flexShrink:0}}>
+                <CompassSVG/>
+              </div>
             </div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:20}}>Hitta ditt parti – svara på 25 frågor</div>
+
+            {/* Info-badges */}
+            <div style={{display:"grid",gridTemplateColumns:mobile?"1fr 1fr":"repeat(3,1fr)",gap:16,marginBottom:40}}>
+              {[
+                {icon:"🎯",title:"25 frågor",desc:"Inom sju politiska ämnesområden"},
+                {icon:"⚡",title:"Snabbt & enkelt",desc:"Tar ungefär 3–5 minuter att genomföra"},
+                {icon:"🔒",title:"Helt anonymt",desc:"Dina svar lagras aldrig på någon server"},
+              ].map(f=>(
+                <div key={f.title} style={{background:"#fff",borderRadius:14,padding:"20px 22px",border:"1px solid #E5E7EB",display:"flex",gap:14,alignItems:"flex-start"}}>
+                  <span style={{fontSize:26,flexShrink:0}}>{f.icon}</span>
+                  <div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY,marginBottom:4}}>{f.title}</div>
+                    <div style={{fontSize:12,color:GRAY,lineHeight:1.5}}>{f.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,marginBottom:20,paddingBottom:10,borderBottom:`2px solid ${NAVY}`}}>Hitta ditt parti</div>
             <Valkompass/>
           </div>
         )}
@@ -926,7 +958,7 @@ export default function App() {
           </div>
           <div style={{borderTop:"1px solid rgba(255,255,255,0.1)",paddingTop:20,display:"flex",justifyContent:"space-between",fontSize:11,color:"rgba(255,255,255,0.25)",flexWrap:"wrap",gap:8}}>
             <span>© {new Date().getFullYear()} PartiFokus. Drivs ideellt.</span>
-            <span>Utgivningsbevis sökt hos MPRT · partifokus@gmail.com</span>
+            <span>partifokus@gmail.com</span>
           </div>
         </div>
       </footer>
