@@ -874,111 +874,134 @@ function OpinionTab() {
 // ─── POLITIKSKOLA ─────────────────────────────────────────────────────────────
 const POLITIKSKOLA = [
   {
-    id:"sverige", titel:"Så fungerar Sverige", icon:"🏛️", color:"#1D4ED8",
-    desc:"Lär dig hur riksdag, regering och kommuner hänger ihop.",
+    id:"basen", titel:"Basen: Vem bestämmer egentligen?", icon:"♟️", color:"#1D4ED8",
+    desc:"Riksdag, Regering och kungen. Vi reder ut rollerna direkt.",
     avsnitt:[
-      { rubrik:"Riksdagen", text:"Riksdagen är Sveriges parlament och den högsta beslutande församlingen. Den består av 349 ledamöter som väljs av svenska folket vart fjärde år. Riksdagen stiftar lagar, beslutar om statens budget och granskar regeringens arbete. Ledamöterna väljs genom proportionella val, vilket innebär att partiernas antal platser speglar hur många röster de fick." },
-      { rubrik:"Regeringen", text:"Regeringen leder landet och genomför de beslut som riksdagen fattar. I spetsen för regeringen sitter statsministern, som utses av riksdagens talman efter att ett nytt riksdagsval hållits. Statsministern väljer sedan sina ministrar. Regeringen kan styra landet så länge den har riksdagens förtroende — annars kan riksdagen rösta bort den genom en misstroendeomröstning." },
-      { rubrik:"Kommuner och regioner", text:"Sverige är uppdelat i 290 kommuner och 21 regioner. Kommunerna ansvarar för skola, äldreomsorg och socialtjänst. Regionerna ansvarar främst för sjukvård och kollektivtrafik. Både kommuner och regioner har egna folkvalda fullmäktige och rätt att ta ut skatt. Det är därför du betalar kommunalskatt utöver den statliga inkomstskatten." },
+      { rubrik:"🍕 Pizzaparlamentet", text:"Sverige styrs som en stor förening med tre huvudspelare. RIKSDAGEN (349 ledamöter) är folkets röst — de bestämmer lagarna och budgeten. Tänk på dem som kunderna på en pizzeria som röstar om menyn. REGERINGEN är kockarna i köket — de vinner valet och ser till att riksdagens beslut blir verklighet. KUNGEN har noll politisk makt. Han är som en maskot för ett fotbollslag — viktig för stämningen och historien, men han får inte byta ut spelarna eller ändra reglerna." },
+      { rubrik:"💰 Vart går skatten?", text:"Varje gång du jobbar eller köper en kexchoklad ger du pengar till staten. Statens utgifter fördelar sig ungefär så här: Sjukvård & Omsorg ca 25%, Skola & Utbildning ca 15%, Socialförsäkring (bidrag/pension) ca 40%, Polis & Försvar ca 10%. Brutal sanning: Politik handlar till 90% om vem som ska få dessa miljarder och vem som ska betala dem. Det är därför folk bråkar." },
+      { rubrik:"🏛️ Tre nivåer av makt", text:"Makten i Sverige är uppdelad på tre nivåer. KOMMUNEN (290 st) ansvarar för det som är nära dig: skolan, soporna, biblioteket och vattenkranen. REGIONEN (21 st) sköter allt som är för stort för en kommun: sjukhusen och kollektivtrafiken. EU stiftar stora lagar om miljö, handel och internet som gäller i hela Europa — oavsett vad svenska politiker tycker." },
     ],
     quiz:[
-      { fraga:"Hur många ledamöter finns i riksdagen?", alt:["249","349","449","149"], svar:1 },
-      { fraga:"Vem utser statsministern?", alt:["Kungen","Riksdagen","Talmannen","Folket direkt"], svar:2 },
-      { fraga:"Vad ansvarar regionerna främst för?", alt:["Skolan","Sjukvården","Polisen","Försvaret"], svar:1 },
+      { fraga:"Hur många ledamöter finns i riksdagen?", alt:["249","349","449","549"], svar:1 },
+      { fraga:"Vilken politisk makt har kungen i Sverige?", alt:["Han kan lägga in veto mot lagar","Han utser statsministern","Han har ingen politisk makt alls","Han leder försvaret"], svar:2 },
+      { fraga:"Vad ansvarar kommunerna för?", alt:["Sjukhusen","Försvaret","Skolan och soporna","EU-lagstiftning"], svar:2 },
+      { fraga:"Ungefär hur stor andel av statens budget går till socialförsäkring?", alt:["10%","25%","40%","60%"], svar:2 },
     ]
   },
   {
-    id:"rostar", titel:"Så röstar du", icon:"🗳️", color:"#059669",
-    desc:"Allt du behöver veta om hur det svenska valsystemet fungerar.",
+    id:"ideologi", titel:"Ideologierna: Var står du?", icon:"🧭", color:"#059669",
+    desc:"Vänster, höger, GAL-TAN. Sluta gissa vad partierna pratar om.",
     avsnitt:[
-      { rubrik:"Valsystemet", text:"Sverige har ett proportionellt valsystem, vilket innebär att riksdagens sammansättning speglar hur folket röstat. För att ett parti ska komma in i riksdagen krävs att det får minst 4 procent av rösterna i hela landet, eller minst 12 procent i en enskild valkrets. Det finns tre typer av val: riksdagsval, regionval och kommunval — alla hålls samma dag vart fjärde år." },
-      { rubrik:"Hur man röstar", text:"På valdagen går du till din vallokal med röstkort och legitimation. Du väljer en valsedel för det parti du vill rösta på. Du kan också skriva in ett namn på valsedeln för att ge en personröst till en specifik kandidat inom partiet. Förtidsröstning finns tillgänglig under veckorna innan valdagen på bibliotek och andra röstningslokaler." },
-      { rubrik:"Vad händer efter valet?", text:"När rösterna räknats och mandaten fördelats inleds regeringsbildningen. Riksdagens talman håller samtal med partiledarna och ger sedan uppdraget att bilda regering till den person som bedöms ha bäst förutsättningar att leda en regering med riksdagens stöd. Denna person — vanligtvis ledaren för det största blocket — försöker sedan förhandla fram en koalition eller ett samarbetsavtal." },
+      { rubrik:"⬅️ Vänster vs Höger ➡️", text:"Den klassiska skalan handlar om ekonomi och statens roll. VÄNSTERN (socialism/socialdemokrati) fokuserar på gemenskap: Staten ska ta in mycket skatt för att skolan, vården och tågen ska vara gratis och lika för alla. Man vill minska klyftorna mellan rik och fattig. HÖGERN (liberalism/konservatism) fokuserar på individen: Du ska få behålla mer av din lön, starta företag och välja din egen skola. Frihet är viktigare än att staten fixar allt. KONSERVATISMEN fokuserar på ordning och tradition: Hårda straff, starkt försvar och skydda landets kultur." },
+      { rubrik:"🗺️ GAL-TAN — den andra axeln", text:"Höger-vänster förklarar inte allt. Den andra viktiga axeln är GAL-TAN. GAL (Gröna, Alternativa, Libertära) värnar om miljö, individuell frihet, öppenhet mot invandrare och progressiva värderingar. TAN (Traditionella, Auktoritära, Nationalistiska) värnar om nationell identitet, lag och ordning, traditionella familjevärderingar och begränsad invandring. SD är klassiskt TAN. MP är klassiskt GAL. S och M befinner sig någonstans i mitten på denna axel." },
+      { rubrik:"🇸🇪 De svenska partierna placerade", text:"Grovt förenklat: V (vänster-GAL), S (center-vänster), MP (vänster-GAL), C (center, libertär), L (center-höger), KD (höger-TAN), M (höger), SD (höger-TAN). Kom ihåg: Inga partier är renodlade — alla blandar ideologier i praktiken. Det är deras faktiska röstning i riksdagen som avslöjar vad de egentligen tycker, inte vad de säger på valaffischer." },
     ],
     quiz:[
-      { fraga:"Hur ofta hålls riksdagsval i Sverige?", alt:["Vart 3:e år","Vart 4:e år","Vart 5:e år","Vart 6:e år"], svar:1 },
-      { fraga:"Hur många procent av rösterna krävs för att komma in i riksdagen?", alt:["2%","3%","4%","5%"], svar:2 },
-      { fraga:"Vad innebär en personröst?", alt:["Du röstar på en person från ett annat parti","Du röstar på en specifik kandidat inom partiet","Du röstar två gånger","Du röstar blankt"], svar:1 },
+      { fraga:"Vad fokuserar vänstern klassiskt på?", alt:["Individens frihet","Gemenskap och omfördelning","Nationell identitet","Låga skatter"], svar:1 },
+      { fraga:"Vad står T i GAL-TAN för?", alt:["Tolerant","Traditionell","Transparent","Transnationell"], svar:1 },
+      { fraga:"Vilket parti anses klassiskt mest GAL?", alt:["SD","KD","MP","M"], svar:2 },
+      { fraga:"Vad avslöjar egentligen vad ett parti tycker?", alt:["Deras valaffischer","Partiledaren tweets","Deras faktiska röstning i riksdagen","Partiets namn"], svar:2 },
     ]
   },
   {
-    id:"partier", titel:"Partierna & ideologierna", icon:"⚖️", color:"#7C3AED",
-    desc:"Förstå skillnaden mellan höger och vänster och vad partierna egentligen vill.",
+    id:"maskineriet", titel:"Maskineriet: Hur blir en lag till?", icon:"⚙️", color:"#7C3AED",
+    desc:"Från en smart idé till en regel som alla måste följa.",
     avsnitt:[
-      { rubrik:"Höger och vänster", text:"Den politiska skalan från vänster till höger handlar ursprungligen om synen på ekonomi och statens roll. Vänstern vill generellt ha mer statlig styrning, starkare offentlig sektor och mer omfördelning av resurser. Högern föredrar mer marknadsekonomi, lägre skatter och mer utrymme för privata alternativ. De flesta partier befinner sig dock någonstans mitt på skalan och kombinerar idéer från båda hållen." },
-      { rubrik:"Blockpolitik", text:"I Sverige brukar partierna delas in i två block: högerblocket (Tidöpartierna: M, SD, KD, L) och vänsterblocket (S, V, MP). Centerpartiet är ett undantag som historiskt samarbetat med båda blocken. Blocken samarbetar ofta i riksdagen, men det är inte ovanligt att partier röstar tvärs över blockgränserna i enskilda frågor." },
-      { rubrik:"Partiernas grundideologier", text:"M=konservatism/liberalism, SD=socialkonservatism/nationalism, KD=kristdemokrati, L=klassisk liberalism, C=liberalism/agrarianism, S=socialdemokrati, V=demokratisk socialism, MP=grön politik. Alla partier blandar dock ideologier i praktiken, och det är deras faktiska politik — inte etiketten — som räknas." },
+      { rubrik:"⚙️ Lag-fabriken steg för steg", text:"Steg 1 — FÖRSLAGET: En politiker skriver en motion (förslag från riksdagsledamot) eller en proposition (förslag från regeringen). Propositioner har mycket större chans att gå igenom. Steg 2 — UTREDNINGEN: Experter, myndigheter och organisationer får yttra sig om förslaget fungerar i verkligheten. Det kan ta månader eller år. Steg 3 — UTSKOTTET: En mindre grupp riksdagsledamöter grälar om detaljerna och skriver ett betänkande. Steg 4 — OMRÖSTNING: Hela riksdagen trycker på Ja, Nej eller Avstår. Enkel majoritet (175 av 349) räcker för de flesta lagar." },
+      { rubrik:"🔍 Riksdagens kontrollmakt", text:"Riksdagen granskar regeringen på tre sätt. INTERPELLATION är en formell skriftlig fråga till en minister — ministern måste svara i kammaren och det följer en debatt. FRÅGESTUND är kortare och mer direktkonfrontation med statsministern eller ministrar. MISSTROENDEOMRÖSTNING är det ultimata vapnet — om en majoritet röstar mot en minister eller statsministern måste de avgå. Det händer sällan men är ett enormt maktmedel." },
+      { rubrik:"📊 Budgetprocessen", text:"Varje höst lämnar regeringen sin budgetproposition till riksdagen — statens stora plan för nästa år med alla inkomster och utgifter. Riksdagen debatterar och röstar. Om oppositionen har majoritet kan de rösta igenom en alternativ budget — vilket faktiskt hände 2014 och ledde till extraval. Budgetpolitik är ofta den viktigaste politiska skiljelinjen eftersom den sätter ramarna för allt annat." },
     ],
     quiz:[
-      { fraga:"Vilken fråga är mest typiskt 'vänster'?", alt:["Sänkta skatter","Fri marknad","Stärkt offentlig välfärd","Minskad statlig reglering"], svar:2 },
-      { fraga:"Vilka partier ingår i Tidöpartierna?", alt:["M, C, KD, L","M, SD, KD, L","S, V, MP, C","M, SD, S, C"], svar:1 },
-      { fraga:"Vilket parti brukar kallas 'mitt på skalan' och samarbetat med båda blocken?", alt:["KD","MP","C","L"], svar:2 },
+      { fraga:"Vad är skillnaden mellan en motion och en proposition?", alt:["Ingen skillnad","Motion kommer från ledamot, proposition från regeringen","Proposition kommer från ledamot, motion från regeringen","Motion är om ekonomi, proposition om lagar"], svar:1 },
+      { fraga:"Hur många röster krävs för att en vanlig lag ska gå igenom?", alt:["Alla 349","Två tredjedelar","Enkel majoritet (175)","Tre fjärdedelar"], svar:2 },
+      { fraga:"Vad händer om riksdagen röstar ja i en misstroendeomröstning mot statsministern?", alt:["Ingenting, det är symboliskt","Statsministern måste avgå","Nyval utlyses automatiskt","Kungen tar över"], svar:1 },
+      { fraga:"Vad hände 2014 när oppositionen röstade igenom sin egen budget?", alt:["Regeringen ignorerade det","Det ledde till extraval","Kungen lade in veto","Statsministern fick böta"], svar:1 },
     ]
   },
   {
-    id:"begrepp", titel:"Politiska begrepp", icon:"📖", color:"#D97706",
-    desc:"Förstå de ord som används i politiska debatter och riksdagen.",
+    id:"valet", titel:"Valet: Så fungerar din röst", icon:"🗳️", color:"#DC2626",
+    desc:"Hur din röst räknas, vad som händer sen och hur du verkligen påverkar.",
     avsnitt:[
-      { rubrik:"Riksdagsbeslut: Motion och proposition", text:"En motion är ett förslag som en riksdagsledamot eller ett parti lägger fram i riksdagen. Det kan handla om allt från nya lagar till att be regeringen utreda något. En proposition är däremot ett lagförslag som kommer från regeringen. Propositioner har ofta större chans att gå igenom eftersom de backas upp av den sittande regeringen." },
-      { rubrik:"Interpellation och frågestund", text:"En interpellation är en formell skriftlig fråga som en riksdagsledamot ställer till en minister. Ministern måste svara, och det följs av en debatt i riksdagen — ett viktigt verktyg för oppositionen att granska makten. En frågestund är ett kortare och mer informellt format där ledamöter ställer korta frågor direkt till statsministern eller ministrarna." },
-      { rubrik:"Budget och statsskuld", text:"Statens budget är en plan för hur landets pengar ska tas in (via skatter och avgifter) och spenderas (på sjukvård, försvar, skola m.m.). Om staten spenderar mer än den tar in uppstår ett underskott, och statsskulden växer. Riksdagen beslutar om budgeten varje höst. Budgetpolitik är ofta den viktigaste politiska skiljelinjen mellan blocken." },
+      { rubrik:"🗳️ Hur din röst räknas", text:"Sverige har proportionellt val — partiernas antal platser i riksdagen speglar hur många röster de fick. Om S får 31% av rösterna får de ungefär 31% av mandaten. Spärren: Ett parti måste få minst 4% av rösterna i hela landet ELLER 12% i en enskild valkrets för att komma in i riksdagen. Det finns tre val samma dag: Riksdagsval, Regionval och Kommunval. Du röstar i alla tre med separata valsedlar. Personröst: Du kan skriva in ett namn på valsedeln för att stärka en specifik kandidat inom partiet." },
+      { rubrik:"📅 Valdagen 13 september 2026", text:"Valdagen är söndag 13 september 2026. Förtidsröstning börjar 26 augusti. Du behöver legitimation. På valdagskvällen börjar rösterna räknas direkt och resultaten strömmar in under kvällen — det är en av de mest dramatiska kvällarna i svensk politik. Förhandsmandaten (preliminära) presenteras sent på kvällen. Det slutgiltiga resultatet tar några dagar på grund av brevröster och kontrollräkning." },
+      { rubrik:"📣 Du påverkar mer än du tror", text:"Röstning är minsta möjliga ansträngning. Det finns 100 andra sätt att påverka. Du kan skriva ett medborgarförslag till din kommun — har det 50 underskrifter MÅSTE kommunen behandla det. Du kan kontakta din riksdagsledamot direkt via riksdagens hemsida. Du kan anmäla dig till ett partis lokalavdelning och faktiskt vara med och bestämma partiets politik. Du kan demonstrera, skriva insändare eller starta en namninsamling. Politiker lyssnar på organiserade grupper — var en av dem." },
     ],
     quiz:[
-      { fraga:"Vad är en proposition?", alt:["En fråga från en ledamot till en minister","Ett lagförslag från regeringen","En omröstning i riksdagen","En interpellationsdebatt"], svar:1 },
-      { fraga:"Vad kallas den formella skriftliga frågan till en minister?", alt:["Motion","Proposition","Interpellation","Frågestund"], svar:2 },
-      { fraga:"Vad händer om staten spenderar mer än den tar in?", alt:["Överskott uppstår","Statsskulden minskar","Underskott uppstår och skulden växer","Skatterna sänks automatiskt"], svar:2 },
+      { fraga:"Hur många procent krävs nationellt för att komma in i riksdagen?", alt:["2%","3%","4%","5%"], svar:2 },
+      { fraga:"När är valdagen 2026?", alt:["13 juni","13 september","13 oktober","13 november"], svar:1 },
+      { fraga:"Vad innebär en personröst?", alt:["Du röstar på ett parti utanför riksdagen","Du röstar på en specifik kandidat inom partiet","Du röstar anonymt","Du röstar för en enskild lag"], svar:1 },
+      { fraga:"Hur många underskrifter krävs för att kommunen MÅSTE behandla ett medborgarförslag?", alt:["10","50","100","500"], svar:1 },
+    ]
+  },
+  {
+    id:"media", titel:"Media & Makt: Vem sätter agendan?", icon:"📺", color:"#D97706",
+    desc:"Hur nyheter formas, vem som äger medierna och hur du genomskådar snurr.",
+    avsnitt:[
+      { rubrik:"📺 Vem äger medierna?", text:"Svenska medier äger till stor del av privata företag och familjer. Bonnier-gruppen äger DN, Expressen och TV4. Schibsted äger Aftonbladet och Svenska Dagbladet. SVT och SR är public service — finansierade via public service-avgiften och ska per lag vara opartiska. Ägarskap påverkar inte alltid den dagliga journalistiken direkt, men kan forma de långsiktiga prioriteringarna. Viktigt att känna till: Alla medier gör val om vad som är en nyhet och hur den presenteras." },
+      { rubrik:"🎯 Dagordningsmakten", text:"Den viktigaste makten media har är inte att berätta vad du ska tycka — det är att bestämma VAD du tänker på. Om alla tidningar skriver om invandring i en vecka tänker folk att invandring är landets viktigaste fråga, oavsett om statistiken stödjer det. Politiker vet detta och försöker ständigt påverka mediernas dagordning. När en partiledare läcker en nyhet, håller en presskonferens eller säger något kontroversiellt — det är strategi, inte slump." },
+      { rubrik:"🔍 Genomskåda politisk snurr", text:"Fyra frågor att alltid ställa: VEM säger det? (Parti, organisation, lobbyist?) VARFÖR just nu? (Val på gång? Skandal att dölja?) VAD utelämnas? (Vilken sida av historien berättas inte?) VAR kommer siffrorna ifrån? (Vem finansierade undersökningen?). Kom ihåg: Alla har en agenda — även de som säger att de inte har det. Det är inte cynism, det är realism. Källkritik är din superkraft i en värld full av politisk kommunikation." },
+    ],
+    quiz:[
+      { fraga:"Vilket medieföretag äger Aftonbladet?", alt:["Bonnier","Schibsted","SVT","Stampen"], svar:1 },
+      { fraga:"Vad är dagordningsmakten?", alt:["Makten att bestämma lagar","Makten att bestämma vad folk tänker på","Makten att censurera nyheter","Makten att utse statsministern"], svar:1 },
+      { fraga:"Hur finansieras SVT och SR?", alt:["Reklam","Statliga anslag via skatt","Public service-avgiften","Privata ägare"], svar:2 },
+      { fraga:"Vilken är den viktigaste frågan att ställa om en politisk nyhet?", alt:["Hur lång är artikeln?","Vem säger det och varför?","Vilket parti nämns?","Hur många likes fick den?"], svar:1 },
+    ]
+  },
+  {
+    id:"din_makt", titel:"Din Makt: Hur förändrar du Sverige?", icon:"✊", color:"#0891B2",
+    desc:"Konkreta verktyg för att påverka politiken — från soffa till riksdag.",
+    avsnitt:[
+      { rubrik:"✊ Din verktygslåda", text:"Rösta är golvet, inte taket. Utöver att rösta vart fjärde år kan du: Skriva medborgarförslag till kommunen (50 underskrifter = obligatorisk behandling). Kontakta din riksdagsledamot direkt — de svarar faktiskt ofta. Gå med i ett partis lokalavdelning och vara med och forma partiets politik inifrån. Delta i remissrundor när nya lagar ska stiftas. Demonstrera och organisera — historien visar att organiserade grupper förändrar mer än enskilda individer. Dela trovärdig information och motverka desinformation i din omgivning." },
+      { rubrik:"🗺️ Vägen in i politiken", text:"Vill du verkligen påverka? Så här ser den vanliga vägen ut: 1. Gå med i ett parti och bli aktiv i lokalavdelningen. 2. Ta på dig uppdrag: styrelsepost, nämndplats i kommunen. 3. Kandidera till kommunfullmäktige. 4. Bygg erfarenhet och nätverk. 5. Kandidera till riksdagen. De flesta riksdagsledamöter började i kommunpolitiken. Medelåldern för en förstagångsledamot är runt 40 år — men det finns 25-åringar i riksdagen. Du behöver inte ett gymnasium i statsvetenskap." },
+      { rubrik:"⚖️ Dina rättigheter som medborgare", text:"Du har rätt att ta del av alla offentliga handlingar (offentlighetsprincipen) — vilket innebär att du kan begära ut myndigheters mail, dokument och beslut. Det är ett av världens starkaste system för insyn i makten. Du har yttrande- och mötesfrihet. Du har rätt att bilda föreningar. Du har rätt till rättshjälp. Och om en myndighet fattar ett felaktigt beslut om dig har du rätt att överklaga det. Dessa rättigheter existerar — men bara om du känner till dem och använder dem." },
+    ],
+    quiz:[
+      { fraga:"Hur många underskrifter krävs för ett medborgarförslag som kommunen måste behandla?", alt:["10","25","50","100"], svar:2 },
+      { fraga:"Vad innebär offentlighetsprincipen?", alt:["Alla måste publicera sina åsikter offentligt","Du kan begära ut myndigheters dokument och mail","Politiker måste hålla öppna möten varje månad","Media måste publicera alla pressmeddelanden"], svar:1 },
+      { fraga:"Var börjar de flesta riksdagsledamöter sin politiska karriär?", alt:["Europaparlamentet","Regionfullmäktige","Kommunpolitiken","Partistyrelsen"], svar:2 },
+      { fraga:"Vad är golvet för demokratiskt deltagande?", alt:["Att bli riksdagsledamot","Att skriva insändare","Att rösta vart fjärde år","Att betala skatt"], svar:2 },
     ]
   },
 ];
 
-const SB_QUIZ_TABLE = "quiz_stats";
+const FINAL_EXAM_QUESTIONS = [
+  { fraga:"Sverige har 349 riksdagsledamöter. Hur utses de?", alt:["Av kungen","Via proportionella val av folket","Av statsministern","Via lottning bland medborgare"], svar:1 },
+  { fraga:"Vilken spärr gäller nationellt för att komma in i riksdagen?", alt:["2%","3%","4%","5%"], svar:2 },
+  { fraga:"Vad händer om riksdagen röstar igenom en misstroendeomröstning mot statsministern?", alt:["Ingenting","Kungen tar över","Statsministern måste avgå","Automatiskt nyval"], svar:2 },
+  { fraga:"Vad är dagordningsmakten?", alt:["Makten att stifta lagar","Makten att bestämma vad folk tänker på","Makten att censurera TV","Makten att utse ministrar"], svar:1 },
+  { fraga:"Vad innebär offentlighetsprincipen?", alt:["Alla måste vara offentliga","Du kan begära ut myndigheters dokument","Media måste publicera allt","Politiker får inte ha hemligheter"], svar:1 },
+  { fraga:"Vilket medieföretag äger DN och Expressen?", alt:["Schibsted","SVT","Bonnier","Stampen"], svar:2 },
+  { fraga:"Vad är en proposition?", alt:["En fråga från en ledamot","Ett lagförslag från regeringen","En omröstning i kammaren","En interpellationsdebatt"], svar:1 },
+  { fraga:"GAL-TAN är en politisk axel. Vad står GAL för?", alt:["Global, Auktoritär, Liberal","Grön, Alternativ, Libertär","Grön, Auktoritär, Lokal","Global, Alternativ, Laglig"], svar:1 },
+  { fraga:"Hur finansieras SVT och SR?", alt:["Privata ägare","Reklam","Public service-avgiften","EU-bidrag"], svar:2 },
+  { fraga:"Vad är det ultimata vapnet riksdagen har mot en regering?", alt:["Budgetomröstning","Interpellation","Misstroendeomröstning","Frågestund"], svar:2 },
+];
 
-async function sbIncrementQuiz(id) {
-  try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}`, {
-      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-    });
-    const rows = await r.json();
-    const current = rows[0]?.completions || 0;
-    await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}`, {
-      method: "PATCH",
-      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ completions: current + 1 })
-    });
-    return current + 1;
-  } catch { return null; }
-}
+const RANKS = ["Nybörjare 🌱","Intresserad 👀","Aktivist ✊","Politisk rådgivare 🎯","Partiledare 🏆","Statsminister 🇸🇪","Politiskt geni 🧠"];
 
-async function sbGetQuizCount(id) {
-  try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}&select=completions`, {
-      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-    });
-    const rows = await r.json();
-    return rows[0]?.completions || 0;
-  } catch { return null; }
-}
-
-function PolitikskolaQuiz({ quiz, quizId }) {
+function PolitikskolaQuiz({ quiz, quizId, onComplete }) {
   const [answers,setAnswers]=useState({});
   const [submitted,setSubmitted]=useState(false);
   const [count,setCount]=useState(null);
   const score=submitted?quiz.filter((q,i)=>answers[i]===q.svar).length:0;
+  const allAnswered=Object.keys(answers).length===quiz.length;
 
   useEffect(()=>{ sbGetQuizCount(quizId).then(n=>{ if(n!==null) setCount(n); }); },[quizId]);
 
   function handleSubmit(){
+    if(!allAnswered)return;
     setSubmitted(true);
     sbIncrementQuiz(quizId).then(n=>{ if(n!==null) setCount(n); });
+    if(onComplete) onComplete(score===quiz.length);
   }
 
   return(
-    <div style={{background:"#F9FAFB",borderRadius:16,padding:24,marginTop:32,border:"1px solid #E5E7EB"}}>
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:4}}>
-        <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY}}>🧠 Testa dina kunskaper</div>
+    <div style={{background:"#F9FAFB",borderRadius:16,padding:24,marginTop:24,border:"1px solid #E5E7EB"}}>
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY}}>🧠 Quiz</div>
         {count!==null&&<div style={{fontSize:11,color:GRAY}}>{count.toLocaleString("sv-SE")} har gjort detta quiz</div>}
       </div>
-      <div style={{fontSize:13,color:GRAY,marginBottom:24}}>Välj rätt svar på varje fråga.</div>
       {quiz.map((q,qi)=>(
         <div key={qi} style={{marginBottom:20}}>
           <div style={{fontWeight:700,color:NAVY,fontSize:14,marginBottom:10}}>{qi+1}. {q.fraga}</div>
@@ -989,24 +1012,25 @@ function PolitikskolaQuiz({ quiz, quizId }) {
               const wrong=submitted&&chosen&&ai!==q.svar;
               return(
                 <button key={ai} onClick={()=>!submitted&&setAnswers(prev=>({...prev,[qi]:ai}))}
-                  style={{background:correct?"#DCFCE7":wrong?"#FEE2E2":chosen?"#EFF6FF":"#fff",border:`2px solid ${correct?"#16A34A":wrong?"#DC2626":chosen?"#1D4ED8":"#E5E7EB"}`,borderRadius:10,padding:"10px 14px",fontSize:13,cursor:submitted?"default":"pointer",textAlign:"left",color:NAVY,fontWeight:chosen||correct?600:400,transition:"all .1s"}}>
+                  style={{background:correct?"#DCFCE7":wrong?"#FEE2E2":chosen?"#EFF6FF":"#fff",border:`2px solid ${correct?"#16A34A":wrong?"#DC2626":chosen?"#1D4ED8":"#E5E7EB"}`,borderRadius:10,padding:"10px 14px",fontSize:13,cursor:submitted?"default":"pointer",textAlign:"left",color:NAVY,fontWeight:chosen||correct?600:400}}>
                   {a}
                 </button>
               );
             })}
           </div>
+          {submitted&&<div style={{fontSize:12,color:answers[qi]===q.svar?"#16A34A":"#DC2626",marginTop:6,fontWeight:600}}>{answers[qi]===q.svar?"✓ Rätt!":"✗ Fel — rätt svar: "+q.alt[q.svar]}</div>}
         </div>
       ))}
       {!submitted?(
-        <button onClick={handleSubmit} disabled={Object.keys(answers).length<quiz.length}
-          style={{background:Object.keys(answers).length<quiz.length?"#E5E7EB":NAVY,color:Object.keys(answers).length<quiz.length?"#9CA3AF":"#fff",border:"none",borderRadius:10,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:Object.keys(answers).length<quiz.length?"not-allowed":"pointer",marginTop:8}}>
+        <button onClick={handleSubmit} disabled={!allAnswered}
+          style={{background:allAnswered?NAVY:"#E5E7EB",color:allAnswered?"#fff":"#9CA3AF",border:"none",borderRadius:10,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:allAnswered?"pointer":"not-allowed",marginTop:8}}>
           Kolla svaren
         </button>
       ):(
-        <div style={{marginTop:16,display:"flex",alignItems:"center",gap:16}}>
+        <div style={{marginTop:16,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
           <div style={{background:score===quiz.length?"#DCFCE7":score>=quiz.length/2?"#FEF9C3":"#FEE2E2",borderRadius:12,padding:"12px 20px"}}>
             <span style={{fontWeight:700,fontSize:16,color:NAVY}}>{score}/{quiz.length} rätt</span>
-            <span style={{fontSize:13,color:GRAY,marginLeft:8}}>{score===quiz.length?"Perfekt! 🎉":score>=quiz.length/2?"Bra jobbat!":"Försök igen!"}</span>
+            <span style={{fontSize:13,color:GRAY,marginLeft:8}}>{score===quiz.length?"Perfekt! 🎉":score>=quiz.length/2?"Bra jobbat! 👍":"Försök igen! 💪"}</span>
           </div>
           <button onClick={()=>{setAnswers({});setSubmitted(false);}} style={{background:"none",border:"1px solid #E5E7EB",borderRadius:8,padding:"10px 18px",fontSize:13,cursor:"pointer",color:NAVY}}>Försök igen</button>
         </div>
@@ -1015,7 +1039,69 @@ function PolitikskolaQuiz({ quiz, quizId }) {
   );
 }
 
+function FinalExam({ onBack }) {
+  const [answers,setAnswers]=useState({});
+  const [submitted,setSubmitted]=useState(false);
+  const score=submitted?FINAL_EXAM_QUESTIONS.filter((q,i)=>answers[i]===q.svar).length:0;
+  const allAnswered=Object.keys(answers).length===FINAL_EXAM_QUESTIONS.length;
+  const rankIndex=submitted?Math.min(Math.floor((score/FINAL_EXAM_QUESTIONS.length)*RANKS.length),RANKS.length-1):0;
+
+  return(
+    <div style={{maxWidth:760,margin:"0 auto"}}>
+      <div style={{background:"linear-gradient(135deg,#0F172A 0%,#1e3a5f 100%)",borderRadius:20,padding:"40px",marginBottom:32,textAlign:"center"}}>
+        <div style={{fontSize:48,marginBottom:12}}>🏆</div>
+        <div style={{fontFamily:"Georgia,serif",fontSize:28,fontWeight:700,color:"#fff",marginBottom:8}}>Slutprovet</div>
+        <div style={{fontSize:15,color:"rgba(255,255,255,0.65)"}}>10 frågor som testar allt du lärt dig. Är du redo att hantera makten?</div>
+      </div>
+      {FINAL_EXAM_QUESTIONS.map((q,qi)=>(
+        <div key={qi} style={{background:"#fff",borderRadius:14,padding:24,marginBottom:16,border:"1px solid #E5E7EB"}}>
+          <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:NAVY,fontSize:16,marginBottom:14}}>Fråga {qi+1} av {FINAL_EXAM_QUESTIONS.length}: {q.fraga}</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+            {q.alt.map((a,ai)=>{
+              const chosen=answers[qi]===ai;
+              const correct=submitted&&ai===q.svar;
+              const wrong=submitted&&chosen&&ai!==q.svar;
+              return(
+                <button key={ai} onClick={()=>!submitted&&setAnswers(prev=>({...prev,[qi]:ai}))}
+                  style={{background:correct?"#DCFCE7":wrong?"#FEE2E2":chosen?"#EFF6FF":"#F9FAFB",border:`2px solid ${correct?"#16A34A":wrong?"#DC2626":chosen?"#1D4ED8":"#E5E7EB"}`,borderRadius:10,padding:"12px 16px",fontSize:14,cursor:submitted?"default":"pointer",textAlign:"left",color:NAVY,fontWeight:chosen||correct?700:400}}>
+                  {a}
+                </button>
+              );
+            })}
+          </div>
+          {submitted&&<div style={{fontSize:12,color:answers[qi]===q.svar?"#16A34A":"#DC2626",marginTop:8,fontWeight:600}}>{answers[qi]===q.svar?"✓ Rätt!":"✗ Fel — rätt svar: "+q.alt[q.svar]}</div>}
+        </div>
+      ))}
+      {!submitted?(
+        <button onClick={()=>setSubmitted(true)} disabled={!allAnswered}
+          style={{background:allAnswered?"#D97706":"#E5E7EB",color:allAnswered?"#fff":"#9CA3AF",border:"none",borderRadius:12,padding:"16px 40px",fontSize:16,fontWeight:700,cursor:allAnswered?"pointer":"not-allowed",width:"100%",marginBottom:16}}>
+          {allAnswered?"Lämna in provet →":"Svara på alla frågor först"}
+        </button>
+      ):(
+        <div style={{background:"linear-gradient(135deg,#0F172A,#1e3a5f)",borderRadius:20,padding:32,textAlign:"center",marginBottom:16}}>
+          <div style={{fontSize:48,marginBottom:12}}>{score===FINAL_EXAM_QUESTIONS.length?"🧠":score>=7?"🏆":score>=5?"👍":"💪"}</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:32,fontWeight:700,color:"#fff",marginBottom:8}}>{score}/{FINAL_EXAM_QUESTIONS.length} rätt</div>
+          <div style={{fontSize:20,color:GOLD,fontWeight:700,marginBottom:16}}>Din rank: {RANKS[rankIndex]}</div>
+          <div style={{fontSize:15,color:"rgba(255,255,255,0.7)",maxWidth:400,margin:"0 auto 24px"}}>
+            {score===10?"Du är ett politiskt geni. Sverige behöver fler som dig.":score>=7?"Imponerande! Du har koll på hur makten fungerar.":score>=5?"Halvvägs — du vet grunderna men det finns mer att lära.":"Gå tillbaka och läs modulerna igen. Kunskapen är viktig!"}
+          </div>
+          <button onClick={()=>{setAnswers({});setSubmitted(false);}} style={{background:"rgba(255,255,255,0.1)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"12px 24px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Försök igen</button>
+        </div>
+      )}
+      <button onClick={onBack} style={{background:"none",border:"none",color:BLUE,fontSize:14,fontWeight:600,cursor:"pointer"}}>← Tillbaka till Politikskolan</button>
+    </div>
+  );
+}
+
 function PolitikskolaTab({ activeKat, setActiveKat }) {
+  const [showExam,setShowExam]=useState(false);
+  const [completed,setCompleted]=useState(new Set());
+  const allDone=completed.size===POLITIKSKOLA.length;
+
+  function handleComplete(id){ setCompleted(prev=>new Set([...prev,id])); }
+
+  if(showExam) return <FinalExam onBack={()=>setShowExam(false)}/>;
+
   if(activeKat){
     const kat=POLITIKSKOLA.find(k=>k.id===activeKat);
     return(
@@ -1032,35 +1118,74 @@ function PolitikskolaTab({ activeKat, setActiveKat }) {
             <div style={{fontSize:15,color:"#374151",lineHeight:1.8}}>{a.text}</div>
           </div>
         ))}
-        <PolitikskolaQuiz quiz={kat.quiz} quizId={kat.id}/>
+        <PolitikskolaQuiz quiz={kat.quiz} quizId={kat.id} onComplete={(perfect)=>handleComplete(kat.id)}/>
+        <button onClick={()=>setActiveKat(null)} style={{marginTop:24,background:"none",border:"none",color:BLUE,fontSize:14,fontWeight:600,cursor:"pointer"}}>← Tillbaka till Politikskolan</button>
       </div>
     );
   }
+
   return(
     <div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:28,fontWeight:700,color:NAVY,marginBottom:8}}>Politikskola</div>
-      <div style={{fontSize:15,color:GRAY,marginBottom:32,maxWidth:600}}>Lär dig hur Sverige styrs, hur valet fungerar och vad de politiska begreppen betyder. Varje avsnitt avslutas med ett quiz.</div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:20}}>
-        {POLITIKSKOLA.map(kat=>(
-          <div key={kat.id} onClick={()=>setActiveKat(kat.id)} style={{background:"#fff",borderRadius:16,overflow:"hidden",border:"1px solid #E5E7EB",cursor:"pointer",transition:"all .2s"}}
-            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.1)";}}
-            onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
-            <div style={{height:8,background:kat.color}}/>
-            <div style={{padding:"24px 24px 20px"}}>
-              <div style={{fontSize:32,marginBottom:12}}>{kat.icon}</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:8}}>{kat.titel}</div>
-              <div style={{fontSize:13,color:GRAY,lineHeight:1.6,marginBottom:16}}>{kat.desc}</div>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <span style={{fontSize:12,color:GRAY}}>{kat.avsnitt.length} avsnitt · {kat.quiz.length} quizfrågor</span>
-                <span style={{fontSize:13,color:kat.color,fontWeight:700}}>Läs mer →</span>
+      {/* Header */}
+      <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:20,padding:"40px 48px",marginBottom:40}}>
+        <div style={{display:"inline-block",background:"rgba(201,168,76,0.2)",borderRadius:20,padding:"4px 14px",fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:16}}>🎓 Politikskolan</div>
+        <div style={{fontFamily:"Georgia,serif",fontSize:36,fontWeight:700,color:"#fff",marginBottom:12}}>Lär dig allt om makt.</div>
+        <div style={{fontSize:16,color:"rgba(255,255,255,0.65)",maxWidth:560,lineHeight:1.7}}>Politik är inte en tråkig skolbok. Det är kampen om hur dina pengar används, hur din frihet ser ut och vem som får bestämma över din framtid. Vi börjar från noll.</div>
+        {/* Progress */}
+        <div style={{marginTop:24}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"rgba(255,255,255,0.5)",marginBottom:6}}>
+            <span>{completed.size}/{POLITIKSKOLA.length} moduler klara</span>
+            <span>{Math.round((completed.size/POLITIKSKOLA.length)*100)}%</span>
+          </div>
+          <div style={{height:8,background:"rgba(255,255,255,0.15)",borderRadius:4,overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${(completed.size/POLITIKSKOLA.length)*100}%`,background:`linear-gradient(90deg,${GOLD},#f59e0b)`,borderRadius:4,transition:"width .5s"}}/>
+          </div>
+        </div>
+      </div>
+
+      {/* Moduler */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:20,marginBottom:40}}>
+        {POLITIKSKOLA.map((kat,i)=>{
+          const done=completed.has(kat.id);
+          return(
+            <div key={kat.id} onClick={()=>setActiveKat(kat.id)}
+              style={{background:"#fff",borderRadius:16,overflow:"hidden",border:`1px solid ${done?"#16A34A":"#E5E7EB"}`,cursor:"pointer",transition:"all .2s",position:"relative"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow="0 12px 32px rgba(0,0,0,0.1)";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
+              <div style={{height:6,background:done?"#16A34A":kat.color}}/>
+              <div style={{padding:"24px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+                  <div style={{fontSize:28}}>{kat.icon}</div>
+                  {done?<span style={{fontSize:11,color:"#16A34A",fontWeight:700,background:"#DCFCE7",padding:"3px 10px",borderRadius:20}}>KLAR ✅</span>:<span style={{fontSize:11,color:GRAY,fontWeight:700}}>Nivå {i+1}</span>}
+                </div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY,marginBottom:6}}>{kat.titel}</div>
+                <div style={{fontSize:13,color:GRAY,lineHeight:1.6,marginBottom:16}}>{kat.desc}</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:11,color:GRAY}}>{kat.avsnitt.length} avsnitt · {kat.quiz.length} frågor</span>
+                  <button style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"8px 16px",fontSize:12,fontWeight:700,cursor:"pointer"}}>Utforska →</button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
+      </div>
+
+      {/* Slutprov */}
+      <div style={{background:allDone?"linear-gradient(135deg,#0F172A,#1e3a5f)":"#F9FAFB",borderRadius:20,padding:"40px",textAlign:"center",border:allDone?"none":"2px dashed #E5E7EB"}}>
+        <div style={{fontSize:48,marginBottom:12}}>🏆</div>
+        <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:allDone?"#fff":GRAY,marginBottom:8}}>Slutprovet: Är du ett politiskt geni?</div>
+        <div style={{fontSize:14,color:allDone?"rgba(255,255,255,0.65)":GRAY,marginBottom:24,maxWidth:400,margin:"0 auto 24px"}}>
+          {allDone?"Du har klarat alla moduler. Dags att bevisa att du kan hantera makten.":"Klara alla 6 moduler för att låsa upp slutprovet."}
+        </div>
+        <button onClick={()=>allDone&&setShowExam(true)} disabled={!allDone}
+          style={{background:allDone?GOLD:"#E5E7EB",color:allDone?NAVY:"#9CA3AF",border:"none",borderRadius:12,padding:"16px 40px",fontSize:16,fontWeight:700,cursor:allDone?"pointer":"not-allowed"}}>
+          {allDone?"Starta slutprovet →":"Lås upp genom att klara alla moduler"}
+        </button>
       </div>
     </div>
   );
 }
+
 
 // ─── HOME PAGE ────────────────────────────────────────────────────────────────
 function HomePage({ articles, onTabChange, loading }) {
