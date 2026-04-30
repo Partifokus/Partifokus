@@ -1015,8 +1015,7 @@ function PolitikskolaQuiz({ quiz, quizId }) {
   );
 }
 
-function PolitikskolaTab() {
-  const [activeKat,setActiveKat]=useState(null);
+function PolitikskolaTab({ activeKat, setActiveKat }) {
   if(activeKat){
     const kat=POLITIKSKOLA.find(k=>k.id===activeKat);
     return(
@@ -1175,6 +1174,7 @@ export default function App() {
   const [press,setPress]=useState([]);
   const [loading,setLoading]=useState(true);
   const [modal,setModal]=useState(null);
+  const [activeKat,setActiveKat]=useState(null);
   const mobile=useIsMobile();
 
   useEffect(()=>{
@@ -1195,7 +1195,7 @@ export default function App() {
 
   useEffect(()=>{if(window.gtag)window.gtag("config",GA_ID,{page_path:"/"+tab});},[tab]);
 
-  function changeTab(newTab){setTab(newTab);setParty("all");window.scrollTo({top:0,behavior:"smooth"});}
+  function changeTab(newTab){setTab(newTab);setParty("all");setActiveKat(null);window.scrollTo({top:0,behavior:"smooth"});}
 
   return(
     <div style={{fontFamily:"system-ui,sans-serif",background:"#F9FAFB",minHeight:"100vh",color:NAVY}}>
@@ -1228,7 +1228,7 @@ export default function App() {
         {tab==="omrostningar"&&<OmrostningarTab/>}
         {tab==="ledamoter"   &&<LedamoterTab/>}
         {tab==="opinion"     &&<OpinionTab/>}
-        {tab==="politikskola"&&<PolitikskolaTab/>}
+        {tab==="politikskola"&&<PolitikskolaTab activeKat={activeKat} setActiveKat={setActiveKat}/>}
         {tab==="valkompass"  &&(
           <div>
             {/* Hero-header för valkompassen */}
