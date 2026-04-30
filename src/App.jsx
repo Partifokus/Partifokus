@@ -56,6 +56,17 @@ const CATEGORY_KEYWORDS = {
   Bostäder:     ["bostad","hyra","bostadspris","byggande","hyresrätt","bostadsrätt"],
 };
 
+const POLITICAL_FILTER = [
+  "politik","riksdag","regering","parti","minister","statsminister","opposition","riksdagen",
+  "moderaterna","socialdemokraterna","sverigedemokraterna","kristdemokraterna","liberalerna","centerpartiet","vänsterpartiet","miljöpartiet",
+  "kristersson","andersson","åkesson","busch","mohamsson","thand","helldén","dadgostar",
+  "debatt","motion","proposition","budget","reform","lag ","lagstiftning","valet","val 2026",
+  "votering","omröstning","utskott","alliansen","tidöavtalet","koalition","mandate",
+  "skattepolitik","välfärden","invandringspolitik","klimatpolitik","kriminalpolitik",
+  "riksmötet","kammare","talman","partiledare","partiledning"
+];
+function isPolitical(t) { const l=(t||"").toLowerCase(); return POLITICAL_FILTER.some(kw=>l.includes(kw)); }
+
 const TABS = [
   { id:"nyheter",      label:"Nyheter" },
   { id:"press",        label:"Pressmeddelanden" },
@@ -322,10 +333,10 @@ function PollWidget({ compact }) {
       <div>
         <div style={{fontSize:12,color:GRAY,marginBottom:12}}>{total>0?`${total.toLocaleString()} röster`:"Bli den första"} · Anonym</div>
         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:12}}>
-          {PP.map(({id})=>{const p=gp(id);return(
+          {PP.map(({id,label})=>{const p=gp(id);return(
             <div key={id} onClick={()=>setSel(id)} style={{display:"flex",alignItems:"center",gap:4,padding:"5px 8px",borderRadius:6,border:sel===id?`2px solid ${BLUE}`:"1px solid #E5E7EB",background:sel===id?"#EFF6FF":"#FAFAFA",cursor:"pointer"}}>
               <div style={{width:14,height:14,borderRadius:"50%",border:sel===id?`4px solid ${BLUE}`:"2px solid #D1D5DB",background:"#fff",flexShrink:0}}/>
-              {p&&<span style={{display:"inline-block",padding:"1px 5px",borderRadius:3,fontSize:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>}
+              {p?<span style={{display:"inline-block",padding:"1px 5px",borderRadius:3,fontSize:10,fontWeight:700,background:p.bg,color:p.color}}>{p.short}</span>:<span style={{fontSize:11,color:"#374151",fontWeight:600}}>{label}</span>}
             </div>
           );})}
         </div>
@@ -737,74 +748,43 @@ function PressTab({ items, loading }) {
   );
 }
 
+const MOCK_VOTES = [
+  { id:"v1", titel:"Sänkt skatt för pensionärer",           datum:"2026-04-24", ja:234, nej:115, beteckning:"2025/26:Sk12", parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Nej"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
+  { id:"v2", titel:"Utökat stöd till kommuner för välfärd", datum:"2026-04-23", ja:178, nej:171, beteckning:"2025/26:Fi8",  parter:[{p:"M",r:"Nej"},{p:"SD",r:"Nej"},{p:"KD",r:"Nej"},{p:"L",r:"Nej"},{p:"C",r:"Nej"},{p:"S",r:"Ja"},{p:"V",r:"Ja"},{p:"MP",r:"Ja"}] },
+  { id:"v3", titel:"Skärpt straff för gängkriminalitet",    datum:"2026-04-22", ja:289, nej:60,  beteckning:"2025/26:Ju5",  parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Ja"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
+  { id:"v4", titel:"Förbud mot vinstuttag i välfärden",     datum:"2026-04-21", ja:115, nej:234, beteckning:"2025/26:So3",  parter:[{p:"M",r:"Nej"},{p:"SD",r:"Nej"},{p:"KD",r:"Nej"},{p:"L",r:"Nej"},{p:"C",r:"Nej"},{p:"S",r:"Ja"},{p:"V",r:"Ja"},{p:"MP",r:"Ja"}] },
+  { id:"v5", titel:"Ny kärnkraftslag",                      datum:"2026-04-20", ja:221, nej:128, beteckning:"2025/26:N2",   parter:[{p:"M",r:"Ja"},{p:"SD",r:"Ja"},{p:"KD",r:"Ja"},{p:"L",r:"Ja"},{p:"C",r:"Ja"},{p:"S",r:"Nej"},{p:"V",r:"Nej"},{p:"MP",r:"Nej"}] },
+];
+
+const MOCK_DEBATES = [
+  { id:"d1", titel:"Frågestund med statsministern",            datum:"2026-05-07", tid:"14:00", typ:"Frågestund" },
+  { id:"d2", titel:"Debatt om budgetpropositionen 2027",       datum:"2026-05-14", tid:"09:00", typ:"Debatt" },
+  { id:"d3", titel:"Interpellationsdebatt om klimatpolitiken", datum:"2026-05-20", tid:"13:00", typ:"Interpellation" },
+  { id:"d4", titel:"Debatt om migrationslagen",                datum:"2026-05-28", tid:"11:00", typ:"Debatt" },
+];
+
 function OmrostningarTab() {
-  const [votes,setVotes]=useState([]);
-  const [debates,setDebates]=useState([]);
-  const [loading,setLoading]=useState(true);
-
-  useEffect(()=>{
-    fetch("/api/riksdag?endpoint=voteringlista&rm=2025/26&sz=15")
-      .then(r=>r.json())
-      .then(data=>{
-        const lista=data?.voteringlista?.votering||[];
-        setVotes(Array.isArray(lista)?lista:[lista].filter(Boolean));
-      }).catch(()=>{}).finally(()=>setLoading(false));
-
-    fetch("/api/riksdag?endpoint=kalender")
-      .then(r=>r.json())
-      .then(data=>{
-        const dagar=data?.kalender?.kalenderdag||[];
-        const dagArr=Array.isArray(dagar)?dagar:[dagar].filter(Boolean);
-        const today=new Date().toISOString().slice(0,10);
-        const kommande=[];
-        dagArr.forEach(dag=>{
-          if(!dag.datum||dag.datum<today)return;
-          const aktiviteter=Array.isArray(dag.aktivitet)?dag.aktivitet:[dag.aktivitet].filter(Boolean);
-          aktiviteter.forEach(a=>{
-            if(a&&(a.organ==="Kammaren"||a.typ==="Debatt"||a.typ==="Frågestund"||a.typ==="Interpellation")){
-              kommande.push({id:a.id||dag.datum+a.summary,datum:dag.datum,titel:a.summary||a.organ,typ:a.typ||a.kategori||"Aktivitet",tid:a.start||""});
-            }
-          });
-        });
-        setDebates(kommande.slice(0,8));
-      }).catch(()=>{});
-  },[]);
-
-  if(loading)return <LoadingState/>;
-
   return(
     <div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>Senaste omröstningar <span style={{fontFamily:"sans-serif",fontSize:12,fontWeight:400,color:GRAY,marginLeft:8}}>Källa: riksdagen.se</span></div>
-      {votes.length===0&&<EmptyState text="Inga omröstningar hittades just nu."/>}
-      {votes.map((v,i)=>{
-        const ja=parseInt(v.ja||0),nej=parseInt(v.nej||0),tot=ja+nej||1,jaPct=Math.round(ja/tot*100);
-        return(
-          <div key={v.votering_id||i} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,marginBottom:14}}>
-            <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,marginBottom:10,color:NAVY}}>{v.titel||v.beteckning||"Omröstning"}</div>
-            <div style={{display:"flex",gap:16,fontSize:12,color:GRAY,marginBottom:8}}>
-              <span style={{color:"#059669",fontWeight:700}}>✓ Ja: {ja}</span>
-              <span style={{color:"#DC2626",fontWeight:700}}>✗ Nej: {nej}</span>
-              <span style={{marginLeft:"auto"}}>{v.datum}</span>
-            </div>
-            <div style={{height:8,background:"#F3F4F6",borderRadius:2,overflow:"hidden",display:"flex"}}>
-              <div style={{width:`${jaPct}%`,background:"#059669"}}/><div style={{width:`${100-jaPct}%`,background:"#DC2626"}}/>
-            </div>
-            {v.beteckning&&<div style={{fontSize:11,color:GRAY,marginTop:6}}>Beteckning: {v.beteckning}</div>}
-          </div>
-        );
-      })}
-      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24,marginTop:32}}>Kommande debatter <span style={{fontFamily:"sans-serif",fontSize:12,fontWeight:400,color:GRAY,marginLeft:8}}>Källa: riksdagen.se</span></div>
-      {debates.length===0&&<EmptyState text="Inga kommande debatter hittades."/>}
-      {debates.map(d=>(
+      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>Senaste omröstningar</div>
+      {MOCK_VOTES.map(v=>{const tot=v.ja+v.nej,jaPct=Math.round(v.ja/tot*100);return(
+        <div key={v.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,marginBottom:14}}>
+          <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,marginBottom:10,color:NAVY}}>{v.titel}</div>
+          <div style={{display:"flex",gap:16,fontSize:12,color:GRAY,marginBottom:8}}><span style={{color:"#059669",fontWeight:700}}>✓ Ja: {v.ja}</span><span style={{color:"#DC2626",fontWeight:700}}>✗ Nej: {v.nej}</span><span style={{marginLeft:"auto"}}>{v.datum} · {v.beteckning}</span></div>
+          <div style={{height:8,background:"#F3F4F6",borderRadius:2,overflow:"hidden",display:"flex",marginBottom:14}}><div style={{width:`${jaPct}%`,background:"#059669"}}/><div style={{width:`${100-jaPct}%`,background:"#DC2626"}}/></div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{v.parter.map(({p,r})=><span key={p} style={{display:"flex",alignItems:"center",gap:3}}><Badge id={p}/><span style={{fontSize:11,color:r==="Ja"?"#059669":"#DC2626",fontWeight:700}}>{r}</span></span>)}</div>
+        </div>
+      );})}
+      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24,marginTop:32}}>Kommande debatter</div>
+      {MOCK_DEBATES.map(d=>(
         <div key={d.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:10,padding:"14px 20px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
           <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:GOLD,minWidth:60,fontSize:13}}>{d.datum.slice(5)}</div>
-          <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{d.titel}</div><div style={{fontSize:11,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginTop:2}}>{d.typ}{d.tid?" · "+d.tid:""}</div></div>
+          <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{d.titel}</div><div style={{fontSize:11,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginTop:2}}>{d.typ} · {d.tid}</div></div>
         </div>
       ))}
     </div>
   );
 }
-
 
 function LedamoterTab() {
   const [partyFilter,setPartyFilter]=useState("all");
@@ -1055,25 +1035,48 @@ function HomePage({ articles, onTabChange, loading }) {
         <EmptyState text="Hämtar nyheter..."/>
       )}
 
-      {/* UTFORSKA – compass + poll */}
+      {/* UTFORSKA – valkompass + poll + politikskola */}
       <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:20}}>Utforska politik på ditt sätt</div>
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:24,marginBottom:56}}>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr 1fr",gap:20,marginBottom:56}}>
 
-        {/* Valkompass card with compass SVG */}
-        <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:20,padding:32,cursor:"pointer",overflow:"hidden",position:"relative"}} onClick={()=>onTabChange("valkompass")}>
-          <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:8}}>🗳️ Valkompass 2026</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:8}}>Osäker på var du<br/>står inför valet?</div>
-          <div style={{fontSize:13,color:"rgba(255,255,255,0.65)",marginBottom:20}}>Svara på 25 frågor och se vilket parti du matchar bäst.</div>
-          <CompassSVG/>
-          <button style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"12px 24px",fontSize:14,fontWeight:700,cursor:"pointer",marginTop:20,width:"100%"}}>Gör testet nu →</button>
+        {/* Valkompass */}
+        <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:20,padding:24,cursor:"pointer",overflow:"hidden",position:"relative",display:"flex",flexDirection:"column"}} onClick={()=>onTabChange("valkompass")}>
+          <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:6}}>🗳️ Valkompass 2026</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:19,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:6}}>Osäker på var du<br/>står inför valet?</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,0.65)",marginBottom:16}}>Svara på 14 frågor och se vilket parti du matchar bäst.</div>
+          <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <svg viewBox="0 0 320 200" width="100%" height="130" style={{display:"block"}}>
+              {["M","SD","S","V","C","MP","KD","L"].map((pid,i)=>{
+                const angle=(i*(360/8)-90)*Math.PI/180;
+                const cx=160,cy=100,r=80;
+                const x=cx+r*Math.cos(angle),y=cy+r*Math.sin(angle);
+                const p=gp(pid);
+                return(<g key={pid}><circle cx={x} cy={y} r={18} fill={p?.bg||"#ccc"}/><text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="800" fill={p?.color||"#fff"}>{p?.short}</text></g>);
+              })}
+              <circle cx={160} cy={100} r={28} fill={NAVY} stroke="rgba(201,168,76,0.4)" strokeWidth="1.5"/>
+              <polygon points="160,72 156,100 160,88 164,100" fill={GOLD}/>
+              <circle cx={160} cy={100} r={5} fill={GOLD}/>
+            </svg>
+          </div>
+          <button style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Gör testet nu →</button>
         </div>
 
-        {/* Poll card */}
-        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:20,padding:28}}>
-          <div style={{fontSize:11,color:BLUE,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:8}}>📊 Folkopinionen</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,lineHeight:1.3,marginBottom:8}}>Vart lutar din röst<br/>inför valet 2026?</div>
-          <div style={{fontSize:13,color:GRAY,marginBottom:16}}>Rösta anonymt – se resultatet direkt.</div>
+        {/* Poll */}
+        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:20,padding:24}}>
+          <div style={{fontSize:11,color:BLUE,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:6}}>📊 Folkopinionen</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:19,fontWeight:700,color:NAVY,lineHeight:1.3,marginBottom:6}}>Vart lutar din röst<br/>inför valet 2026?</div>
+          <div style={{fontSize:12,color:GRAY,marginBottom:14}}>Rösta anonymt – se resultatet direkt.</div>
           <PollWidget compact/>
+        </div>
+
+        {/* Politikskola */}
+        <div style={{background:"linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",justifyContent:"space-between"}} onClick={()=>onTabChange("politikskola")}>
+          <div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:6}}>🎓 Politikskola</div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:19,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Förstår du skillnaden mellan en motion och en proposition?</div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.6,marginBottom:20}}>Lär dig hur Sverige faktiskt styrs — från riksdag till kommunhus. Guider, förklaringar och quiz för alla nivåer.</div>
+          </div>
+          <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%",backdropFilter:"blur(4px)"}}>Utforska Politikskolan →</button>
         </div>
       </div>
     </div>
@@ -1092,7 +1095,7 @@ export default function App() {
 
   useEffect(()=>{
     Promise.allSettled(NEWS_SOURCES.map(fetchRSS)).then(results=>{
-      const fetched=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(a=>!isHomepageLink(a.link));
+      const fetched=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(a=>!isHomepageLink(a.link)&&isPolitical(a.title+" "+(a.description||"")));
       const thirtyDays=Date.now()-30*24*60*60*1000;
       const seen=new Set();
       const deduped=fetched.filter(a=>{const k=a.title.slice(0,40).toLowerCase();if(seen.has(k))return false;seen.add(k);return !a.pubDate||new Date(a.pubDate)>thirtyDays;});
