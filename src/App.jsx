@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 
 const GA_ID = "G-DB7QB8N6BE";
+// ── Supabase – fyll i dina uppgifter ──────────────────────────────────────────
+const SUPABASE_URL  = "https://DIN-PROJEKT-ID.supabase.co";
+const SUPABASE_KEY  = "DIN-ANON-KEY";
+const STATS_TABLE   = "valkompass_stats";
+// ─────────────────────────────────────────────────────────────────────────────
 const NAVY = "#0D1B2A";
 const BLUE = "#1D4ED8";
 const GOLD = "#C9A84C";
@@ -74,31 +79,16 @@ const PARTY_LEADERS = [
 ];
 
 const QUESTIONS = [
-  { id:1,  text:"Invandringen till Sverige bör minskas kraftigt",                   cat:"Migration",    s:{M:1, SD:1, KD:0, L:-1,C:-1,S:0, V:-1,MP:-1} },
-  { id:2,  text:"Sverige ska bygga ny kärnkraft",                                   cat:"Klimat",       s:{M:1, SD:1, KD:1, L:1, C:0, S:0, V:-1,MP:-1} },
-  { id:3,  text:"Vinster i skattefinansierad välfärd ska förbjudas",                cat:"Ekonomi",      s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
-  { id:4,  text:"Inkomstskatten ska sänkas för de flesta",                          cat:"Ekonomi",      s:{M:1, SD:0, KD:0, L:1, C:1, S:-1,V:-1,MP:-1} },
-  { id:5,  text:"Straffen för gängkriminalitet ska skärpas kraftigt",               cat:"Kriminalitet", s:{M:1, SD:1, KD:1, L:0, C:0, S:1, V:-1,MP:-1} },
-  { id:6,  text:"Sverige ska ha bindande klimatlagstiftning med hårda mål",         cat:"Klimat",       s:{M:-1,SD:-1,KD:0, L:0, C:1, S:0, V:1, MP:1 } },
-  { id:7,  text:"RUT- och ROT-avdraget ska utökas",                                 cat:"Ekonomi",      s:{M:1, SD:0, KD:1, L:1, C:1, S:-1,V:-1,MP:-1} },
-  { id:8,  text:"Det ska bli lättare att utvisa kriminella utlänningar",            cat:"Migration",    s:{M:1, SD:1, KD:1, L:0, C:0, S:0, V:-1,MP:-1} },
-  { id:9,  text:"Förskolan ska vara avgiftsfri för alla barn",                      cat:"Skola",        s:{M:-1,SD:0, KD:0, L:0, C:0, S:1, V:1, MP:1 } },
-  { id:10, text:"Sverige ska öka försvarsbudgeten ytterligare",                     cat:"Ekonomi",      s:{M:1, SD:1, KD:1, L:1, C:1, S:1, V:-1,MP:0 } },
-  { id:11, text:"Hyresreglering ska återinföras i storstäderna",                    cat:"Bostäder",     s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
-  { id:12, text:"Polisen ska få utökade befogenheter mot organiserad brottslighet", cat:"Kriminalitet", s:{M:1, SD:1, KD:1, L:0, C:0, S:0, V:-1,MP:-1} },
-  { id:13, text:"Den offentliga sjukvården ska prioriteras framför privat",         cat:"Sjukvård",     s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
-  { id:14, text:"Arbetstiden ska kortas till 6 timmar per dag med bibehållen lön",  cat:"Ekonomi",      s:{M:-1,SD:-1,KD:-1,L:-1,C:-1,S:-1,V:1, MP:0 } },
-  { id:15, text:"Sverige ska ta emot fler kvotflyktingar via FN",                   cat:"Migration",    s:{M:-1,SD:-1,KD:0, L:1, C:1, S:0, V:1, MP:1 } },
-  { id:16, text:"Pensionerna för de med lägst pension ska höjas kraftigt",          cat:"Ekonomi",      s:{M:0, SD:1, KD:1, L:0, C:0, S:1, V:1, MP:0 } },
-  { id:17, text:"Barn till illegalt inresna ska ha rätt till skola och sjukvård",   cat:"Migration",    s:{M:0, SD:-1,KD:0, L:1, C:1, S:1, V:1, MP:1 } },
-  { id:18, text:"Företag ska betala mer i skatt för att finansiera välfärden",      cat:"Ekonomi",      s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
-  { id:19, text:"Vapenexporten till konfliktländer ska stoppas",                     cat:"Ekonomi",      s:{M:-1,SD:-1,KD:0, L:0, C:0, S:0, V:1, MP:1 } },
-  { id:20, text:"Sverige ska ha mer lokalt självstyre",                              cat:"Ekonomi",      s:{M:0, SD:-1,KD:0, L:1, C:1, S:-1,V:-1,MP:0 } },
-  { id:21, text:"Det ska bli lättare för arbetsgivare att säga upp anställda",      cat:"Ekonomi",      s:{M:1, SD:0, KD:0, L:1, C:1, S:-1,V:-1,MP:-1} },
-  { id:22, text:"Tiggeri ska förbjudas i Sverige",                                   cat:"Kriminalitet", s:{M:0, SD:1, KD:0, L:-1,C:-1,S:-1,V:-1,MP:-1} },
-  { id:23, text:"Sverige ska satsa mer på järnväg och kollektivtrafik",              cat:"Klimat",       s:{M:0, SD:0, KD:0, L:1, C:1, S:1, V:1, MP:1 } },
-  { id:24, text:"Alla medborgare ska garanteras en grundinkomst",                    cat:"Ekonomi",      s:{M:-1,SD:-1,KD:-1,L:-1,C:-1,S:-1,V:1, MP:0 } },
-  { id:25, text:"Skolval och friskolereformen ska begränsas",                        cat:"Skola",        s:{M:-1,SD:-1,KD:-1,L:-1,C:-1,S:0, V:1, MP:1 } },
+  { id:1,  text:"Den totala invandringen till Sverige bör reduceras i väsentlig utsträckning",          cat:"Migration",    s:{M:1, SD:1, KD:0, L:-1,C:-1,S:0, V:-1,MP:-1} },
+  { id:2,  text:"Sverige bör investera i ny kärnkraft som en del av energiomställningen",              cat:"Klimat",       s:{M:1, SD:1, KD:1, L:1, C:0, S:0, V:-1,MP:-1} },
+  { id:3,  text:"Privata aktörer bör inte ha rätt att ta ut vinst ur skattefinansierad välfärd",       cat:"Ekonomi",      s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
+  { id:4,  text:"Straffen för grova våldsbrott och gängrelaterad brottslighet bör skärpas avsevärt",   cat:"Kriminalitet", s:{M:1, SD:1, KD:1, L:0, C:0, S:1, V:-1,MP:-1} },
+  { id:5,  text:"Sverige bör införa lagstadgade och bindande mål för utsläppsreduktion",               cat:"Klimat",       s:{M:-1,SD:-1,KD:0, L:0, C:1, S:0, V:1, MP:1 } },
+  { id:6,  text:"Det allmänna sjukvårdssystemet bör ges tydlig prioritet framför privata vårdgivare",  cat:"Sjukvård",     s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
+  { id:7,  text:"Den statliga inkomstskatten bör sänkas för låg- och medelinkomsttagare",              cat:"Ekonomi",      s:{M:1, SD:0, KD:0, L:1, C:1, S:-1,V:-1,MP:-1} },
+  { id:8,  text:"Möjligheterna att utvisa utländska medborgare som begår brott i Sverige bör utökas",  cat:"Migration",    s:{M:1, SD:1, KD:1, L:0, C:0, S:0, V:-1,MP:-1} },
+  { id:9,  text:"Friskolornas etableringsrätt och det fria skolvalet bör begränsas",                   cat:"Skola",        s:{M:-1,SD:-1,KD:-1,L:-1,C:-1,S:0, V:1, MP:1 } },
+  { id:10, text:"Nyproduktion av hyresrätter med kontrollerade hyresnivåer bör subventioneras av staten", cat:"Bostäder", s:{M:-1,SD:0, KD:-1,L:-1,C:-1,S:1, V:1, MP:1 } },
 ];
 
 const FAQ_ITEMS = [
@@ -200,6 +190,36 @@ function cleanText(t) {
     .replace(/&quot;/g,'"').replace(/&#\d+;/g,"").replace(/&[a-z]+;/g," ")
     .replace(/\s+/g," ").trim();
 }
+
+// ── Valkompass-räknare via Supabase ───────────────────────────────────────────
+async function incrementValkompasCount() {
+  try {
+    // Hämta nuvarande värde
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${STATS_TABLE}?id=eq.1`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }
+    });
+    const rows = await res.json();
+    const current = rows[0]?.completions ?? 0;
+    // Räkna upp
+    await fetch(`${SUPABASE_URL}/rest/v1/${STATS_TABLE}?id=eq.1`, {
+      method: "PATCH",
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ completions: current + 1 })
+    });
+    return current + 1;
+  } catch { return null; }
+}
+
+async function getValkompasCount() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${STATS_TABLE}?id=eq.1`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await res.json();
+    return rows[0]?.completions ?? 0;
+  } catch { return null; }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function isHomepageLink(url) {
   try {
@@ -390,6 +410,7 @@ function PollWidget({ compact }) {
 function Valkompass() {
   const [answers,setAnswers]=useState({});
   const [result,setResult]=useState(null);
+  const [totalCount,setTotalCount]=useState(null);
   const progress=Object.keys(answers).length;
   const currentQ=QUESTIONS.find(q=>answers[q.id]===undefined);
 
@@ -403,6 +424,8 @@ function Valkompass() {
       const vals=Object.values(scores),mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||1;
       const norm={};Object.entries(scores).forEach(([pid,sc])=>{norm[pid]=Math.round(((sc-mn)/rng)*100);});
       setResult(Object.entries(norm).sort((a,b)=>b[1]-a[1]));
+      // Räkna upp i Supabase
+      incrementValkompasCount().then(n=>{ if(n!==null) setTotalCount(n); });
     }
   }
 
@@ -419,6 +442,7 @@ function Valkompass() {
             <span style={{color:wp?.color,fontWeight:700,fontSize:26}}>{wp?.short}</span>
           </div>
           <div style={{fontSize:13,color:"rgba(255,255,255,0.5)"}}>Baserat på dina svar på {QUESTIONS.length} frågor</div>
+          {totalCount!==null&&<div style={{marginTop:12,fontSize:12,color:"rgba(255,255,255,0.35)",letterSpacing:"0.5px"}}>🗳️ {totalCount.toLocaleString("sv-SE")} personer har gjort valkompassen</div>}
         </div>
         <div style={{background:"#fff",borderRadius:16,padding:24,marginBottom:20,border:"1px solid #E5E7EB"}}>
           <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:NAVY,marginBottom:16}}>Din fullständiga matchning</div>
