@@ -209,7 +209,7 @@ function isHomepageLink(url) {
   } catch { return false; }
 }
 
-
+async function fetchRSS(src) {
   try {
     const res = await fetch("/api/rss?url="+encodeURIComponent(src.url));
     const text = await res.text();
