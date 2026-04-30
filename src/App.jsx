@@ -1045,17 +1045,22 @@ function HomePage({ articles, onTabChange, loading }) {
           <div style={{fontFamily:"Georgia,serif",fontSize:19,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:6}}>Osäker på var du<br/>står inför valet?</div>
           <div style={{fontSize:12,color:"rgba(255,255,255,0.65)",marginBottom:16}}>Svara på 14 frågor och se vilket parti du matchar bäst.</div>
           <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <svg viewBox="0 0 320 200" width="100%" height="130" style={{display:"block"}}>
+            <svg viewBox="0 0 320 260" width="100%" height="180" style={{display:"block"}}>
+              <style>{`@keyframes spin{from{transform-origin:160px 130px;transform:rotate(0deg)}to{transform-origin:160px 130px;transform:rotate(360deg)}}.mini-needle{transform-origin:160px 130px;animation:spin 8s linear infinite}`}</style>
               {["M","SD","S","V","C","MP","KD","L"].map((pid,i)=>{
                 const angle=(i*(360/8)-90)*Math.PI/180;
-                const cx=160,cy=100,r=80;
+                const cx=160,cy=130,r=105;
                 const x=cx+r*Math.cos(angle),y=cy+r*Math.sin(angle);
                 const p=gp(pid);
-                return(<g key={pid}><circle cx={x} cy={y} r={18} fill={p?.bg||"#ccc"}/><text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="800" fill={p?.color||"#fff"}>{p?.short}</text></g>);
+                return(<g key={pid}><circle cx={x} cy={y} r={24} fill={p?.bg||"#ccc"} filter="url(#ms)"/><text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize="12" fontWeight="800" fill={p?.color||"#fff"}>{p?.short}</text></g>);
               })}
-              <circle cx={160} cy={100} r={28} fill={NAVY} stroke="rgba(201,168,76,0.4)" strokeWidth="1.5"/>
-              <polygon points="160,72 156,100 160,88 164,100" fill={GOLD}/>
-              <circle cx={160} cy={100} r={5} fill={GOLD}/>
+              <circle cx={160} cy={130} r={36} fill={NAVY} stroke="rgba(201,168,76,0.5)" strokeWidth="2"/>
+              <g className="mini-needle">
+                <polygon points="160,100 156,130 160,118 164,130" fill={GOLD}/>
+                <polygon points="160,160 156,130 160,142 164,130" fill="rgba(255,255,255,0.25)"/>
+              </g>
+              <circle cx={160} cy={130} r={6} fill={GOLD}/>
+              <defs><filter id="ms" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.25"/></filter></defs>
             </svg>
           </div>
           <button style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Gör testet nu →</button>
@@ -1129,7 +1134,10 @@ export default function App() {
             <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY}}>Parti<span style={{color:BLUE,borderBottom:`2px solid ${BLUE}`,paddingBottom:1}}>Fokus</span></div>
             <div style={{fontSize:11,color:GRAY,letterSpacing:"1px",marginTop:4,fontWeight:600}}>Politik. Inget annat.</div>
           </button>
-          {!mobile&&<nav style={{display:"flex",gap:2}}>{TABS.map(t=><button key={t.id} onClick={()=>changeTab(t.id)} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:GRAY,borderBottom:tab===t.id?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>{t.label}</button>)}</nav>}
+          {!mobile&&<nav style={{display:"flex",gap:2}}>
+            <button onClick={()=>changeTab("hem")} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab==="hem"?700:400,color:tab==="hem"?NAVY:GRAY,borderBottom:tab==="hem"?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>Hem</button>
+            {TABS.map(t=><button key={t.id} onClick={()=>changeTab(t.id)} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:GRAY,borderBottom:tab===t.id?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>{t.label}</button>)}
+          </nav>}
           {mobile&&<select value={tab} onChange={e=>changeTab(e.target.value)} style={{border:"1px solid #E5E7EB",borderRadius:8,padding:"6px 10px",fontSize:13,color:NAVY,background:"#fff"}}><option value="hem">Hem</option>{TABS.map(t=><option key={t.id} value={t.id}>{t.label}</option>)}</select>}
         </div>
       </header>
