@@ -980,6 +980,34 @@ const FINAL_EXAM_QUESTIONS = [
 
 const RANKS = ["Nybörjare 🌱","Intresserad 👀","Aktivist ✊","Politisk rådgivare 🎯","Partiledare 🏆","Statsminister 🇸🇪","Politiskt geni 🧠"];
 
+const SB_QUIZ_TABLE = "quiz_stats";
+
+async function sbIncrementQuiz(id) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await r.json();
+    const current = rows[0]?.completions || 0;
+    await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}`, {
+      method: "PATCH",
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ completions: current + 1 })
+    });
+    return current + 1;
+  } catch { return null; }
+}
+
+async function sbGetQuizCount(id) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_QUIZ_TABLE}?id=eq.${id}&select=completions`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    const rows = await r.json();
+    return rows[0]?.completions || 0;
+  } catch { return null; }
+}
+
 function PolitikskolaQuiz({ quiz, quizId, onComplete }) {
   const [answers,setAnswers]=useState({});
   const [submitted,setSubmitted]=useState(false);
