@@ -659,7 +659,7 @@ function BigCard({ article }) {
     <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
       style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s",marginBottom:24}}>
       <div style={{position:"relative",height:340,overflow:"hidden"}}>
-        <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.03)":"scale(1)"}}/>
+        <ImgWithFallback src={img} style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.03)":"scale(1)"}}/>
         <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%)"}}/>
         <div style={{position:"absolute",bottom:0,left:0,right:0,padding:28}}>
           <CatTag cat={article.category} dark/>
@@ -682,7 +682,7 @@ function MedCard({ article }) {
     <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
       style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s"}}>
       <div style={{position:"relative",height:180,overflow:"hidden"}}>
-        <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
+        <ImgWithFallback src={img} style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
       </div>
       <div style={{padding:"14px 16px 16px"}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><CatTag cat={article.category}/><span style={{fontSize:10,color:"#9CA3AF",marginLeft:"auto"}}>{timeAgo(article.pubDate)}</span></div>
@@ -704,7 +704,7 @@ function RowCard({ article }) {
     <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
       style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s",display:"flex",marginBottom:16}}>
       <div style={{width:160,flexShrink:0,overflow:"hidden"}}>
-        <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
+        <ImgWithFallback src={img} style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
       </div>
       <div style={{padding:"16px 20px",flex:1}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><CatTag cat={article.category}/><span style={{fontSize:10,color:"#9CA3AF",marginLeft:"auto"}}>{timeAgo(article.pubDate)}</span></div>
@@ -1038,61 +1038,130 @@ async function sbGetQuizCount(id) {
   } catch { return null; }
 }
 
-function PolitikskolaQuiz({ quiz, quizId, onComplete }) {
+function QuizModal({ quiz, onClose, onDone }) {
   const [answers,setAnswers]=useState({});
   const [submitted,setSubmitted]=useState(false);
-  const [count,setCount]=useState(null);
   const score=submitted?quiz.filter((q,i)=>answers[i]===q.svar).length:0;
   const allAnswered=Object.keys(answers).length===quiz.length;
+  const perfect=submitted&&score===quiz.length;
 
-  useEffect(()=>{ sbGetQuizCount(quizId).then(n=>{ if(n!==null) setCount(n); }); },[quizId]);
+  // Förhindra scrollning bakom modal
+  useEffect(()=>{
+    document.body.style.overflow="hidden";
+    return()=>{ document.body.style.overflow=""; };
+  },[]);
 
   function handleSubmit(){
     if(!allAnswered)return;
     setSubmitted(true);
-    sbIncrementQuiz(quizId).then(n=>{ if(n!==null) setCount(n); });
-    if(onComplete) onComplete(score===quiz.length);
+    if(score===quiz.length) onDone(true);
   }
 
   return(
-    <div style={{background:"#F9FAFB",borderRadius:16,padding:24,marginTop:24,border:"1px solid #E5E7EB"}}>
-      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
-        <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY}}>🧠 Quiz</div>
-        {count!==null&&<div style={{fontSize:11,color:GRAY}}>{count.toLocaleString("sv-SE")} har gjort detta quiz</div>}
+    <div style={{position:"fixed",inset:0,background:"rgba(13,27,42,0.85)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",padding:16,backdropFilter:"blur(4px)"}}>
+      <div style={{background:"#fff",borderRadius:20,width:"100%",maxWidth:600,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 32px 80px rgba(0,0,0,0.4)",position:"relative"}}>
+        {/* Header */}
+        <div style={{background:`linear-gradient(135deg,${NAVY},#1e3a5f)`,borderRadius:"20px 20px 0 0",padding:"24px 28px",position:"sticky",top:0,zIndex:10}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff"}}>🧠 Quiz</div>
+            <div style={{display:"flex",alignItems:"center",gap:12}}>
+              <div style={{fontSize:13,color:"rgba(255,255,255,0.6)"}}>{Object.keys(answers).length}/{quiz.length} besvarade</div>
+              {!submitted&&<button onClick={onClose} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)",color:"#fff",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}}>Avbryt</button>}
+            </div>
+          </div>
+          {/* Progressbar */}
+          <div style={{marginTop:12,height:4,background:"rgba(255,255,255,0.15)",borderRadius:2,overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${(Object.keys(answers).length/quiz.length)*100}%`,background:GOLD,borderRadius:2,transition:"width .3s"}}/>
+          </div>
+          {!submitted&&<div style={{fontSize:11,color:"rgba(255,255,255,0.4)",marginTop:6}}>⚠️ Stänger du quizen måste du börja om</div>}
+        </div>
+
+        {/* Frågor */}
+        <div style={{padding:"24px 28px"}}>
+          {!submitted?quiz.map((q,qi)=>(
+            <div key={qi} style={{marginBottom:28}}>
+              <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:NAVY,fontSize:16,marginBottom:14,lineHeight:1.4}}>{qi+1}. {q.fraga}</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                {q.alt.map((a,ai)=>{
+                  const chosen=answers[qi]===ai;
+                  return(
+                    <button key={ai} onClick={()=>setAnswers(prev=>({...prev,[qi]:ai}))}
+                      style={{background:chosen?"#EFF6FF":"#F9FAFB",border:`2px solid ${chosen?"#1D4ED8":"#E5E7EB"}`,borderRadius:10,padding:"12px 16px",fontSize:14,cursor:"pointer",textAlign:"left",color:NAVY,fontWeight:chosen?700:400,transition:"all .1s"}}>
+                      {a}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )):(
+            <div>
+              {quiz.map((q,qi)=>(
+                <div key={qi} style={{marginBottom:20}}>
+                  <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:NAVY,fontSize:15,marginBottom:10}}>{qi+1}. {q.fraga}</div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                    {q.alt.map((a,ai)=>{
+                      const correct=ai===q.svar;
+                      const chosen=answers[qi]===ai;
+                      const wrong=chosen&&!correct;
+                      return(
+                        <div key={ai} style={{background:correct?"#DCFCE7":wrong?"#FEE2E2":"#F9FAFB",border:`2px solid ${correct?"#16A34A":wrong?"#DC2626":"#E5E7EB"}`,borderRadius:10,padding:"10px 14px",fontSize:13,color:NAVY,fontWeight:correct?700:400}}>
+                          {correct&&"✓ "}{wrong&&"✗ "}{a}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+              <div style={{background:perfect?"#DCFCE7":"#FEE2E2",borderRadius:14,padding:20,textAlign:"center",marginTop:8}}>
+                <div style={{fontSize:36,marginBottom:8}}>{perfect?"🏆":"💪"}</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:6}}>{score}/{quiz.length} rätt</div>
+                <div style={{fontSize:14,color:GRAY,marginBottom:16}}>{perfect?"Perfekt! Du klarar modulen!":"Inte alla rätt — stäng och läs igenom avsnitten igen."}</div>
+                {perfect?(
+                  <button onClick={()=>onDone(true)} style={{background:"#16A34A",color:"#fff",border:"none",borderRadius:10,padding:"13px 28px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Avsluta och fortsätt →</button>
+                ):(
+                  <button onClick={onClose} style={{background:NAVY,color:"#fff",border:"none",borderRadius:10,padding:"13px 28px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Stäng och försök igen</button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!submitted&&(
+            <button onClick={handleSubmit} disabled={!allAnswered}
+              style={{background:allAnswered?NAVY:"#E5E7EB",color:allAnswered?"#fff":"#9CA3AF",border:"none",borderRadius:10,padding:"14px 28px",fontSize:15,fontWeight:700,cursor:allAnswered?"pointer":"not-allowed",width:"100%",marginTop:8}}>
+              {allAnswered?"Lämna in svaren →":"Svara på alla frågor"}
+            </button>
+          )}
+        </div>
       </div>
-      {quiz.map((q,qi)=>(
-        <div key={qi} style={{marginBottom:20}}>
-          <div style={{fontWeight:700,color:NAVY,fontSize:14,marginBottom:10}}>{qi+1}. {q.fraga}</div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-            {q.alt.map((a,ai)=>{
-              const chosen=answers[qi]===ai;
-              const correct=submitted&&ai===q.svar;
-              const wrong=submitted&&chosen&&ai!==q.svar;
-              return(
-                <button key={ai} onClick={()=>!submitted&&setAnswers(prev=>({...prev,[qi]:ai}))}
-                  style={{background:correct?"#DCFCE7":wrong?"#FEE2E2":chosen?"#EFF6FF":"#fff",border:`2px solid ${correct?"#16A34A":wrong?"#DC2626":chosen?"#1D4ED8":"#E5E7EB"}`,borderRadius:10,padding:"10px 14px",fontSize:13,cursor:submitted?"default":"pointer",textAlign:"left",color:NAVY,fontWeight:chosen||correct?600:400}}>
-                  {a}
-                </button>
-              );
-            })}
-          </div>
-          {submitted&&<div style={{fontSize:12,color:answers[qi]===q.svar?"#16A34A":"#DC2626",marginTop:6,fontWeight:600}}>{answers[qi]===q.svar?"✓ Rätt!":"✗ Fel — rätt svar: "+q.alt[q.svar]}</div>}
-        </div>
-      ))}
-      {!submitted?(
-        <button onClick={handleSubmit} disabled={!allAnswered}
-          style={{background:allAnswered?NAVY:"#E5E7EB",color:allAnswered?"#fff":"#9CA3AF",border:"none",borderRadius:10,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:allAnswered?"pointer":"not-allowed",marginTop:8}}>
-          Kolla svaren
-        </button>
-      ):(
-        <div style={{marginTop:16,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
-          <div style={{background:score===quiz.length?"#DCFCE7":score>=quiz.length/2?"#FEF9C3":"#FEE2E2",borderRadius:12,padding:"12px 20px"}}>
-            <span style={{fontWeight:700,fontSize:16,color:NAVY}}>{score}/{quiz.length} rätt</span>
-            <span style={{fontSize:13,color:GRAY,marginLeft:8}}>{score===quiz.length?"Perfekt! 🎉":score>=quiz.length/2?"Bra jobbat! 👍":"Försök igen! 💪"}</span>
-          </div>
-          <button onClick={()=>{setAnswers({});setSubmitted(false);}} style={{background:"none",border:"1px solid #E5E7EB",borderRadius:8,padding:"10px 18px",fontSize:13,cursor:"pointer",color:NAVY}}>Försök igen</button>
-        </div>
-      )}
+    </div>
+  );
+}
+
+function PolitikskolaQuiz({ quiz, quizId, onComplete }) {
+  const [open,setOpen]=useState(false);
+  const [count,setCount]=useState(null);
+
+  useEffect(()=>{ sbGetQuizCount(quizId).then(n=>{ if(n!==null) setCount(n); }); },[quizId]);
+
+  function handleDone(perfect){
+    if(perfect){
+      sbIncrementQuiz(quizId).then(n=>{ if(n!==null) setCount(n); });
+      if(onComplete) onComplete(true);
+    }
+    setOpen(false);
+  }
+
+  return(
+    <div style={{marginTop:24}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:NAVY}}>🧠 Dags för quiz!</div>
+        {count!==null&&count>0&&<div style={{fontSize:11,color:GRAY}}>{count.toLocaleString("sv-SE")} har klarat detta</div>}
+      </div>
+      <div style={{background:"#F9FAFB",borderRadius:14,padding:20,border:"1px solid #E5E7EB"}}>
+        <div style={{fontSize:13,color:GRAY,marginBottom:16,lineHeight:1.6}}>Quizen öppnas i ett eget fönster. Stänger du det måste du börja om. Får du alla rätt klarar du modulen! 🏆</div>
+        <button onClick={()=>setOpen(true)} style={{background:NAVY,color:"#fff",border:"none",borderRadius:10,padding:"13px 28px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Starta quiz →</button>
+      </div>
+      {open&&<QuizModal quiz={quiz} onClose={()=>setOpen(false)} onDone={handleDone}/>}
     </div>
   );
 }
@@ -1346,6 +1415,7 @@ function HomePage({ articles, onTabChange, loading }) {
 
         {/* Politikskola – pokal */}
         <div style={{background:"linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("politikskola")}>
+          <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>🎓 Politikskolan</div>
           <div style={{fontSize:64,marginBottom:12,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))"}}>🏆</div>
           <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Är du ett politiskt geni?</div>
           <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.7,marginBottom:20}}>Gör alla 6 moduler i Politikskolan och klara slutprovet. Få din rank — från Nybörjare till Statsminister.</div>
