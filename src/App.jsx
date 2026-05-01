@@ -12,15 +12,24 @@ const GOLD = "#C9A84C";
 const GRAY = "#6B7280";
 
 const CAT_IMAGES = {
-  Ekonomi:      ["https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70","https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=600&q=70","https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=70","https://images.unsplash.com/photo-1638913662295-9630035ef770?w=600&q=70","https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&q=70"],
-  Migration:    ["https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=70","https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=70","https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=70","https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&q=70"],
-  Klimat:       ["https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=70","https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&q=70","https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&q=70","https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=70","https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=70"],
-  Kriminalitet: ["https://images.unsplash.com/photo-1589578527966-fdac0f44566c?w=600&q=70","https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&q=70","https://images.unsplash.com/photo-1584578043786-4e1e7909f0af?w=600&q=70","https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=70"],
-  Sjukvård:     ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=70","https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=70","https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=600&q=70","https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=70"],
-  Skola:        ["https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=70","https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&q=70","https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=70","https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70"],
-  Bostäder:     ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=70","https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=70","https://images.unsplash.com/photo-1449844908441-8829872d2607?w=600&q=70","https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=70"],
+  Ekonomi:      ["https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=70","https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=70","https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70","https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&q=70"],
+  Migration:    ["https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=70","https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&q=70","https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=70","https://images.unsplash.com/photo-1573497491208-6b1acb260507?w=600&q=70"],
+  Klimat:       ["https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=70","https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=70","https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=70","https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&q=70"],
+  Kriminalitet: ["https://images.unsplash.com/photo-1589578527966-fdac0f44566c?w=600&q=70","https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&q=70","https://images.unsplash.com/photo-1584578043786-4e1e7909f0af?w=600&q=70","https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=70"],
+  Sjukvård:     ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=70","https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=70","https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=70","https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=600&q=70"],
+  Skola:        ["https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=70","https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&q=70","https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70","https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=70"],
+  Bostäder:     ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=70","https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=70","https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=70","https://images.unsplash.com/photo-1449844908441-8829872d2607?w=600&q=70"],
+  Politik:      ["https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=70","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70","https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&q=70","https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=600&q=70"],
 };
-function getCatImage(cat, seed) { const imgs=CAT_IMAGES[cat]||CAT_IMAGES.Ekonomi; return imgs[seed%imgs.length]; }
+function getCatImage(cat, seed) {
+  const imgs=CAT_IMAGES[cat]||CAT_IMAGES.Politik;
+  return imgs[Math.abs(seed||0)%imgs.length];
+}
+function ImgWithFallback({ src, alt, style }) {
+  const [err,setErr]=useState(false);
+  const fallback="https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&q=70";
+  return <img src={err?fallback:src} alt={alt||""} style={style} onError={()=>setErr(true)}/>;
+}
 const HERO_IMAGE = "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=900&q=80";
 
 const PARTIES = [
@@ -344,7 +353,7 @@ async function sbIncrementVote(party) {
 }
 
 function PollWidget({ compact }) {
-  const PP=[{id:"S",label:"Socialdemokraterna"},{id:"SD",label:"Sverigedemokraterna"},{id:"M",label:"Moderaterna"},{id:"V",label:"Vänsterpartiet"},{id:"C",label:"Centerpartiet"},{id:"MP",label:"Miljöpartiet"},{id:"KD",label:"Kristdemokraterna"},{id:"L",label:"Liberalerna"},{id:"ovriga",label:"Övriga partier"},{id:"vetej",label:"Vet ej / Röstar inte"}];
+  const PP=[{id:"S",label:"Socialdemokraterna"},{id:"SD",label:"Sverigedemokraterna"},{id:"M",label:"Moderaterna"},{id:"V",label:"Vänsterpartiet"},{id:"C",label:"Centerpartiet"},{id:"MP",label:"Miljöpartiet"},{id:"KD",label:"Kristdemokraterna"},{id:"L",label:"Liberalerna"},{id:"ovriga",label:"Övriga"},{id:"vetej",label:"Vet ej"}];
   const [sel,setSel]=useState(null);
   const [voted,setVoted]=useState(getPollVoted);
   const [votes,setVotes]=useState({});
@@ -422,10 +431,11 @@ function PollWidget({ compact }) {
 }
 
 // ─── VALKOMPASS COUNTER ──────────────────────────────────────────────────────
-function ValkompasCounter() {
+function ValkompasCounter({ inline }) {
   const [count,setCount]=useState(null);
   useEffect(()=>{ getValkompasCount().then(n=>{ if(n!==null) setCount(n); }); },[]);
   if(count===null||count===0) return null;
+  if(inline) return <div style={{fontSize:12,color:GRAY,fontWeight:600}}>🗳️ {count.toLocaleString("sv-SE")} har gjort testet</div>;
   return <div style={{fontSize:11,color:"rgba(255,255,255,0.4)",marginBottom:8,textAlign:"center"}}>🗳️ {count.toLocaleString("sv-SE")} har gjort valkompassen</div>;
 }
 
@@ -1334,14 +1344,12 @@ function HomePage({ articles, onTabChange, loading }) {
           <PollWidget compact/>
         </div>
 
-        {/* Politikskola */}
-        <div style={{background:"linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",justifyContent:"space-between"}} onClick={()=>onTabChange("politikskola")}>
-          <div>
-            <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:6}}>🎓 Politikskola</div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:19,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Förstår du skillnaden mellan en motion och en proposition?</div>
-            <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.6,marginBottom:20}}>Lär dig hur Sverige faktiskt styrs — från riksdag till kommunhus. Guider, förklaringar och quiz för alla nivåer.</div>
-          </div>
-          <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%",backdropFilter:"blur(4px)"}}>Utforska Politikskolan →</button>
+        {/* Politikskola – pokal */}
+        <div style={{background:"linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("politikskola")}>
+          <div style={{fontSize:64,marginBottom:12,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))"}}>🏆</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Är du ett politiskt geni?</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.7,marginBottom:20}}>Gör alla 6 moduler i Politikskolan och klara slutprovet. Få din rank — från Nybörjare till Statsminister.</div>
+          <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Testa dig själv →</button>
         </div>
       </div>
     </div>
@@ -1444,7 +1452,10 @@ export default function App() {
               ))}
             </div>
 
-            <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,marginBottom:20,paddingBottom:10,borderBottom:`2px solid ${NAVY}`}}>Hitta ditt parti</div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,paddingBottom:10,borderBottom:`2px solid ${NAVY}`}}>
+              <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY}}>Hitta ditt parti</div>
+              <ValkompasCounter inline/>
+            </div>
             <Valkompass/>
           </div>
         )}
