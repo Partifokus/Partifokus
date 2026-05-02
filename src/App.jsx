@@ -1424,13 +1424,14 @@ function ShareButtons({ article }) {
   const url = encodeURIComponent(article.link);
   const text = encodeURIComponent(article.title + " – PartiFokus");
   return(
-    <div style={{display:"flex",gap:6,marginTop:8}}>
+    <div style={{display:"flex",gap:8,marginTop:10,alignItems:"center"}}>
+      <span style={{fontSize:11,color:GRAY,fontWeight:600}}>Dela:</span>
       <a href={`https://twitter.com/intent/tweet?text=${text}&url=${url}`} target="_blank" rel="noopener noreferrer"
-        style={{fontSize:11,color:"#1D9BF0",fontWeight:600,textDecoration:"none",padding:"3px 8px",border:"1px solid #1D9BF0",borderRadius:4}}>𝕏</a>
+        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#000",borderRadius:6}}>𝕏</a>
       <a href={`https://www.facebook.com/sharer/sharer.php?u=${url}`} target="_blank" rel="noopener noreferrer"
-        style={{fontSize:11,color:"#1877F2",fontWeight:600,textDecoration:"none",padding:"3px 8px",border:"1px solid #1877F2",borderRadius:4}}>FB</a>
+        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#1877F2",borderRadius:6}}>Facebook</a>
       <a href={`https://wa.me/?text=${text}%20${url}`} target="_blank" rel="noopener noreferrer"
-        style={{fontSize:11,color:"#25D366",fontWeight:600,textDecoration:"none",padding:"3px 8px",border:"1px solid #25D366",borderRadius:4}}>WA</a>
+        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#25D366",borderRadius:6}}>WhatsApp</a>
     </div>
   );
 }
@@ -1469,46 +1470,87 @@ function OmOssTab() {
 // ─── PARTIERNA JÄMFÖR ────────────────────────────────────────────────────────
 const JAMFOR_DATA = {
   "Ekonomi & Skatter": [
-    { fraga:"Sänka inkomstskatten",            svar:{M:"✓✓",SD:"~",KD:"~",L:"✓✓",C:"✓✓",S:"~",V:"✗",MP:"✗"} },
-    { fraga:"Förbjuda vinster i välfärden",     svar:{M:"✗",SD:"~",KD:"✗",L:"✗",C:"✗",S:"~",V:"✓✓",MP:"✓"} },
-    { fraga:"Bankskatt på övervinster",         svar:{M:"✗",SD:"✗",KD:"✗",L:"✗",C:"✗",S:"✓✓",V:"✓",MP:"✓"} },
-    { fraga:"Höja försvarsanslaget",            svar:{M:"✓✓",SD:"✓",KD:"✓",L:"✓",C:"✓",S:"✓",V:"✗",MP:"~"} },
-    { fraga:"Slopa karensavdraget",             svar:{M:"✗",SD:"~",KD:"✗",L:"✗",C:"✗",S:"✓✓",V:"✓",MP:"✓"} },
-    { fraga:"Sänka bolagsskatten",              svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓",C:"✓",S:"✗",V:"✗",MP:"✗"} },
+    { fraga:"Sänka inkomstskatten för löntagare", svar:{M:"✓✓",SD:"~",KD:"~",L:"✓✓",C:"✓✓",S:"~",V:"✗",MP:"✗"}, info:"M, L och C driver skattesänkningar aktivt. SD stöder svagt — prioriterar välfärd. S vill sänka för låg/medelinkomst men höja för de rikaste. V och MP vill använda pengarna till välfärden." },
+    { fraga:"Förbjuda vinster i skattefinansierad välfärd", svar:{M:"✗",SD:"~",KD:"✗",L:"✗",C:"✗",S:"~",V:"✓✓",MP:"✓"}, info:"V driver vinstförbud aktivt som sin tydligaste profilfråga. MP stöder. S vill reglera men inte totalförbjuda. Högerpartierna vill ha valfrihet med kvalitetskrav." },
+    { fraga:"Bankskatt på bankernas övervinster", svar:{M:"✗",SD:"✗",KD:"✗",L:"✗",C:"✗",S:"✓✓",V:"✓",MP:"✓"}, info:"S, V och MP driver bankskatt aktivt. S vill förlänga tillfällig bankskatt för att finansiera välfärden. Hela högerblocket inklusive SD motsätter sig." },
+    { fraga:"Höja försvarsanslaget", svar:{M:"✓✓",SD:"✓",KD:"✓",L:"✓",C:"✓",S:"✓",V:"✗",MP:"~"}, info:"Bred majoritet stöder ökat försvar efter Rysslands invasion. V är emot av antimilitaristiska skäl. MP stöder viss upprustning men är ambivalenta." },
+    { fraga:"Slopa karensavdraget", svar:{M:"✗",SD:"~",KD:"✗",L:"✗",C:"✗",S:"✓✓",V:"✓",MP:"✓"}, info:"S vill slopa karensavdraget — rättvisefråga för vård- och omsorgspersonal. V och MP stöder. Högerblocket anser det ökar sjukfrånvaron." },
+    { fraga:"Sänka bolagsskatten", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓",C:"✓",S:"✗",V:"✗",MP:"✗"}, info:"M driver sänkning till EU:s mest konkurrenskraftiga nivå. SD avviker från övriga högerpartier — emot av nationalistiska skäl. Vänsterblocket vill ha oförändrad eller högre bolagsskatt." },
   ],
-  "Migration": [
-    { fraga:"Kraftigt minska invandringen",     svar:{M:"✓✓",SD:"✓✓",KD:"~",L:"✗",C:"✗",S:"~",V:"✗",MP:"✗"} },
-    { fraga:"Politik för återvandring",         svar:{M:"~",SD:"✓✓",KD:"~",L:"✗",C:"✗",S:"✗",V:"✗",MP:"✗"} },
-    { fraga:"Krav på språk/arbete för PUT",     svar:{M:"✓✓",SD:"✓✓",KD:"✓",L:"✓",C:"✓",S:"✓",V:"✗",MP:"✗"} },
-    { fraga:"Fler kvotflyktingar via UNHCR",    svar:{M:"✗",SD:"✗",KD:"~",L:"✓",C:"✓",S:"~",V:"✓",MP:"✓"} },
+  "Migration & Integration": [
+    { fraga:"Kraftigt minska den totala invandringen", svar:{M:"✓✓",SD:"✓✓",KD:"~",L:"✗",C:"✗",S:"~",V:"✗",MP:"✗"}, info:"M och SD har drivit igenom lägsta asylmottagning på 40 år. KD vill ha selektiv invandring. L och C värnar humanitet och arbetskraftsinvandring. S är ambivalent." },
+    { fraga:"Politik för frivillig återvandring", svar:{M:"~",SD:"✓✓",KD:"~",L:"✗",C:"✗",S:"✗",V:"✗",MP:"✗"}, info:"SD driver aktivt återvandring med ekonomiska incitament. Bidraget höjt till 350 000 kr/vuxen 2026 (max 500 000 kr för par) med SD:s stöd. M och KD är reserverade. Övriga avvisar." },
+    { fraga:"Utöka möjligheterna till arbetskraftsinvandring", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"~",V:"✗",MP:"~"}, info:"M och L driver aktivt kompetensförsörjning. C stöder. SD är emot av nationalistiska skäl. V är emot pga risk för lönedumpning." },
+    { fraga:"Krav på språk och arbete för permanent uppehållstillstånd", svar:{M:"✓✓",SD:"✓✓",KD:"✓",L:"✓",C:"✓",S:"✓",V:"✗",MP:"✗"}, info:"Bred enighet om integrationskrav inklusive S. V och MP anser kraven riskerar utesluta utsatta grupper." },
+    { fraga:"Ta emot fler kvotflyktingar via UNHCR", svar:{M:"✗",SD:"✗",KD:"~",L:"✓",C:"✓",S:"~",V:"✓",MP:"✓"}, info:"L, C, V och MP stöder fler kvotflyktingar. M och SD vill hålla nere total invandring. KD är öppna men vill begränsa totalt. S är ambivalent." },
   ],
   "Klimat & Energi": [
-    { fraga:"Bygga ny kärnkraft",               svar:{M:"✓✓",SD:"✓",KD:"✓✓",L:"✓",C:"~",S:"~",V:"✗",MP:"✗"} },
-    { fraga:"Bindande klimatlag",               svar:{M:"✗",SD:"✗",KD:"✗",L:"~",C:"✓",S:"~",V:"✓✓",MP:"✓✓"} },
-    { fraga:"Sänka drivmedelsskatten",          svar:{M:"✓✓",SD:"✓✓",KD:"✓",L:"~",C:"~",S:"~",V:"✗",MP:"✗"} },
-    { fraga:"Satsa på sol och vindkraft",       svar:{M:"~",SD:"~",KD:"✗",L:"~",C:"✓",S:"~",V:"✓✓",MP:"✓✓"} },
+    { fraga:"Bygga ny kärnkraft (nybyggnation av reaktorer)", svar:{M:"✓✓",SD:"✓",KD:"✓✓",L:"✓",C:"~",S:"~",V:"✗",MP:"✗"}, info:"M och KD driver aktivt — KD:s Busch är energiminister och partiets profilfråga. SD och L stöder. C är formellt öppen men driver det inte aktivt. V och MP kategoriskt emot." },
+    { fraga:"Bindande klimatlag med hårda utsläppsmål", svar:{M:"✗",SD:"✗",KD:"✗",L:"~",C:"✓",S:"~",V:"✓✓",MP:"✓✓"}, info:"MP och V driver aktivt. C stöder. L driver klimat via EU-samarbete och är ambivalent till nationell lag. M och SD prioriterar sänkta energikostnader framför klimatreglering." },
+    { fraga:"Sänka drivmedelsskatten", svar:{M:"✓✓",SD:"✓✓",KD:"✓",L:"~",C:"~",S:"~",V:"✗",MP:"✗"}, info:"Tidöregeringen har sänkt drivmedelsskatten. SD har drivit detta hårdast. V och MP vill tvärtom höja koldioxidskatten på fossila bränslen." },
+    { fraga:"Kraftigt utöka järnvägsinvesteringarna", svar:{M:"~",SD:"~",KD:"~",L:"✓",C:"✓",S:"✓✓",V:"✓",MP:"✓✓"}, info:"MP och S driver aktivt. C, V och L stöder. Högerblocket stöder järnväg men prioriterar inte lika tydligt framför vägar." },
+    { fraga:"Satsa på sol och vindkraft som primär energikälla", svar:{M:"~",SD:"~",KD:"✗",L:"~",C:"✓",S:"~",V:"✓✓",MP:"✓✓"}, info:"MP och V driver sol/vind som primär energistrategi — tydlig kontrast mot Tidöregeringens kärnkraftfokus. C stöder. KD driver aktivt emot och väljer kärnkraft." },
   ],
   "Utrikes & Försvar": [
-    { fraga:"Sverige kvar i NATO",              svar:{M:"✓✓",SD:"✓✓",KD:"✓✓",L:"✓✓",C:"✓✓",S:"✓✓",V:"✗",MP:"~"} },
-    { fraga:"Ökat EU-samarbete",                svar:{M:"~",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"~",V:"~",MP:"~"} },
+    { fraga:"Sverige ska vara kvar i NATO", svar:{M:"✓✓",SD:"✓✓",KD:"✓✓",L:"✓✓",C:"✓✓",S:"✓✓",V:"✗",MP:"~"}, info:"Fullständig enighet om NATO-medlemskapet utom V som är kategoriskt emot och MP som stöder med reservationer." },
+    { fraga:"Öka försvarsanslaget till minst 3% av BNP", svar:{M:"✓✓",SD:"✓",KD:"✓",L:"✓",C:"✓",S:"~",V:"✗",MP:"~"}, info:"M driver aktivt mot 3%-målet. SD, KD, L och C stöder ökningar. S stöder ökningar men har inte specifikt drivit 3%-målet. V emot militarism." },
+    { fraga:"Stöd till Ukraina (militärt och ekonomiskt)", svar:{M:"✓✓",SD:"✓",KD:"✓✓",L:"✓✓",C:"✓✓",S:"✓✓",V:"~",MP:"✓"}, info:"Bred majoritet för stöd till Ukraina. V stöder humanitärt men är mer restriktiv kring militärt stöd. SD har intagit mer avvaktande position vid olika tillfällen." },
+    { fraga:"Ökat EU-samarbete", svar:{M:"~",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"~",V:"~",MP:"~"}, info:"L driver aktivt EU-samarbete som sin tydligaste utrikespolitiska profilfråga. C stöder. SD är emot fördjupat EU-samarbete. V är EU-kritiska men inte för utträde." },
   ],
-  "Sjukvård": [
-    { fraga:"Kraftigt öka sjukvårdsresurserna", svar:{M:"~",SD:"~",KD:"~",L:"~",C:"~",S:"✓✓",V:"✓✓",MP:"✓"} },
-    { fraga:"Tillåta privata aktörer",          svar:{M:"✓✓",SD:"~",KD:"✓",L:"✓",C:"✓",S:"~",V:"✗",MP:"✗"} },
+  "Sjukvård & Välfärd": [
+    { fraga:"Kraftigt öka resurserna till sjukvården", svar:{M:"~",SD:"~",KD:"~",L:"~",C:"~",S:"✓✓",V:"✓✓",MP:"✓"}, info:"S och V driver kraftiga satsningar. S:s egna beräkningar anger betydligt mer resurser än regeringen. Högerblocket prioriterar effektiviseringar och privata alternativ." },
+    { fraga:"Tillåta privata aktörer i sjukvården", svar:{M:"✓✓",SD:"~",KD:"✓",L:"✓",C:"✓",S:"~",V:"✗",MP:"✗"}, info:"Högerblocket värnar valfrihet och privata alternativ med kvalitetskrav. V och MP vill prioritera offentlig vård. S vill reglera men inte förbjuda." },
+    { fraga:"Inflationssäkra statsbidragen till kommuner och regioner", svar:{M:"✗",SD:"~",KD:"~",L:"~",C:"~",S:"✓✓",V:"✓",MP:"✓"}, info:"S vill automatiskt räkna upp statsbidragen med inflationen för att stoppa nedskärningar i välfärden. M vill bevara budgetdisciplin utan automatik." },
+    { fraga:"Stärka äldreomsorgen med fler anställda", svar:{M:"~",SD:"✓✓",KD:"✓✓",L:"~",C:"~",S:"✓✓",V:"✓",MP:"✓"}, info:"KD, SD och S driver frågan aktivt. V och MP stöder kraftiga satsningar. M, L och C stöder stärkt äldreomsorg men har inte drivit lika specifika förslag." },
   ],
-  "Skola": [
-    { fraga:"Förstatliga skolan",               svar:{M:"~",SD:"✓✓",KD:"~",L:"~",C:"✗",S:"✓✓",V:"✓",MP:"~"} },
-    { fraga:"Begränsa friskolor",               svar:{M:"✗",SD:"✗",KD:"✗",L:"✗",C:"✗",S:"~",V:"✓✓",MP:"✓"} },
+  "Skola & Utbildning": [
+    { fraga:"Statlig styrning av skolan (förstatligande)", svar:{M:"~",SD:"✓✓",KD:"~",L:"~",C:"✗",S:"✓✓",V:"✓",MP:"~"}, info:"S och SD driver förstatligande för att utjämna kvalitetsskillnader. C är tydligt emot — värnar kommunalt självbestämmande. M, KD och L har inte drivit frågan aktivt." },
+    { fraga:"Kraftigt öka resurserna till skola och förskola", svar:{M:"~",SD:"~",KD:"~",L:"✓✓",C:"~",S:"✓✓",V:"✓✓",MP:"✓"}, info:"L har skolan som sin tydligaste profilfråga och driver höjda lärarlöner aktivt. S och V driver kraftiga satsningar. M, SD och KD stöder men inte i samma omfattning." },
+    { fraga:"Begränsa friskolornas etableringsrätt", svar:{M:"✗",SD:"✗",KD:"✗",L:"✗",C:"✗",S:"~",V:"✓✓",MP:"✓"}, info:"V och MP vill begränsa friskolor aktivt. Övriga värnar det fria skolvalet. S är delat — vill reglera och stoppa överkompensation men inte begränsa etableringsrätten." },
+    { fraga:"Stoppa överkompensation till friskolor", svar:{M:"✗",SD:"~",KD:"✗",L:"✗",C:"✗",S:"✓✓",V:"✓✓",MP:"✓"}, info:"S vill stoppa vad de kallar överkompensation till friskolor. V och MP stöder och vill gå längre. Högerblocket ser det som att underminera friskolesystemet." },
   ],
-  "Kriminalitet": [
-    { fraga:"Skärpa straffen för gängbrott",    svar:{M:"✓✓",SD:"✓✓",KD:"✓✓",L:"✓",C:"~",S:"✓✓",V:"✗",MP:"✗"} },
-    { fraga:"Maffialag mot gängens ekonomi",    svar:{M:"✓",SD:"✓",KD:"✓",L:"~",C:"~",S:"✓✓",V:"~",MP:"~"} },
+  "Kriminalitet & Rättsväsende": [
+    { fraga:"Skärpa straffen för gängbrott och grova våldsbrott", svar:{M:"✓✓",SD:"✓✓",KD:"✓✓",L:"✓",C:"~",S:"✓✓",V:"✗",MP:"✗"}, info:"Bred majoritet för straffskärpningar inklusive S som kräver maffialag. V och MP föredrar sociala insatser och avhopparprogram." },
+    { fraga:"Maffialag mot gängens ekonomi och penningtvätt", svar:{M:"✓",SD:"✓",KD:"✓",L:"~",C:"~",S:"✓✓",V:"~",MP:"~"}, info:"S driver aktivt maffialagstiftning — distinkt ansats mot att angripa gängens ekonomi snarare än bara skärpa straff. M, SD och KD stöder. L och C positiva men avvaktande." },
+    { fraga:"Utöka polisens befogenheter mot organiserad brottslighet", svar:{M:"✓✓",SD:"✓✓",KD:"✓✓",L:"~",C:"~",S:"✓✓",V:"✗",MP:"✗"}, info:"M, SD, KD och S driver aktivt. L och C stöder men mer försiktiga kring integritetsfrågor. V och MP oroliga för integritetsintrång." },
+    { fraga:"Anonyma vittnen i rättegångar", svar:{M:"✓",SD:"✓",KD:"✓✓",L:"~",C:"~",S:"~",V:"✗",MP:"✗"}, info:"KD driver anonyma vittnen starkast. Förslaget har mött rättssäkerhetskritik från bl.a. Civil Rights Defenders. L, C och S är avvaktande. V och MP emot." },
+    { fraga:"Prioritera förebyggande insatser mot gängrekrytering", svar:{M:"~",SD:"✗",KD:"~",L:"~",C:"~",S:"✓",V:"✓✓",MP:"✓✓"}, info:"V och MP driver förebyggande insatser aktivt. S kombinerar hårda straff med förebyggande. SD ser hårdare straff och utvisning som primär lösning." },
   ],
-  "Bostäder": [
-    { fraga:"Marknadshyror i nyproduktion",     svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"✗",V:"✗",MP:"✗"} },
-    { fraga:"Subventionera hyresrätter",        svar:{M:"✗",SD:"~",KD:"~",L:"~",C:"~",S:"✓✓",V:"✓✓",MP:"✓"} },
+  "Bostäder & Hyresmarknad": [
+    { fraga:"Marknadshyror i nyproduktion", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"✗",V:"✗",MP:"✗"}, info:"M och L driver aktivt marknadshyror. C stöder. SD avviker tydligt från övriga högerpartier — vill bevara bruksvärdessystemet. S, V och MP vill skydda hyresgäster." },
+    { fraga:"Subventionera nyproduktion av hyresrätter", svar:{M:"✗",SD:"~",KD:"~",L:"~",C:"~",S:"✓✓",V:"✓✓",MP:"✓"}, info:"S och V driver aktivt statliga investeringsbidrag för hyresrätter. MP stöder. Högerblocket föredrar marknadsdriven produktion. M emot." },
+    { fraga:"Förenkla och snabba på bygglovsprocessen", svar:{M:"✓✓",SD:"~",KD:"✓",L:"✓",C:"✓✓",S:"✓",V:"~",MP:"~"}, info:"M och C driver aktivt avreglering. KD, L och S stöder. V och MP stöder enklare process men vill behålla miljökrav." },
+    { fraga:"Reformera hyreslagen", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"✗",V:"✗",MP:"✗"}, info:"M och L vill ha marknadshyror och reformerad hyreslag. SD är emot — avviker från övriga högerpartier av nationalistiska skäl. Vänsterblocket vill skydda hyresgäster." },
+  ],
+  "Demokrati & Rättsstat": [
+    { fraga:"Göra det svårare att ändra grundlagen", svar:{M:"~",SD:"✗",KD:"~",L:"~",C:"✓✓",C:"✓✓",S:"~",V:"~",MP:"✓"}, info:"C och MP driver aktivt stärkt grundlagsskydd. Civil Rights Defenders lyfter detta som positivt för demokratin. SD skeptisk till begränsningar av majoritetsdemokratin." },
+    { fraga:"Stärka domstolarnas oberoende", svar:{M:"~",SD:"✗",KD:"~",L:"✓✓",C:"✓✓",S:"~",V:"~",MP:"~"}, info:"C och L prioriterar oberoende domstolar som demokratisk grundsten. SD har uttryckt skepsis mot domstolar som upplevs motarbeta folkets vilja." },
+    { fraga:"Stödja oberoende medier och pressfrihet", svar:{M:"~",SD:"~",KD:"~",L:"✓✓",C:"✓",S:"~",V:"~",MP:"✓"}, info:"L, C och MP driver pressfrihet och stöd till oberoende medier aktivt. L har detta som profilfråga. SD har vid flera tillfällen kritiserat etablerade medier." },
+  ],
+  "Arbetsmarknad": [
+    { fraga:"Stärka fackens inflytande och kollektivavtalen", svar:{M:"✗",SD:"~",KD:"✗",L:"✗",C:"✗",S:"✓✓",V:"✓✓",MP:"~"}, info:"S och V värnar den svenska modellen med starka fack. SD är mer positiva till arbetsrättsskydd än övriga högerpartier — en avvikelse. M, L och C vill ha mer individuella avtal." },
+    { fraga:"6-timmarsdag med bibehållen lön", svar:{M:"✗",SD:"✗",KD:"✗",L:"✗",C:"✗",S:"✗",V:"✓✓",MP:"~"}, info:"V driver 6-timmarsdag som jämställdhets- och hälsofråga. MP är öppna men driver det inte aktivt. Samtliga övriga partier anser det skadar konkurrenskraften." },
+    { fraga:"Försvaga arbetsrätten (underlätta uppsägningar)", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓",C:"✓",S:"✗",V:"✗",MP:"✗"}, info:"M, L och C vill ha mer flexibel arbetsrätt. SD är ovanligt i högerblocket — vill bevara anställningsskyddet. S och V värnar LAS." },
   ],
 };
+
+const REGERINGSFRAGEN = [
+  { block:"Högerblocket — M, SD, KD, L", color:"#52AEFF", punkter:[
+    "I mars 2026 meddelade M och SD att de vill bilda en gemensam regering med KD och L — Ulf Kristersson som statsministerkandidat.",
+    "SD kräver ministerposter och proportionerligt inflytande i förhållande till partiets storlek.",
+    "L meddelade mars 2026 att de öppnar för att sitta i samma regering som SD — en kontroversiell omsvängning som skapade intern diskussion.",
+  ]},
+  { block:"Centerpartiet — mittenposition", color:"#009933", punkter:[
+    "C positionerar sig som mittenparti och är skeptisk till nära samarbete med SD.",
+    "Har historiskt samarbetat med både höger- och vänsterblocket.",
+  ]},
+  { block:"Vänsterblocket — S, V, MP", color:"#EE2020", punkter:[
+    "S vill leda en ny regering med Magdalena Andersson som statsministerkandidat.",
+    "V:s kongress 2026 antog en röd linje: V kräver ministerposter i en S-ledd regering — inte bara stödja utifrån.",
+    "Hur hårt V:s krav drivs i praktiken är föremål för intern diskussion beroende på mandatläget.",
+    "MP förväntas stödja ett vänsterblock.",
+  ]},
+];
 
 function JamforSymbol({ val }) {
   const map = {"✓✓":{bg:"#DCFCE7",color:"#16A34A",text:"✓✓"},"✓":{bg:"#D1FAE5",color:"#059669",text:"✓"},"✗":{bg:"#FEE2E2",color:"#DC2626",text:"✗"},"~":{bg:"#FEF9C3",color:"#D97706",text:"~"}};
@@ -1518,39 +1560,123 @@ function JamforSymbol({ val }) {
 
 function PartierJamforTab() {
   const [activeKat,setActiveKat]=useState(Object.keys(JAMFOR_DATA)[0]);
+  const [activeView,setActiveView]=useState("tabell"); // tabell | parti | regering
+  const [activePart,setActivePart]=useState("M");
   const pids=["M","SD","KD","L","C","S","V","MP"];
+  const mobile=useIsMobile();
+
   return(
     <div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:8}}>Partierna jämför</div>
-      <div style={{fontSize:14,color:GRAY,marginBottom:8}}>✓✓=driver aktivt · ✓=stöder · ✗=emot · ~=delvis</div>
-      <div style={{marginBottom:20}}><a href="/partistandpunkter_2026_v7.pdf" download style={{color:BLUE,fontWeight:600,fontSize:13}}>⬇ Ladda ner fullständig valguide (PDF)</a></div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:20}}>
-        {Object.keys(JAMFOR_DATA).map(kat=>(
-          <button key={kat} onClick={()=>setActiveKat(kat)}
-            style={{background:activeKat===kat?NAVY:"#fff",color:activeKat===kat?"#fff":"#374151",border:`1px solid ${activeKat===kat?NAVY:"#E5E7EB"}`,borderRadius:20,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>
-            {kat}
+      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:4}}>Partierna jämför</div>
+      <div style={{fontSize:13,color:GRAY,marginBottom:16}}>Jämför partiernas ståndpunkter fråga för fråga. ✓✓=driver aktivt · ✓=stöder · ✗=emot · ~=delvis/villkorat</div>
+
+      {/* Vy-väljare */}
+      <div style={{display:"flex",gap:8,marginBottom:20,flexWrap:"wrap"}}>
+        {[["tabell","📊 Jämförelsetabell"],["parti","🏛️ Partivy"],["regering","⚖️ Regeringsfrågan"]].map(([id,label])=>(
+          <button key={id} onClick={()=>setActiveView(id)}
+            style={{background:activeView===id?NAVY:"#fff",color:activeView===id?"#fff":"#374151",border:`1px solid ${activeView===id?NAVY:"#E5E7EB"}`,borderRadius:20,padding:"8px 18px",fontSize:13,fontWeight:600,cursor:"pointer"}}>
+            {label}
           </button>
         ))}
+        <a href="/partistandpunkter_2026_v7.pdf" download style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,fontSize:12,color:BLUE,fontWeight:600,textDecoration:"none",padding:"8px 14px",border:`1px solid ${BLUE}`,borderRadius:20}}>⬇ PDF-guide</a>
       </div>
-      <div style={{overflowX:"auto"}}>
-        <table style={{width:"100%",borderCollapse:"collapse",minWidth:560}}>
-          <thead>
-            <tr>
-              <th style={{padding:"10px 12px",textAlign:"left",background:NAVY,color:"#fff",fontSize:13,minWidth:180}}>Fråga</th>
-              {pids.map(pid=>{const p=gp(pid);return(<th key={pid} style={{padding:"8px",textAlign:"center",background:p?.bg||NAVY,minWidth:50}}><span style={{fontSize:11,fontWeight:800,color:p?.color||"#fff"}}>{p?.short}</span></th>);})}
-            </tr>
-          </thead>
-          <tbody>
-            {JAMFOR_DATA[activeKat].map((row,i)=>(
-              <tr key={i} style={{background:i%2===0?"#fff":"#F9FAFB"}}>
-                <td style={{padding:"10px 12px",fontSize:13,color:NAVY,borderBottom:"1px solid #E5E7EB"}}>{row.fraga}</td>
-                {pids.map(pid=>(<td key={pid} style={{padding:"6px",textAlign:"center",borderBottom:"1px solid #E5E7EB"}}><JamforSymbol val={row.svar[pid]||"~"}/></td>))}
-              </tr>
+
+      {/* JÄMFÖRELSETABELL */}
+      {activeView==="tabell"&&(
+        <div>
+          <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:20}}>
+            {Object.keys(JAMFOR_DATA).map(kat=>(
+              <button key={kat} onClick={()=>setActiveKat(kat)}
+                style={{background:activeKat===kat?NAVY:"#fff",color:activeKat===kat?"#fff":"#374151",border:`1px solid ${activeKat===kat?NAVY:"#E5E7EB"}`,borderRadius:20,padding:"6px 12px",fontSize:11,fontWeight:600,cursor:"pointer"}}>
+                {kat}
+              </button>
             ))}
-          </tbody>
-        </table>
-      </div>
-      <div style={{fontSize:11,color:GRAY,marginTop:12}}>Baserat på partiprogram maj 2026. <a href="/partistandpunkter_2026_v7.pdf" download style={{color:BLUE}}>Fullständig PDF med källhänvisningar</a>.</div>
+          </div>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",minWidth:560}}>
+              <thead>
+                <tr>
+                  <th style={{padding:"10px 12px",textAlign:"left",background:NAVY,color:"#fff",fontSize:13,minWidth:180}}>Fråga</th>
+                  {pids.map(pid=>{const p=gp(pid);return(<th key={pid} style={{padding:"8px",textAlign:"center",background:p?.bg||NAVY,minWidth:48}}><span style={{fontSize:11,fontWeight:800,color:p?.color||"#fff"}}>{p?.short}</span></th>);})}
+                </tr>
+              </thead>
+              <tbody>
+                {JAMFOR_DATA[activeKat].map((row,i)=>(
+                  <>
+                  <tr key={i} style={{background:i%2===0?"#fff":"#F9FAFB"}}>
+                    <td style={{padding:"10px 12px",fontSize:13,color:NAVY,fontWeight:500,borderBottom:row.info?"none":"1px solid #E5E7EB"}}>{row.fraga}</td>
+                    {pids.map(pid=>(<td key={pid} style={{padding:"6px",textAlign:"center",borderBottom:row.info?"none":"1px solid #E5E7EB"}}><JamforSymbol val={row.svar[pid]||"~"}/></td>))}
+                  </tr>
+                  {row.info&&(
+                    <tr key={`${i}-info`} style={{background:i%2===0?"#fff":"#F9FAFB"}}>
+                      <td colSpan={9} style={{padding:"0 12px 10px",fontSize:11,color:GRAY,lineHeight:1.6,borderBottom:"1px solid #E5E7EB",fontStyle:"italic"}}>{row.info}</td>
+                    </tr>
+                  )}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* PARTIVY */}
+      {activeView==="parti"&&(
+        <div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:20}}>
+            {pids.map(pid=>{const p=gp(pid);return(
+              <button key={pid} onClick={()=>setActivePart(pid)}
+                style={{background:activePart===pid?p?.bg:"#fff",color:activePart===pid?p?.color:"#374151",border:`2px solid ${activePart===pid?p?.bg:"#E5E7EB"}`,borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                {p?.short} {p?.name}
+              </button>
+            );})}
+          </div>
+          {Object.entries(JAMFOR_DATA).map(([kat,fragor])=>(
+            <div key={kat} style={{marginBottom:16}}>
+              <div style={{background:NAVY,color:"#fff",fontWeight:700,fontSize:12,padding:"8px 12px",borderRadius:"8px 8px 0 0"}}>{kat}</div>
+              {fragor.map((row,i)=>{
+                const val=row.svar[activePart]||"~";
+                const symMap={"✓✓":{bg:"#DCFCE7",color:"#16A34A",label:"Driver aktivt"},"✓":{bg:"#D1FAE5",color:"#059669",label:"Stöder"},"✗":{bg:"#FEE2E2",color:"#DC2626",label:"Emot"},"~":{bg:"#FEF9C3",color:"#D97706",label:"Delvis/Villkorat"}};
+                const s=symMap[val]||symMap["~"];
+                return(
+                  <div key={i} style={{background:i%2===0?"#fff":"#F9FAFB",padding:"10px 12px",borderLeft:"1px solid #E5E7EB",borderRight:"1px solid #E5E7EB",borderBottom:"1px solid #E5E7EB"}}>
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+                      <div style={{fontSize:13,color:NAVY}}>{row.fraga}</div>
+                      <div style={{background:s.bg,color:s.color,fontWeight:700,fontSize:11,borderRadius:6,padding:"3px 10px",whiteSpace:"nowrap"}}>{val} {s.label}</div>
+                    </div>
+                    {row.info&&<div style={{fontSize:11,color:GRAY,marginTop:4,lineHeight:1.5,fontStyle:"italic"}}>{row.info}</div>}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* REGERINGSFRÅGAN */}
+      {activeView==="regering"&&(
+        <div>
+          <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,marginBottom:16}}>
+            <div style={{fontSize:13,color:GRAY,lineHeight:1.7}}>
+              Regeringsfrågan är en strategisk förutsättning — inte en sakpolitisk fråga. Den avgör vilka partier som kan bilda regering efter valet 13 september 2026.
+              Informationen nedan speglar kända positioner per maj 2026 och kan förändras under valrörelsen.
+            </div>
+          </div>
+          {REGERINGSFRAGEN.map((block,i)=>(
+            <div key={i} style={{marginBottom:16,borderRadius:12,overflow:"hidden",border:"1px solid #E5E7EB"}}>
+              <div style={{background:block.color,padding:"12px 16px"}}>
+                <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#fff"}}>{block.block}</div>
+              </div>
+              {block.punkter.map((p,j)=>(
+                <div key={j} style={{display:"flex",gap:12,padding:"10px 16px",background:j%2===0?"#fff":"#F9FAFB",borderTop:"1px solid #E5E7EB",alignItems:"flex-start"}}>
+                  <span style={{color:GOLD,fontWeight:700,flexShrink:0}}>•</span>
+                  <span style={{fontSize:13,color:"#374151",lineHeight:1.6}}>{p}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -1785,7 +1911,10 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
 
   if(phase==="leaderboard") return(
     <div style={{maxWidth:480,margin:"0 auto"}}>
-      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,marginBottom:4}}>🏆 Topplistan — Vecka {getWeekNumber()}</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY}}>🏆 Topplistan — Vecka {getWeekNumber()}</div>
+        <button onClick={()=>{setPhase("info");if(onResetPhase)onResetPhase();}} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>← Tillbaka</button>
+      </div>
       <div style={{fontSize:13,color:GRAY,marginBottom:20}}>{weekCount} personer har gjort veckans quiz</div>
       {leaderboard.length===0?<div style={{textAlign:"center",padding:32,color:GRAY}}>Ingen har gjort quizet än!</div>:(
         <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,overflow:"hidden"}}>
@@ -1811,7 +1940,9 @@ function QuizPage() {
   return(
     <div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
-        <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Veckans politiska quiz</div>
+        <button onClick={()=>setShowLeaderboard(false)} style={{background:"none",border:"none",cursor:"pointer",padding:0,textAlign:"left"}}>
+          <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Veckans politiska quiz</div>
+        </button>
         <button onClick={()=>setShowLeaderboard(true)}
           style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"8px 16px",fontSize:13,fontWeight:700,cursor:"pointer"}}>
           🏆 Topplistan
@@ -1839,7 +1970,10 @@ function HomePage({ articles, onTabChange, loading }) {
               <div key={f.t} style={{flex:1}}><div style={{fontSize:22,marginBottom:4}}>{f.icon}</div><div style={{fontSize:13,fontWeight:700,color:NAVY,marginBottom:2}}>{f.t}</div><div style={{fontSize:11,color:GRAY,lineHeight:1.4}}>{f.d}</div></div>
             ))}
           </div>
-          <button onClick={()=>onTabChange("nyheter")} style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"14px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Senaste nyheterna →</button>
+          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
+            <button onClick={()=>onTabChange("quiz")} style={{background:"#7F1D1D",color:"#fff",border:"none",borderRadius:8,padding:"14px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>🧠 Veckans quiz →</button>
+            <button onClick={()=>onTabChange("nyheter")} style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"14px 28px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Senaste nyheterna →</button>
+          </div>
         </div>
         {!mobile&&top[0]&&(
           <div style={{position:"relative",borderRadius:16,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.15)",cursor:"pointer"}} onClick={()=>openArticle(top[0])}>
@@ -1864,11 +1998,11 @@ function HomePage({ articles, onTabChange, loading }) {
       </div>
       {loading ? (
         <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(3,1fr)",gap:20,marginBottom:56}}>
-          {[1,2,3,4].map(i=><SkeletonCard key={i}/>)}
+          {[1,2,3].map(i=><SkeletonCard key={i}/>)}
         </div>
       ) : top.length > 0 ? (
         <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(3,1fr)",gap:20,marginBottom:56}}>
-          {top.slice(1,5).map(a=><MedCard key={a.id} article={a}/>)}
+          {top.slice(1,4).map(a=><MedCard key={a.id} article={a}/>)}
         </div>
       ) : (
         <EmptyState text="Hämtar nyheter..."/>
@@ -1878,44 +2012,34 @@ function HomePage({ articles, onTabChange, loading }) {
       {/* SENASTE OPINION */}
       <div style={{marginBottom:40}}>
         <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
-          <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Senaste opinionsmätning</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Senaste opinionsmätningen</div>
           <button onClick={()=>onTabChange("opinion")} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>Visa alla →</button>
         </div>
-        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:mobile?"16px":"24px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:16}}>
-            <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{POLLS_DATA_HOME[0].datum}</div>
-            <div style={{fontSize:11,color:GRAY}}>Källa: {POLLS_DATA_HOME[0].källa}</div>
-          </div>
-          <div style={{display:"flex",alignItems:"flex-end",gap:mobile?4:8,height:120,marginBottom:8}}>
-            {["M","SD","KD","L","C","S","V","MP"].map(pid=>{
-              const p=gp(pid),pct=POLLS_DATA_HOME[0][pid]||0;
-              const maxPct=Math.max(...["M","SD","KD","L","C","S","V","MP"].map(x=>POLLS_DATA_HOME[0][x]||0));
-              return(
-                <div key={pid} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                  <div style={{fontSize:mobile?9:11,fontWeight:700,color:NAVY}}>{pct}%</div>
-                  <div style={{width:"100%",background:p?.bg||"#ccc",borderRadius:"3px 3px 0 0",height:`${(pct/maxPct)*90}px`,minHeight:4}}/>
-                  <div style={{display:"inline-block",padding:"1px 3px",borderRadius:3,fontSize:mobile?8:10,fontWeight:700,background:p?.bg,color:p?.color}}>{p?.short}</div>
-                </div>
-              );
-            })}
-          </div>
-          <div style={{borderTop:"1px solid #E5E7EB",paddingTop:10,display:"flex",gap:16,fontSize:11,color:GRAY,flexWrap:"wrap"}}>
-            <span>Högerblocket (M+SD+KD+L): <strong style={{color:NAVY}}>{(POLLS_DATA_HOME[0].M+POLLS_DATA_HOME[0].SD+POLLS_DATA_HOME[0].KD+POLLS_DATA_HOME[0].L).toFixed(1)}%</strong></span>
-            <span>Vänsterblocket (C+S+V+MP): <strong style={{color:NAVY}}>{(POLLS_DATA_HOME[0].C+POLLS_DATA_HOME[0].S+POLLS_DATA_HOME[0].V+POLLS_DATA_HOME[0].MP).toFixed(1)}%</strong></span>
-          </div>
-        </div>
-      </div>
-
-      {/* VECKANS QUIZ - kompakt banner */}
-      <div onClick={()=>onTabChange("quiz")} style={{background:"linear-gradient(135deg,#991B1B,#DC2626)",borderRadius:14,padding:"16px 24px",marginBottom:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",gap:16}}>
-        <div style={{display:"flex",alignItems:"center",gap:16}}>
-          <span style={{fontSize:32}}>🧠</span>
-          <div>
-            <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:2}}>Veckans quiz</div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:"#fff"}}>Kan du nå topplistan? Nytt quiz varje vecka</div>
+        <div style={{display:"flex",justifyContent:"center"}}>
+          <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:"20px 28px",width:"100%",maxWidth:560}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:16}}>
+              <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{POLLS_DATA_HOME[0].datum}</div>
+              <div style={{fontSize:11,color:GRAY}}>Källa: {POLLS_DATA_HOME[0].källa}</div>
+            </div>
+            <div style={{display:"flex",alignItems:"flex-end",gap:6,height:110,marginBottom:8}}>
+              {["M","SD","KD","L","C","S","V","MP"].map(pid=>{
+                const p=gp(pid),pct=POLLS_DATA_HOME[0][pid]||0;
+                const maxPct=Math.max(...["M","SD","KD","L","C","S","V","MP"].map(x=>POLLS_DATA_HOME[0][x]||0));
+                return(
+                  <div key={pid} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
+                    <div style={{fontSize:10,fontWeight:700,color:NAVY}}>{pct}%</div>
+                    <div style={{width:"100%",background:p?.bg||"#ccc",borderRadius:"3px 3px 0 0",height:`${(pct/maxPct)*80}px`,minHeight:4}}/>
+                    <div style={{display:"inline-block",padding:"1px 3px",borderRadius:3,fontSize:9,fontWeight:700,background:p?.bg,color:p?.color}}>{p?.short}</div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{borderTop:"1px solid #E5E7EB",paddingTop:8,display:"flex",gap:12,fontSize:10,color:GRAY,flexWrap:"wrap",justifyContent:"center"}}>
+              <span>Höger (M+SD+KD+L): <strong style={{color:NAVY}}>{(POLLS_DATA_HOME[0].M+POLLS_DATA_HOME[0].SD+POLLS_DATA_HOME[0].KD+POLLS_DATA_HOME[0].L).toFixed(1)}%</strong></span>
+              <span>Vänster (C+S+V+MP): <strong style={{color:NAVY}}>{(POLLS_DATA_HOME[0].C+POLLS_DATA_HOME[0].S+POLLS_DATA_HOME[0].V+POLLS_DATA_HOME[0].MP).toFixed(1)}%</strong></span>
+            </div>
           </div>
         </div>
-        <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.4)",borderRadius:8,padding:"8px 18px",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>Spela nu →</button>
       </div>
 
       <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:20}}>Utforska politik på ditt sätt</div>
@@ -1967,7 +2091,7 @@ function HomePage({ articles, onTabChange, loading }) {
         </div>
 
         {/* Politikskola – pokal */}
-        <div style={{background:"linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("politikskola")}>
+        <div style={{background:"linear-gradient(135deg,#4C1D95 0%,#3730A3 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("politikskola")}>
           <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>🎓 Politikskolan</div>
           <div style={{fontSize:64,marginBottom:12,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))"}}>🏆</div>
           <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Är du ett politiskt geni?</div>
