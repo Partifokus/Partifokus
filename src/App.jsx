@@ -2154,18 +2154,14 @@ function NewsletterSignup({ compact }) {
     e.preventDefault();
     if(!email || !email.includes("@")) { setStatus("error"); return; }
     setStatus("loading");
-    // Mailchimp embed-form action URL — uppdatera med din URL från Mailchimp
-    // Tills vidare sparar vi i Supabase som fallback
     try {
-      await fetch(`${SUPABASE_URL}/rest/v1/newsletter_subscribers`, {
-        method: "POST",
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type":"application/json", "Prefer":"return=minimal" },
-        body: JSON.stringify({ email, subscribed_at: new Date().toISOString() })
-      });
+      // Mailchimp JSONP-submit
+      const url = `https://partifokus.us1.list-manage.com/subscribe/post-json?u=55d10e51c9fd236bbc5295eb1&id=9f60b86424&f_id=0098c5e5f0&EMAIL=${encodeURIComponent(email)}&c=?`;
+      await fetch(url, { mode: "no-cors" });
       setStatus("success");
       setEmail("");
     } catch {
-      setStatus("success"); // Visa success ändå
+      setStatus("success"); // Visa success — no-cors ger alltid "opaque" response
     }
   }
 
