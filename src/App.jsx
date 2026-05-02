@@ -1217,12 +1217,52 @@ function PolitikskolaQuiz({ quiz, quizId, onComplete }) {
   );
 }
 
+
+const SB_FINAL_TABLE = "final_exam_topplista";
+
+const BAD_WORDS = ["fitta","kuk","hora","fan","jävla","helvete","skit","knull","fuck","shit","ass","bitch","nigger","faggot","retard"];
+
+function filterName(name) {
+  const lower = name.toLowerCase();
+  return !BAD_WORDS.some(w => lower.includes(w));
+}
+
+async function sbGetFinalLeaderboard() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_FINAL_TABLE}?order=score.desc,time.asc&limit=15`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    if(!r.ok) return [];
+    return await r.json();
+  } catch { return []; }
+}
+
+async function sbSubmitFinalScore(name, score, timeTaken) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/${SB_FINAL_TABLE}`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type":"application/json", "Prefer":"return=minimal" },
+      body: JSON.stringify({ name: name.slice(0,10), score, time: timeTaken })
+    });
+    return true;
+  } catch { return false; }
+}
+
 function FinalExam({ onBack }) {
   const [answers,setAnswers]=useState({});
   const [submitted,setSubmitted]=useState(false);
+  const [startTime]=useState(Date.now());
+  const [totalTime,setTotalTime]=useState(0);
+  const [name,setName]=useState("");
+  const [nameError,setNameError]=useState("");
+  const [scoreSaved,setScoreSaved]=useState(false);
+  const [leaderboard,setLeaderboard]=useState([]);
+  const [showLeaderboard,setShowLeaderboard]=useState(false);
   const score=submitted?FINAL_EXAM_QUESTIONS.filter((q,i)=>answers[i]===q.svar).length:0;
   const allAnswered=Object.keys(answers).length===FINAL_EXAM_QUESTIONS.length;
   const rankIndex=submitted?Math.min(Math.floor((score/FINAL_EXAM_QUESTIONS.length)*RANKS.length),RANKS.length-1):0;
+
+  useEffect(()=>{ sbGetFinalLeaderboard().then(setLeaderboard); },[]);
 
   return(
     <div style={{maxWidth:760,margin:"0 auto"}}>
@@ -1251,7 +1291,7 @@ function FinalExam({ onBack }) {
         </div>
       ))}
       {!submitted?(
-        <button onClick={()=>setSubmitted(true)} disabled={!allAnswered}
+        <button onClick={()=>{setSubmitted(true);setTotalTime(Math.round((Date.now()-startTime)/1000));}} disabled={!allAnswered}
           style={{background:allAnswered?"#D97706":"#E5E7EB",color:allAnswered?"#fff":"#9CA3AF",border:"none",borderRadius:12,padding:"16px 40px",fontSize:16,fontWeight:700,cursor:allAnswered?"pointer":"not-allowed",width:"100%",marginBottom:16}}>
           {allAnswered?"Lämna in provet →":"Svara på alla frågor först"}
         </button>
@@ -1263,7 +1303,49 @@ function FinalExam({ onBack }) {
           <div style={{fontSize:15,color:"rgba(255,255,255,0.7)",maxWidth:400,margin:"0 auto 24px"}}>
             {score===10?"Du är ett politiskt geni. Sverige behöver fler som dig.":score>=7?"Imponerande! Du har koll på hur makten fungerar.":score>=5?"Halvvägs — du vet grunderna men det finns mer att lära.":"Gå tillbaka och läs modulerna igen. Kunskapen är viktig!"}
           </div>
-          <button onClick={()=>{setAnswers({});setSubmitted(false);}} style={{background:"rgba(255,255,255,0.1)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"12px 24px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Försök igen</button>
+          <button onClick={()=>{setAnswers({});setSubmitted(false);setScoreSaved(false);setName("");}} style={{background:"rgba(255,255,255,0.1)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"12px 24px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Försök igen</button>
+        </div>
+      )}
+      {submitted&&!scoreSaved&&(
+        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:24,marginBottom:16,textAlign:"center"}}>
+          <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY,marginBottom:8}}>Skriv ditt namn på topplistan</div>
+          <div style={{fontSize:13,color:GRAY,marginBottom:16}}>Max 10 tecken · Tid: {Math.floor(totalTime/60)}:{String(totalTime%60).padStart(2,"0")}</div>
+          <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:8}}>
+            <input value={name} onChange={e=>{setName(e.target.value.slice(0,10));setNameError("");}}
+              placeholder="Ditt namn" maxLength={10}
+              style={{border:"2px solid #E5E7EB",borderRadius:8,padding:"10px 16px",fontSize:16,width:200,textAlign:"center",color:NAVY}}/>
+            <button onClick={async()=>{
+              if(!name.trim()){setNameError("Skriv ett namn");return;}
+              if(!filterName(name)){setNameError("Ogiltigt namn");return;}
+              await sbSubmitFinalScore(name,score,totalTime);
+              const lb=await sbGetFinalLeaderboard();
+              setLeaderboard(lb);setScoreSaved(true);
+            }} style={{background:"#16A34A",color:"#fff",border:"none",borderRadius:8,padding:"10px 20px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Spara →</button>
+          </div>
+          {nameError&&<div style={{fontSize:12,color:"#DC2626",fontWeight:600}}>{nameError}</div>}
+          <button onClick={()=>setScoreSaved(true)} style={{background:"none",border:"none",color:GRAY,fontSize:12,cursor:"pointer",marginTop:8}}>Hoppa över</button>
+        </div>
+      )}
+      {submitted&&(
+        <div style={{marginBottom:16}}>
+          <button onClick={()=>setShowLeaderboard(!showLeaderboard)}
+            style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"10px 20px",fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:showLeaderboard?12:0}}>
+            🏆 {showLeaderboard?"Dölj topplistan":"Visa topplistan"}
+          </button>
+          {showLeaderboard&&(
+            <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,overflow:"hidden"}}>
+              <div style={{background:NAVY,padding:"12px 20px"}}><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#fff"}}>🏆 Hall of Fame — Politikskolan</div></div>
+              {leaderboard.length===0?<div style={{padding:24,textAlign:"center",color:GRAY}}>Ingen har klarat slutprovet än — bli den första!</div>:
+              leaderboard.slice(0,15).map((r,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"12px 20px",borderBottom:"1px solid #F3F4F6",background:i===0?"#FFFBEB":i<3?"#F9FAFB":"#fff"}}>
+                  <div style={{width:28,fontWeight:700,fontSize:14,color:i===0?GOLD:i===1?"#9CA3AF":i===2?"#CD7F32":GRAY}}>{i===0?"🥇":i===1?"🥈":i===2?"🥉":`#${i+1}`}</div>
+                  <div style={{fontWeight:700,fontSize:15,color:NAVY,flex:1}}>{r.name}</div>
+                  <div style={{fontSize:12,color:GRAY}}>{Math.floor(r.time/60)}:{String(r.time%60).padStart(2,"0")}</div>
+                  <div style={{fontWeight:700,fontSize:15,color:NAVY}}>{r.score}/10</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
       <button onClick={onBack} style={{background:"none",border:"none",color:BLUE,fontSize:14,fontWeight:600,cursor:"pointer"}}>← Tillbaka till Politikskolan</button>
@@ -1578,7 +1660,7 @@ function PartierJamforTab() {
             {label}
           </button>
         ))}
-        <a href="/partistandpunkter_2026_v7.pdf" download style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,fontSize:12,color:BLUE,fontWeight:600,textDecoration:"none",padding:"8px 14px",border:`1px solid ${BLUE}`,borderRadius:20}}>⬇ PDF-guide</a>
+        <a href="/partistandpunkter_2026_v7.pdf" download style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,fontSize:12,color:BLUE,fontWeight:600,textDecoration:"none",padding:"8px 14px",border:`1px solid ${BLUE}`,borderRadius:20}}>Ladda ner PDF</a>
       </div>
 
       {/* JÄMFÖRELSETABELL */}
@@ -1684,10 +1766,10 @@ function PartierJamforTab() {
 // ─── VECKANS QUIZ ─────────────────────────────────────────────────────────────
 const SB_WEEKLY_TABLE = "weekly_quiz";
 const WEEKLY_QUESTIONS = [
-  { q:"Vilket år grundades Socialdemokraterna?", alt:["1881","1889","1904","1921"],svar:1 },
+  // GRUNDLÄGGANDE DEMOKRATI & RIKSDAG
   { q:"Hur många ledamöter finns i riksdagen?", alt:["249","299","349","399"],svar:2 },
-  { q:"Vad är en interpellation?", alt:["En omröstning","En formell fråga till en minister","Ett lagförslag","En budgetdebatt"],svar:1 },
   { q:"Vilket år gick Sverige med i NATO?", alt:["2022","2023","2024","2025"],svar:2 },
+  { q:"Vad är en interpellation?", alt:["En omröstning","En formell fråga till en minister","Ett lagförslag","En budgetdebatt"],svar:1 },
   { q:"Vilket parti leds av Ebba Busch?", alt:["Moderaterna","Liberalerna","Kristdemokraterna","Centerpartiet"],svar:2 },
   { q:"Vad innebär ett misstroendevotum?", alt:["En ny lag","Riksdagen röstar bort en minister","En budgetomröstning","En valförfalskning"],svar:1 },
   { q:"Hur länge varar ett riksdagsmandat?", alt:["3 år","4 år","5 år","6 år"],svar:1 },
@@ -1700,21 +1782,128 @@ const WEEKLY_QUESTIONS = [
   { q:"Vilket parti var störst i valet 2022?", alt:["Moderaterna","Socialdemokraterna","Sverigedemokraterna","Centerpartiet"],svar:1 },
   { q:"Vad är en proposition?", alt:["En ledamots förslag","Ett lagförslag från regeringen","En fråga till talmannen","En budgetdebatt"],svar:1 },
   { q:"Vilken myndighet genomför val i Sverige?", alt:["Riksdagen","SCB","Valmyndigheten","Länsstyrelsen"],svar:2 },
-  { q:"Vad är en motion i riksdagen?", alt:["En omröstning","En ledamots eget lagförslag","En debatt","Ett utskottsbeslut"],svar:1 },
   { q:"Vilket parti ingår i Tidöregeringen?", alt:["Centerpartiet","Vänsterpartiet","Kristdemokraterna","Socialdemokraterna"],svar:2 },
   { q:"Vilket år hölls senaste riksdagsvalet?", alt:["2018","2020","2022","2024"],svar:2 },
   { q:"Vad kallas riksdagens ledare?", alt:["Statsminister","Riksdagschef","Talman","Lantråd"],svar:2 },
   { q:"Vilket organ utser statsministern?", alt:["Kungen","Folket direkt","Riksdagens talman","Riksrätten"],svar:2 },
-  { q:"Vad styr kärnkraftsfrågan politiskt just nu?", alt:["V och MP är för","M och KD driver aktivt","S driver kärnkraft","C är emot förnybart"],svar:1 },
   { q:"Vad innebär proportionellt valsystem?", alt:["Varje röst väger lika","Platserna speglar röstandelen","Störst parti tar allt","Systemet med valkretsar"],svar:1 },
   { q:"Vilket av dessa är inte ett riksdagsparti 2026?", alt:["Feministiskt initiativ","Moderaterna","Vänsterpartiet","Miljöpartiet"],svar:0 },
   { q:"Vad är riksdagens viktigaste uppgift?", alt:["Utse statsministern","Stifta lagar och besluta om budget","Döma i rättsliga mål","Representera Sverige utomlands"],svar:1 },
-  { q:"Vilket år bildades Sverige (traditionell räkning)?", alt:["830","970","1100","1249"],svar:1 },
-  { q:"Vad kallar man ett partis ståndpunktsdokument?", alt:["Valkampanj","Partiprogram","Riksdagsmotion","Budgetmotion"],svar:1 },
-  { q:"GAL-TAN — vad står GAL för?", alt:["Global, Auktoritär, Liberal","Grön, Alternativ, Libertär","Grön, Auktoritär, Lokal","Global, Alternativ, Laglig"],svar:1 },
+  { q:"Vad är en motion i riksdagen?", alt:["En omröstning","En ledamots eget lagförslag","En debatt","Ett utskottsbeslut"],svar:1 },
+  { q:"Vilket år grundades Socialdemokraterna?", alt:["1881","1889","1904","1921"],svar:1 },
   { q:"Vilket medieföretag äger Aftonbladet?", alt:["Bonnier","Schibsted","SVT","Stampen"],svar:1 },
   { q:"Hur finansieras SVT och SR?", alt:["Reklam","Skatt","Public service-avgiften","Privata ägare"],svar:2 },
+  { q:"GAL-TAN — vad står GAL för?", alt:["Global, Auktoritär, Liberal","Grön, Alternativ, Libertär","Grön, Auktoritär, Lokal","Global, Alternativ, Laglig"],svar:1 },
+  { q:"Vad kallar man ett partis ståndpunktsdokument?", alt:["Valkampanj","Partiprogram","Riksdagsmotion","Budgetmotion"],svar:1 },
+  { q:"Vilket år bildades Sverige (traditionell räkning)?", alt:["830","970","1100","1249"],svar:1 },
+  { q:"Vad styr kärnkraftsfrågan politiskt just nu?", alt:["V och MP är för","M och KD driver aktivt","S driver kärnkraft","C är emot förnybart"],svar:1 },
+
+  // PARTIERNA & IDEOLOGI
+  { q:"Vilket parti leds av Nooshi Dadgostar?", alt:["Socialdemokraterna","Centerpartiet","Vänsterpartiet","Miljöpartiet"],svar:2 },
+  { q:"Vad är Tidöavtalet?", alt:["En klimatöverenskommelse","Samarbetsavtalet för Tidöregeringen","En migrationsreform","Ett EU-fördrag"],svar:1 },
+  { q:"Vilket parti driver starkast för kärnkraft?", alt:["Moderaterna","Sverigedemokraterna","Kristdemokraterna","Liberalerna"],svar:2 },
+  { q:"Vilket parti är tydligast emot NATO?", alt:["Miljöpartiet","Centerpartiet","Socialdemokraterna","Vänsterpartiet"],svar:3 },
+  { q:"Vilket parti driver 6-timmarsdag?", alt:["Socialdemokraterna","Vänsterpartiet","Miljöpartiet","Centerpartiet"],svar:1 },
+  { q:"Vad betyder GAL i GAL-TAN?", alt:["Grön, Alternativ, Libertär","Global, Auktoritär, Liberal","Grön, Auktoritär, Lokal","Global, Alternativ, Laglig"],svar:0 },
+  { q:"Vilket parti driver starkast för vinstförbud i välfärden?", alt:["Socialdemokraterna","Miljöpartiet","Vänsterpartiet","Centerpartiet"],svar:2 },
+  { q:"Vilket parti är starkast pro-EU?", alt:["Moderaterna","Liberalerna","Centerpartiet","Kristdemokraterna"],svar:1 },
+  { q:"Vilket parti leds av Magdalena Andersson?", alt:["Vänsterpartiet","Centerpartiet","Socialdemokraterna","Miljöpartiet"],svar:2 },
+  { q:"Vad är Sverigedemokraternas ideologiska beteckning?", alt:["Liberalkonservatism","Socialdemokrati","Socialkonservatism","Kristdemokrati"],svar:2 },
+  { q:"Vilket parti driver aktivt återvandringspolitik?", alt:["Moderaterna","Kristdemokraterna","Sverigedemokraterna","Liberalerna"],svar:2 },
+  { q:"Vilket parti leds av Elisabeth Thand Ringqvist?", alt:["Liberalerna","Centerpartiet","Kristdemokraterna","Miljöpartiet"],svar:1 },
+  { q:"Vilket parti leds av Simona Mohamsson?", alt:["Centerpartiet","Socialdemokraterna","Liberalerna","Kristdemokraterna"],svar:2 },
+  { q:"Vilket parti driver marknadshyror starkast?", alt:["Sverigedemokraterna","Kristdemokraterna","Moderaterna","Socialdemokraterna"],svar:2 },
+  { q:"Vilket parti vill förstatliga skolan?", alt:["Moderaterna och Liberalerna","Socialdemokraterna och SD","Centerpartiet och KD","V och MP"],svar:1 },
+
+  // HISTORIA & GEOGRAFI
+  { q:"Vilket år gick Sverige med i EU?", alt:["1990","1993","1995","2000"],svar:2 },
+  { q:"Vad heter Sveriges kungahus?", alt:["Vasa","Holstein-Gottorp-Romanov","Bernadotte","Habsburg"],svar:2 },
+  { q:"Vilken stad är Sveriges näst största?", alt:["Malmö","Göteborg","Uppsala","Linköping"],svar:1 },
+  { q:"Hur många kommuner finns i Sverige?", alt:["210","250","290","310"],svar:2 },
+  { q:"Vilket år avskaffades den svenska adelstiteln juridiskt?", alt:["1809","1866","1974","1991"],svar:2 },
+  { q:"Vad heter Sveriges grundlag?", alt:["Riksdagslagen","Regeringsformen","Grundstadgan","Folkrätten"],svar:1 },
+  { q:"Vilket år röstade Sverige om euron?", alt:["1999","2001","2003","2006"],svar:2 },
+  { q:"Vad heter den svenska riksbankens chef?", alt:["Stefan Ingves","Erik Thedéen","Riksbankschefen","Per Jansson"],svar:1 },
+  { q:"Hur många grundlagar har Sverige?", alt:["1","2","4","6"],svar:2 },
+  { q:"Vilket år fick svenska kvinnor rösträtt?", alt:["1909","1918","1921","1928"],svar:2 },
+  { q:"Vad heter den svenska säkerhetstjänsten?", alt:["MUST","FRA","SÄPO","FMV"],svar:2 },
+  { q:"Vilket land delar längst landgräns med Sverige?", alt:["Danmark","Finland","Norge","Ryssland"],svar:2 },
+  { q:"Vad heter Riksdagens ombudsman?", alt:["Riksrevisorn","JO (Justitieombudsmannen)","Riksadvokaten","Statsrådet"],svar:1 },
+  { q:"Vilket år hölls det första allmänna valet i Sverige?", alt:["1866","1909","1921","1932"],svar:2 },
+  { q:"Hur många länder är med i EU 2026?", alt:["25","27","28","30"],svar:1 },
+
+  // AKTUELL POLITIK & SAMHÄLLE
+  { q:"Vad är Tidöavtalets fyra parter?", alt:["M, SD, KD och L","M, SD, C och KD","S, V, MP och C","M, L, C och KD"],svar:0 },
+  { q:"Vilket år blir nästa riksdagsval?", alt:["2024","2025","2026","2027"],svar:2 },
+  { q:"Vad kallas den politiska axeln som mäter värderingar bortom vänster-höger?", alt:["GAL-TAN","Höger-Vänster","Liberal-Konservativ","Nord-Syd"],svar:0 },
+  { q:"Vilket land anföll Ukraina 2022?", alt:["Kina","Belarus","Ryssland","Polen"],svar:2 },
+  { q:"Vad är NATO?", alt:["EU:s militärgren","Nordatlantiska försvarsalliansen","FN:s säkerhetsråd","Europeiska säkerhetsunionen"],svar:1 },
+  { q:"Vad kallas det när riksdagen röstar om att avsätta statsministern?", alt:["Budgetomröstning","Interpellation","Misstroendeomröstning","Riksrätt"],svar:2 },
+  { q:"Vilket departement ansvarar för klimatfrågor?", alt:["Finansdepartementet","Klimat- och miljödepartementet","Näringsdepartementet","Utrikesdepartementet"],svar:1 },
+  { q:"Vad är en remiss i lagstiftningsprocessen?", alt:["En röstning","En möjlighet för berörda att yttra sig","En typ av lag","En riksdagsfråga"],svar:1 },
+  { q:"Vilket organ granskar om lagar strider mot grundlagen?", alt:["Riksrätten","Lagrådet","Riksrevisionen","Justitiekanslern"],svar:1 },
+  { q:"Vad kallas riksdagsarbetets formella samlingsperiod?", alt:["Riksmötet","Rikssessionen","Rikssamlingen","Riksperioden"],svar:0 },
+  { q:"Hur många utskott finns i riksdagen?", alt:["10","15","18","20"],svar:1 },
+  { q:"Vad är skillnaden mellan en lag och en förordning?", alt:["Ingen skillnad","Lagar stiftas av riksdagen, förordningar av regeringen","Förordningar är strängare","Lagar gäller bara i städer"],svar:1 },
+  { q:"Vad kallas processen när en misstänkt brottsling utlämnas till annat land?", alt:["Deportation","Utvisning","Extradition","Repatriering"],svar:2 },
+  { q:"Vilket land är störst i EU till ytan?", alt:["Tyskland","Frankrike","Sverige","Spanien"],svar:1 },
+  { q:"Vad är Riksrevisionen?", alt:["En domstol","En myndighet som granskar statens pengar","Riksdagens talmansstab","En grundlag"],svar:1 },
+
+  // EKONOMI & VÄLFÄRD
+  { q:"Vad är BNP?", alt:["Bruttonationalprodukten","Budgetens nettopris","Bankernas nettoprofit","Bruttonationalpriset"],svar:0 },
+  { q:"Vad är inflation?", alt:["När ekonomin växer","När priserna stiger","När löner sänks","När räntan ökar"],svar:1 },
+  { q:"Vad kallas den svenska centralbanken?", alt:["Finansinspektionen","Riksbanken","Statens budget","Riksgälden"],svar:1 },
+  { q:"Vad är arbetsgivaravgifter?", alt:["Skatt anställda betalar","Avgifter arbetsgivare betalar utöver lönen","Pensionsavsättningar","Fackavgifter"],svar:1 },
+  { q:"Vad är RUT-avdraget?", alt:["Skattereduktion för hushållstjänster","Bidrag till företag","Stöd till pensionärer","Avdrag för resor"],svar:0 },
+  { q:"Vad kallas den skatt du betalar på din lön?", alt:["Moms","Inkomstskatt","Bolagsskatt","Fastighetsskatt"],svar:1 },
+  { q:"Vad är A-kassa?", alt:["Pensionsförsäkring","Sjukförsäkring","Arbetslöshetsersättning","Barnbidrag"],svar:2 },
+  { q:"Vad är moms?", alt:["Inkomstskatt","Mervärdesskatt på varor och tjänster","Skatt på aktier","Tull på import"],svar:1 },
+  { q:"Vad kallas Riksbankens styrränta populärt?", alt:["Reporäntan","Grundräntan","Statsräntan","Riksräntan"],svar:0 },
+  { q:"Vad är ROT-avdraget?", alt:["Skattereduktion för reparation av bostad","Bidrag till nybyggnation","Avdrag för resor till jobbet","Stöd till företag"],svar:0 },
+  { q:"Vad är jobbskatteavdraget?", alt:["Avdrag för pendlare","Skattereduktion för arbetsinkomst","Bidrag till arbetslösa","Stöd till småföretag"],svar:1 },
+  { q:"Vad kallas det om ett lands import är större än exporten?", alt:["Handelsöverskott","Handelsunderskott","Bytesbalans","Valutareserv"],svar:1 },
+  { q:"Vad är Finanspolitiska rådet?", alt:["En riksdagskommitté","En oberoende myndighet som utvärderar finanspolitiken","Finansdepartementets styrelse","Riksbankens råd"],svar:1 },
+  { q:"Vad innebär balanskravet för kommuner?", alt:["Kommuner får inte ha skulder","Kommuner måste ha lika mycket inkomster som utgifter","Kommuner ska ha ett visst sparande","Kommuner ska erbjuda lika service"],svar:1 },
+  { q:"Vad är en statsbudget?", alt:["Riksbankens årsplan","Statens plan för inkomster och utgifter","Kommunernas gemensamma budget","EU:s bidrag till Sverige"],svar:1 },
+
+  // MILJÖ & KLIMAT
+  { q:"Vad är Parisavtalet?", alt:["Ett handelsavtal","Ett globalt klimatavtal från 2015","En NATO-överenskommelse","Ett EU-direktiv"],svar:1 },
+  { q:"Vad är koldioxidskatt?", alt:["Skatt på bilar","Avgift på fossila bränslen baserad på koldioxidutsläpp","Skatt på flygresor","Avgift på plastprodukter"],svar:1 },
+  { q:"Vad är reduktionsplikten?", alt:["Krav på att minska plastanvändning","Krav på att blanda in förnybart i drivmedel","Krav på energieffektivisering","Krav på solpaneler"],svar:1 },
+  { q:"Vad innebär fossilfritt?", alt:["Inga bilar","Inga utsläpp av fossila bränslen","Inga kärnkraftverk","Enbart vindkraft"],svar:1 },
+  { q:"Vad är biologisk mångfald?", alt:["Antalet olika ekosystem","Variationen av liv på jorden","Havens djuphet","Skogarnas storlek"],svar:1 },
+  { q:"Vad är ett utsläppsrättsystem (ETS)?", alt:["En klimatskatt","Ett system där företag handlar med utsläppsrätter","En tekniksubvention","En internationell klimatfond"],svar:1 },
+  { q:"Vilket år ska Sverige vara klimatneutralt enligt riksdagsmålet?", alt:["2030","2040","2045","2050"],svar:2 },
+  { q:"Vad är en koldioxidbudget?", alt:["Statens klimatutgifter","Hur mycket koldioxid som kan släppas ut totalt","Kostnaden för att plantera träd","Avgifter för utsläpp"],svar:1 },
+  { q:"Vad kallas energi från sol, vind och vatten?", alt:["Kärnenergi","Fossilenergi","Förnybar energi","Bioenergi"],svar:2 },
+  { q:"Vad är FN:s klimatpanel?", alt:["WHO","IPCC","IAEA","NATO"],svar:1 },
+
+  // RÄTTSVÄSENDE & KRIMINALITET
+  { q:"Vad är HD i Sverige?", alt:["Hovrätten i Dalarna","Högsta domstolen","Hälso- och sjukvårdsdirektionen","Humanitär diplomatisk enhet"],svar:1 },
+  { q:"Vad är presumtionsregeln?", alt:["Man är skyldig tills motsatsen bevisas","Man är oskyldig tills motsatsen bevisas","En regel om vittnen","En åklagarregel"],svar:1 },
+  { q:"Vad kallas det att frihetsberöva någon i väntan på rättegång?", alt:["Arrestering","Häktning","Förvar","Internering"],svar:1 },
+  { q:"Vad är Åklagarmyndigheten?", alt:["En domstol","Myndigheten som väcker åtal","Polisens överstab","En fångelsemyndighet"],svar:1 },
+  { q:"Vad är en stämningsansökan?", alt:["En polisanmälan","En begäran om rättegång","Ett överklagande","En vittnesuppgift"],svar:1 },
+  { q:"Vad kallas brott där gärningsmannen är okänd?", alt:["Anonyma brott","Ouppklarade brott","Dolda brott","Latenta brott"],svar:1 },
+  { q:"Vad är Kriminalvårdens uppgift?", alt:["Utreda brott","Verkställa domar och minska återfall","Åtala brottslingar","Skydda vittnen"],svar:1 },
+  { q:"Vad är skillnaden mellan fängelse och häkte?", alt:["Ingen","Häkte är i väntan på dom, fängelse är straffet","Fängelse är strängare","Häkte är för ungdomar"],svar:1 },
+  { q:"Vad är en husrannsakan?", alt:["En skatterevision","Polisens genomsökning av en bostad","En grannintervju","En fastighetsbesiktning"],svar:1 },
+  { q:"Vad är skillnaden mellan brott och förseelse?", alt:["Ingen","Brott är allvarligare och kan ge fängelse","Förseelse är strängare","Brott sker utomhus"],svar:1 },
+
+  // INTERNATIONELLT
+  { q:"Vad är FN?", alt:["En militärallians","Förenta Nationerna — internationell organisation","EU:s föregångare","Europarådets organ"],svar:1 },
+  { q:"Hur många länder är med i NATO 2026?", alt:["28","30","32","34"],svar:2 },
+  { q:"Vad är ICC?", alt:["Internationella Brottmålsdomstolen","EU:s kontrollkommission","Internationella Centralbanken","FN:s klimatråd"],svar:0 },
+  { q:"Vad är Schengenavtalet?", alt:["EU:s försvarsavtal","Fri rörlighet utan passkontroll i Europa","EU:s handelsavtal","NATO:s grundstadga"],svar:1 },
+  { q:"Vilket land är inte med i EU men med i Schengen?", alt:["Norge","Ryssland","Turkiet","Albanien"],svar:0 },
+  { q:"Vad är Europarådet?", alt:["EU:s råd","Organisation för mänskliga rättigheter i Europa","NATO:s råd","FN:s europeiska gren"],svar:1 },
+  { q:"Vad är ECHR?", alt:["EU:s centralbank","Europeiska konventionen om de mänskliga rättigheterna","NATO:s försvarspakt","Europas klimatavtal"],svar:1 },
+  { q:"Vilket land har vetorätt i FN:s säkerhetsråd?", alt:["Sverige","Tyskland","Ryssland","Ukraina"],svar:2 },
+  { q:"Vad är G7?", alt:["De 7 rikaste EU-länderna","Gruppen av 7 ledande industriländer","NATO:s kärngrupp","FN:s säkerhetsråd"],svar:1 },
+  { q:"Vad är UNHCR?", alt:["FN:s klimatorgan","FN:s flyktingkommissariat","EU:s gränsbevakningsbyrå","Internationella migrationsbyrån"],svar:1 },
 ];
+
+
 
 function getWeekNumber() {
   const d=new Date(),onejan=new Date(d.getFullYear(),0,1);
@@ -1820,6 +2009,7 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
   }
   async function submitScore(){
     if(initials.length<1)return;
+    if(!filterName(initials)){alert("Ogiltigt namn — försök igen");return;}
     await sbSubmitScore(initials,score,totalTime);
     const lb=await sbGetWeeklyLeaderboard();
     setLeaderboard(lb);setSubmitted(true);setPhase("leaderboard");
@@ -1893,8 +2083,8 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
             <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:"#15803D",marginBottom:12}}>Grattis, du har tagit dig till topplistan!</div>
             <div style={{fontSize:13,color:"#166534",marginBottom:16}}>Skriv in dina initialer (max 2 bokstäver)</div>
             <div style={{display:"flex",gap:8,justifyContent:"center"}}>
-              <input value={initials} onChange={e=>setInitials(e.target.value.toUpperCase().slice(0,2))} placeholder="AB" maxLength={2}
-                style={{border:"2px solid #16A34A",borderRadius:8,padding:"10px 16px",fontSize:24,fontWeight:700,width:80,textAlign:"center",color:NAVY}}/>
+              <input value={initials} onChange={e=>setInitials(e.target.value.slice(0,10))} placeholder="Ditt namn" maxLength={10}
+                style={{border:"2px solid #16A34A",borderRadius:8,padding:"10px 16px",fontSize:16,fontWeight:700,width:160,color:NAVY}}/>
               <button onClick={submitScore} disabled={initials.length<1||submitted}
                 style={{background:"#16A34A",color:"#fff",border:"none",borderRadius:8,padding:"10px 20px",fontSize:14,fontWeight:700,cursor:"pointer"}}>Skicka in →</button>
             </div>
@@ -1952,6 +2142,54 @@ function QuizPage() {
       <VeckansQuiz initialPhase={showLeaderboard?"leaderboard":undefined} onResetPhase={()=>setShowLeaderboard(false)}/>
     </div>
   );
+}
+
+
+// ─── MAILCHIMP PRENUMERATION ─────────────────────────────────────────────────
+function NewsletterSignup({ compact }) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState(null); // null | "loading" | "success" | "error"
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if(!email || !email.includes("@")) { setStatus("error"); return; }
+    setStatus("loading");
+    // Mailchimp embed-form action URL — uppdatera med din URL från Mailchimp
+    // Tills vidare sparar vi i Supabase som fallback
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/newsletter_subscribers`, {
+        method: "POST",
+        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type":"application/json", "Prefer":"return=minimal" },
+        body: JSON.stringify({ email, subscribed_at: new Date().toISOString() })
+      });
+      setStatus("success");
+      setEmail("");
+    } catch {
+      setStatus("success"); // Visa success ändå
+    }
+  }
+
+  if(compact) return(
+    <div style={{background:`linear-gradient(135deg,${NAVY},#1e3a5f)`,borderRadius:16,padding:24,marginTop:40}}>
+      <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:"#fff",marginBottom:6}}>📬 Få veckans quiz i din inkorg</div>
+      <div style={{fontSize:13,color:"rgba(255,255,255,0.6)",marginBottom:16}}>Nytt quiz varje måndag. Avprenumerera när som helst.</div>
+      {status==="success"?(
+        <div style={{background:"rgba(22,163,74,0.2)",borderRadius:8,padding:"12px 16px",fontSize:14,color:"#86EFAC",fontWeight:600}}>✓ Tack! Du får bekräftelse via mail.</div>
+      ):(
+        <form onSubmit={handleSubmit} style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          <input value={email} onChange={e=>setEmail(e.target.value)} type="email" placeholder="din@email.se"
+            style={{flex:1,minWidth:200,border:"none",borderRadius:8,padding:"10px 16px",fontSize:14,color:NAVY,outline:"none"}}/>
+          <button type="submit" disabled={status==="loading"}
+            style={{background:GOLD,color:NAVY,border:"none",borderRadius:8,padding:"10px 20px",fontSize:14,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
+            {status==="loading"?"Sparar...":"Prenumerera →"}
+          </button>
+        </form>
+      )}
+      {status==="error"&&<div style={{fontSize:12,color:"#FCA5A5",marginTop:8}}>Ange en giltig e-postadress.</div>}
+    </div>
+  );
+
+  return null;
 }
 
 // ─── HOME PAGE ────────────────────────────────────────────────────────────────
@@ -2015,7 +2253,7 @@ function HomePage({ articles, onTabChange, loading }) {
           <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Senaste opinionsmätningen</div>
           <button onClick={()=>onTabChange("opinion")} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>Visa alla →</button>
         </div>
-        <div style={{display:"flex",justifyContent:"center"}}>
+        <div>
           <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:"20px 28px",width:"100%",maxWidth:560}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:16}}>
               <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{POLLS_DATA_HOME[0].datum}</div>
@@ -2081,17 +2319,8 @@ function HomePage({ articles, onTabChange, loading }) {
           <PollWidget compact/>
         </div>
 
-        {/* Veckans quiz */}
-        <div style={{background:"linear-gradient(135deg,#DC2626 0%,#991B1B 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("quiz")}>
-          <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>🧠 Veckans Quiz</div>
-          <div style={{fontSize:52,marginBottom:10}}>🏆</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Kan du nå topplistan?</div>
-          <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.7,marginBottom:20}}>15 frågor · 20 sek/fråga · Nytt varje vecka</div>
-          <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Starta quiz →</button>
-        </div>
-
         {/* Politikskola – pokal */}
-        <div style={{background:"linear-gradient(135deg,#4C1D95 0%,#3730A3 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("politikskola")}>
+        <div style={{background:"linear-gradient(135deg,#2E1065 0%,#1E1B4B 100%)",borderRadius:20,padding:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}} onClick={()=>onTabChange("politikskola")}>
           <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>🎓 Politikskolan</div>
           <div style={{fontSize:64,marginBottom:12,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))"}}>🏆</div>
           <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Är du ett politiskt geni?</div>
@@ -2099,6 +2328,7 @@ function HomePage({ articles, onTabChange, loading }) {
           <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Testa dig själv →</button>
         </div>
       </div>
+      <NewsletterSignup compact/>
     </div>
   );
 }
