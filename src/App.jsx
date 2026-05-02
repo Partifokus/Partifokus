@@ -1684,7 +1684,7 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
     } else {
       let s=0;
       questions.forEach((q,i)=>{if(na[i]===q.svar)s+=10;});
-      const t=Math.round((Date.now()-startTime())/1000);
+      const t=Math.round((Date.now()-startTime)/1000);
       setScore(s);
       setTotalTime(t);
       setAnswers(na);
