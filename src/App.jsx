@@ -2162,7 +2162,7 @@ await fetch("/api/subscribe", {
       });
       setStatus("success");
       setEmail("");
-      });
+      }
     } catch {
       setStatus("success");
     }
