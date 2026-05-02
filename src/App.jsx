@@ -2162,7 +2162,7 @@ function NewsletterSignup({ compact }) {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, groups: ["dGAgE3"] })
       });
       setStatus("success");
       setEmail("");
