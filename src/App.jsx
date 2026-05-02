@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const GA_ID = "G-DB7QB8N6BE";
 // ── Supabase – fyll i dina uppgifter ──────────────────────────────────────────
@@ -1643,19 +1643,43 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
   const alreadyPlayed=localStorage.getItem(PLAYED_KEY);
 
   useEffect(()=>{sbGetWeeklyCount().then(setWeekCount);sbGetWeeklyLeaderboard().then(setLeaderboard);},[]);
+
+  // Timer — använder useRef för att undvika stale closure
+  const answersRef = useRef({});
+  const currentRef = useRef(0);
+  answersRef.current = answers;
+  currentRef.current = current;
+
   useEffect(()=>{
     if(phase!=="quiz")return;
-    if(timeLeft<=0){nextQuestion(null);return;}
+    if(timeLeft<=0){
+      handleAutoAdvance();
+      return;
+    }
     const t=setTimeout(()=>setTimeLeft(t=>t-1),1000);
     return()=>clearTimeout(t);
-  },[timeLeft,phase,current]);
+  },[timeLeft,phase]);
+
+  function handleAutoAdvance(){
+    const cur = currentRef.current;
+    const ans = answersRef.current;
+    const na={...ans,[cur]:null};
+    finishQuestion(cur, na);
+  }
 
   function startQuiz(){setPhase("quiz");setTimeLeft(20);}
+
   function nextQuestion(answerIdx){
-    const na={...answers,[current]:answerIdx};
+    const cur = currentRef.current;
+    const ans = answersRef.current;
+    const na={...ans,[cur]:answerIdx};
     setAnswers(na);
-    if(current<questions.length-1){
-      setCurrent(c=>c+1);
+    finishQuestion(cur, na);
+  }
+
+  function finishQuestion(cur, na){
+    if(cur < questions.length-1){
+      setCurrent(cur+1);
       setTimeLeft(20);
     } else {
       let s=0;
@@ -1663,9 +1687,9 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
       const t=Math.round((Date.now()-startTime())/1000);
       setScore(s);
       setTotalTime(t);
+      setAnswers(na);
       localStorage.setItem(PLAYED_KEY,"1");
-      // Liten fördröjning så att state hinner uppdateras
-      setTimeout(()=>setPhase("result"), 50);
+      setPhase("result");
     }
   }
   async function submitScore(){
