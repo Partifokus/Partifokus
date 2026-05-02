@@ -90,7 +90,6 @@ const TABS = [
   { id:"opinion",      label:"Opinion" },
   { id:"valkompass",   label:"Valkompass" },
   { id:"politikskola", label:"Politikskola" },
-  { id:"om",           label:"Om oss" },
   { id:"jamfor",       label:"Partierna jämför" },
   { id:"quiz",         label:"Veckans quiz" },
 ];
@@ -1626,12 +1625,13 @@ async function sbGetWeeklyCount() {
   } catch{return 0;}
 }
 
-function VeckansQuiz() {
-  const [phase,setPhase]=useState("info");
+function VeckansQuiz({ initialPhase, onResetPhase }) {
+  const [phase,setPhase]=useState(initialPhase||"info");
+  useEffect(()=>{ if(initialPhase) setPhase(initialPhase); },[initialPhase]);
   const [questions]=useState(()=>getWeeklyQuestions());
   const [current,setCurrent]=useState(0);
   const [answers,setAnswers]=useState({});
-  const [timeLeft,setTimeLeft]=useState(15);
+  const [timeLeft,setTimeLeft]=useState(20);
   const [startTime]=useState(Date.now);
   const [totalTime,setTotalTime]=useState(0);
   const [score,setScore]=useState(0);
@@ -1650,15 +1650,22 @@ function VeckansQuiz() {
     return()=>clearTimeout(t);
   },[timeLeft,phase,current]);
 
-  function startQuiz(){setPhase("quiz");setTimeLeft(15);}
+  function startQuiz(){setPhase("quiz");setTimeLeft(20);}
   function nextQuestion(answerIdx){
     const na={...answers,[current]:answerIdx};
     setAnswers(na);
-    if(current<questions.length-1){setCurrent(c=>c+1);setTimeLeft(15);}
-    else{
-      let s=0;questions.forEach((q,i)=>{if(na[i]===q.svar)s+=10;});
+    if(current<questions.length-1){
+      setCurrent(c=>c+1);
+      setTimeLeft(20);
+    } else {
+      let s=0;
+      questions.forEach((q,i)=>{if(na[i]===q.svar)s+=10;});
       const t=Math.round((Date.now()-startTime())/1000);
-      setScore(s);setTotalTime(t);setPhase("result");localStorage.setItem(PLAYED_KEY,"1");
+      setScore(s);
+      setTotalTime(t);
+      localStorage.setItem(PLAYED_KEY,"1");
+      // Liten fördröjning så att state hinner uppdateras
+      setTimeout(()=>setPhase("result"), 50);
     }
   }
   async function submitScore(){
@@ -1683,7 +1690,7 @@ function VeckansQuiz() {
       <div style={{fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:"#fff",marginBottom:8}}>Veckans politiska quiz</div>
       {weekCount>0&&<div style={{fontSize:12,color:"rgba(255,255,255,0.5)",marginBottom:16}}>🎯 {weekCount} har gjort veckans quiz</div>}
       <div style={{background:"rgba(255,255,255,0.1)",borderRadius:12,padding:20,marginBottom:24,textAlign:"left",maxWidth:340,margin:"0 auto 24px"}}>
-        {["15 frågor om svensk politik och historia","15 sekunder per fråga — automatisk vidare","Blandat lätt och svårt","Topplista med initialer (max 2 bokstäver)","En gång per vecka"].map((r,i)=>
+        {["15 frågor om svensk politik och historia","20 sekunder per fråga — automatisk vidare","Blandat lätt och svårt","Topplista med initialer (max 2 bokstäver)","En gång per vecka"].map((r,i)=>
           <div key={i} style={{fontSize:13,color:"rgba(255,255,255,0.8)",marginBottom:8,display:"flex",gap:8}}><span style={{color:GOLD}}>✓</span>{r}</div>)}
       </div>
       <button onClick={startQuiz} style={{background:GOLD,color:NAVY,border:"none",borderRadius:12,padding:"14px 40px",fontSize:16,fontWeight:700,cursor:"pointer"}}>Börja →</button>
@@ -1700,7 +1707,7 @@ function VeckansQuiz() {
             <div style={{fontSize:13,color:"rgba(255,255,255,0.7)"}}>Fråga {current+1} av {questions.length}</div>
             <div style={{background:urgentColor,borderRadius:20,padding:"4px 14px",fontSize:18,fontWeight:700,color:"#fff"}}>{timeLeft}</div>
           </div>
-          <div style={{height:4,background:"#F3F4F6"}}><div style={{height:"100%",width:`${(timeLeft/15)*100}%`,background:urgentColor,transition:"width 1s linear"}}/></div>
+          <div style={{height:4,background:"#F3F4F6"}}><div style={{height:"100%",width:`${(timeLeft/20)*100}%`,background:urgentColor,transition:"width 1s linear"}}/></div>
           <div style={{padding:28}}>
             <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:NAVY,marginBottom:24,lineHeight:1.4}}>{q.q}</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
@@ -1773,6 +1780,25 @@ function VeckansQuiz() {
   return null;
 }
 
+
+// ─── QUIZ PAGE ────────────────────────────────────────────────────────────────
+function QuizPage() {
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  return(
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Veckans politiska quiz</div>
+        <button onClick={()=>setShowLeaderboard(true)}
+          style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"8px 16px",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+          🏆 Topplistan
+        </button>
+      </div>
+      <div style={{fontSize:14,color:GRAY,marginBottom:20}}>Nytt quiz varje vecka — kan du ta dig till topplistan?</div>
+      <VeckansQuiz initialPhase={showLeaderboard?"leaderboard":undefined} onResetPhase={()=>setShowLeaderboard(false)}/>
+    </div>
+  );
+}
+
 // ─── HOME PAGE ────────────────────────────────────────────────────────────────
 function HomePage({ articles, onTabChange, loading }) {
   const mobile=useIsMobile();
@@ -1813,11 +1839,11 @@ function HomePage({ articles, onTabChange, loading }) {
         <button onClick={()=>onTabChange("nyheter")} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>Visa alla →</button>
       </div>
       {loading ? (
-        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(4,1fr)",gap:20,marginBottom:56}}>
+        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(3,1fr)",gap:20,marginBottom:56}}>
           {[1,2,3,4].map(i=><SkeletonCard key={i}/>)}
         </div>
       ) : top.length > 0 ? (
-        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(4,1fr)",gap:20,marginBottom:56}}>
+        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(3,1fr)",gap:20,marginBottom:56}}>
           {top.slice(1,5).map(a=><MedCard key={a.id} article={a}/>)}
         </div>
       ) : (
@@ -1825,8 +1851,51 @@ function HomePage({ articles, onTabChange, loading }) {
       )}
 
       {/* UTFORSKA – valkompass + poll + politikskola */}
+      {/* SENASTE OPINION */}
+      <div style={{marginBottom:40}}>
+        <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
+          <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Senaste opinionsmätning</div>
+          <button onClick={()=>onTabChange("opinion")} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer"}}>Visa alla →</button>
+        </div>
+        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:mobile?"16px":"24px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:16}}>
+            <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{POLLS_DATA_HOME[0].datum}</div>
+            <div style={{fontSize:11,color:GRAY}}>Källa: {POLLS_DATA_HOME[0].källa}</div>
+          </div>
+          <div style={{display:"flex",alignItems:"flex-end",gap:mobile?4:8,height:120,marginBottom:8}}>
+            {["M","SD","KD","L","C","S","V","MP"].map(pid=>{
+              const p=gp(pid),pct=POLLS_DATA_HOME[0][pid]||0;
+              const maxPct=Math.max(...["M","SD","KD","L","C","S","V","MP"].map(x=>POLLS_DATA_HOME[0][x]||0));
+              return(
+                <div key={pid} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                  <div style={{fontSize:mobile?9:11,fontWeight:700,color:NAVY}}>{pct}%</div>
+                  <div style={{width:"100%",background:p?.bg||"#ccc",borderRadius:"3px 3px 0 0",height:`${(pct/maxPct)*90}px`,minHeight:4}}/>
+                  <div style={{display:"inline-block",padding:"1px 3px",borderRadius:3,fontSize:mobile?8:10,fontWeight:700,background:p?.bg,color:p?.color}}>{p?.short}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{borderTop:"1px solid #E5E7EB",paddingTop:10,display:"flex",gap:16,fontSize:11,color:GRAY,flexWrap:"wrap"}}>
+            <span>Högerblocket (M+SD+KD+L): <strong style={{color:NAVY}}>{(POLLS_DATA_HOME[0].M+POLLS_DATA_HOME[0].SD+POLLS_DATA_HOME[0].KD+POLLS_DATA_HOME[0].L).toFixed(1)}%</strong></span>
+            <span>Vänsterblocket (C+S+V+MP): <strong style={{color:NAVY}}>{(POLLS_DATA_HOME[0].C+POLLS_DATA_HOME[0].S+POLLS_DATA_HOME[0].V+POLLS_DATA_HOME[0].MP).toFixed(1)}%</strong></span>
+          </div>
+        </div>
+      </div>
+
+      {/* VECKANS QUIZ - kompakt banner */}
+      <div onClick={()=>onTabChange("quiz")} style={{background:"linear-gradient(135deg,#991B1B,#DC2626)",borderRadius:14,padding:"16px 24px",marginBottom:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",gap:16}}>
+        <div style={{display:"flex",alignItems:"center",gap:16}}>
+          <span style={{fontSize:32}}>🧠</span>
+          <div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:2}}>Veckans quiz</div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:"#fff"}}>Kan du nå topplistan? Nytt quiz varje vecka</div>
+          </div>
+        </div>
+        <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.4)",borderRadius:8,padding:"8px 18px",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>Spela nu →</button>
+      </div>
+
       <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:20}}>Utforska politik på ditt sätt</div>
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(4,1fr)",gap:20,marginBottom:56}}>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"repeat(3,1fr)",gap:20,marginBottom:56}}>
 
         {/* Valkompass */}
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,#1e3a5f 100%)`,borderRadius:20,padding:24,cursor:"pointer",overflow:"hidden",position:"relative",display:"flex",flexDirection:"column"}} onClick={()=>onTabChange("valkompass")}>
@@ -1869,7 +1938,7 @@ function HomePage({ articles, onTabChange, loading }) {
           <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:10}}>🧠 Veckans Quiz</div>
           <div style={{fontSize:52,marginBottom:10}}>🏆</div>
           <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:"#fff",lineHeight:1.3,marginBottom:10}}>Kan du nå topplistan?</div>
-          <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.7,marginBottom:20}}>15 frågor · 15 sek/fråga · Nytt varje vecka</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.7,marginBottom:20}}>15 frågor · 20 sek/fråga · Nytt varje vecka</div>
           <button style={{background:"rgba(255,255,255,0.15)",color:"#fff",border:"2px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 16px",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%"}}>Starta quiz →</button>
         </div>
 
@@ -1969,7 +2038,7 @@ export default function App() {
         {tab==="politikskola"&&<PolitikskolaTab activeKat={activeKat} setActiveKat={setActiveKat}/>}
         {tab==="om"          &&<OmOssTab/>}
         {tab==="jamfor"      &&<PartierJamforTab/>}
-        {tab==="quiz"        &&<div><div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:4}}>Veckans politiska quiz</div><div style={{fontSize:14,color:GRAY,marginBottom:20}}>Nytt quiz varje vecka — kan du ta dig till topplistan?</div><VeckansQuiz/></div>}
+        {tab==="quiz"        &&<QuizPage/>}
         {tab==="valkompass"  &&(
           <div>
             {/* Hero-header för valkompassen */}
@@ -2028,6 +2097,7 @@ export default function App() {
             </div>
             <div>
               <div style={{fontSize:11,color:GOLD,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",marginBottom:12}}>Om oss</div>
+              <div onClick={()=>changeTab("om")} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}} onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>Om PartiFokus</div>
               {[["sources","Källor"],["privacy","Integritetspolicy"]].map(([id,label])=>(
                 <div key={id} onClick={()=>setModal(id)} style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginBottom:8,cursor:"pointer"}} onMouseEnter={e=>e.target.style.color="#fff"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,0.45)"}>{label}</div>
               ))}
