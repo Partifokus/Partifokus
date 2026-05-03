@@ -156,14 +156,14 @@ const NEWS_SOURCES = [
 ];
 
 const PRESS_SOURCES = [
-  { name:"Moderaterna",        party:"M",  url:"https://www.riksdagen.se/sv/rss/?parti=M&typ=pressmeddelande" },
-  { name:"Socialdemokraterna", party:"S",  url:"https://www.riksdagen.se/sv/rss/?parti=S&typ=pressmeddelande" },
-  { name:"Sverigedemokraterna",party:"SD", url:"https://www.riksdagen.se/sv/rss/?parti=SD&typ=pressmeddelande" },
-  { name:"Kristdemokraterna",  party:"KD", url:"https://www.riksdagen.se/sv/rss/?parti=KD&typ=pressmeddelande" },
-  { name:"Liberalerna",        party:"L",  url:"https://www.riksdagen.se/sv/rss/?parti=L&typ=pressmeddelande" },
-  { name:"Centerpartiet",      party:"C",  url:"https://www.riksdagen.se/sv/rss/?parti=C&typ=pressmeddelande" },
-  { name:"Vänsterpartiet",     party:"V",  url:"https://www.riksdagen.se/sv/rss/?parti=V&typ=pressmeddelande" },
-  { name:"Miljöpartiet",       party:"MP", url:"https://www.riksdagen.se/sv/rss/?parti=MP&typ=pressmeddelande" },
+  { name:"Moderaterna",        party:"M",  url:"https://moderaterna.se/?feed=rss2" },
+  { name:"Socialdemokraterna", party:"S",  url:"https://www.socialdemokraterna.se/feed" },
+  { name:"Sverigedemokraterna",party:"SD", url:"https://sd.se/feed" },
+  { name:"Kristdemokraterna",  party:"KD", url:"https://kristdemokraterna.se/feed" },
+  { name:"Liberalerna",        party:"L",  url:"https://www.liberalerna.se/feed" },
+  { name:"Centerpartiet",      party:"C",  url:"https://www.centerpartiet.se/feed" },
+  { name:"Vänsterpartiet",     party:"V",  url:"https://www.vansterpartiet.se/feed" },
+  { name:"Miljöpartiet",       party:"MP", url:"https://www.mp.se/feed" },
 ];
 
 // Shared poll key
@@ -1506,18 +1506,22 @@ function SearchBar({ articles, onTabChange }) {
 
 // ─── DELA-KNAPPAR ─────────────────────────────────────────────────────────────
 function ShareButtons({ article }) {
-  // Dela via partifokus.se så att folk ser sajten i länken
   const pfUrl = encodeURIComponent(`https://www.partifokus.se/?artikel=${encodeURIComponent(article.link)}`);
   const text = encodeURIComponent(article.title + " – via PartiFokus");
+
+  function openShare(url) {
+    window.open(url, "_blank", "width=600,height=400,noopener,noreferrer");
+  }
+
   return(
     <div style={{display:"flex",gap:8,marginTop:10,alignItems:"center"}}>
       <span style={{fontSize:11,color:GRAY,fontWeight:600}}>Dela:</span>
-      <a href={`https://twitter.com/intent/tweet?text=${text}&url=${pfUrl}`} target="_blank" rel="noopener noreferrer"
-        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#000",borderRadius:6}}>𝕏</a>
-      <a href={`https://www.facebook.com/sharer/sharer.php?u=${pfUrl}`} target="_blank" rel="noopener noreferrer"
-        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#1877F2",borderRadius:6}}>Facebook</a>
-      <a href={`https://wa.me/?text=${text}%20${pfUrl}`} target="_blank" rel="noopener noreferrer"
-        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#25D366",borderRadius:6}}>WhatsApp</a>
+      <button onClick={e=>{e.stopPropagation();openShare(`https://twitter.com/intent/tweet?text=${text}&url=${pfUrl}`);}}
+        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,border:"none",padding:"5px 10px",background:"#000",borderRadius:6,cursor:"pointer"}}>𝕏</button>
+      <button onClick={e=>{e.stopPropagation();openShare(`https://www.facebook.com/sharer/sharer.php?u=${pfUrl}`);}}
+        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,border:"none",padding:"5px 10px",background:"#1877F2",borderRadius:6,cursor:"pointer"}}>Facebook</button>
+      <button onClick={e=>{e.stopPropagation();openShare(`https://wa.me/?text=${text}%20${pfUrl}`);}}
+        style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,border:"none",padding:"5px 10px",background:"#25D366",borderRadius:6,cursor:"pointer"}}>WhatsApp</button>
     </div>
   );
 }
