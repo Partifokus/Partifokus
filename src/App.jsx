@@ -148,7 +148,6 @@ const NEWS_SOURCES = [
   { name:"DN",          url:"https://www.dn.se/rss/" },
   { name:"Aftonbladet", url:"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/" },
   { name:"Expressen",   url:"https://feeds.expressen.se/nyheter/" },
-  { name:"Omni",        url:"https://omni.se/rss" },
   { name:"Google News", url:"https://news.google.com/rss/search?q=moderaterna+OR+socialdemokraterna+OR+sverigedemokraterna&hl=sv&gl=SE&ceid=SE:sv" },
   { name:"Google News", url:"https://news.google.com/rss/search?q=centerpartiet+OR+vänsterpartiet+OR+miljöpartiet+OR+kristdemokraterna&hl=sv&gl=SE&ceid=SE:sv" },
   { name:"Google News", url:"https://news.google.com/rss/search?q=riksdagen+OR+regering+OR+budget+OR+politik+Sverige&hl=sv&gl=SE&ceid=SE:sv" },
@@ -156,14 +155,14 @@ const NEWS_SOURCES = [
 ];
 
 const PRESS_SOURCES = [
-  { name:"Moderaterna",        party:"M",  url:"https://moderaterna.se/?feed=rss2" },
-  { name:"Socialdemokraterna", party:"S",  url:"https://www.socialdemokraterna.se/feed" },
-  { name:"Sverigedemokraterna",party:"SD", url:"https://sd.se/feed" },
-  { name:"Kristdemokraterna",  party:"KD", url:"https://kristdemokraterna.se/feed" },
-  { name:"Liberalerna",        party:"L",  url:"https://www.liberalerna.se/feed" },
-  { name:"Centerpartiet",      party:"C",  url:"https://www.centerpartiet.se/feed" },
-  { name:"Vänsterpartiet",     party:"V",  url:"https://www.vansterpartiet.se/feed" },
-  { name:"Miljöpartiet",       party:"MP", url:"https://www.mp.se/feed" },
+  { name:"Moderaterna",        party:"M",  url:"https://news.google.com/rss/search?q=moderaterna+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Socialdemokraterna", party:"S",  url:"https://news.google.com/rss/search?q=socialdemokraterna+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Sverigedemokraterna",party:"SD", url:"https://news.google.com/rss/search?q=sverigedemokraterna+OR+jimmie+åkesson+OR+sd-politiker&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Kristdemokraterna",  party:"KD", url:"https://news.google.com/rss/search?q=kristdemokraterna+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Liberalerna",        party:"L",  url:"https://news.google.com/rss/search?q=liberalerna+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Centerpartiet",      party:"C",  url:"https://news.google.com/rss/search?q=centerpartiet+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Vänsterpartiet",     party:"V",  url:"https://news.google.com/rss/search?q=vänsterpartiet+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
+  { name:"Miljöpartiet",       party:"MP", url:"https://news.google.com/rss/search?q=miljöpartiet+pressmeddelande&hl=sv&gl=SE&ceid=SE:sv" },
 ];
 
 // Shared poll key
@@ -1613,7 +1612,7 @@ const JAMFOR_DATA = {
     { fraga:"Reformera hyreslagen", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"✗",V:"✗",MP:"✗"}, info:"M och L vill ha marknadshyror och reformerad hyreslag. SD är emot — avviker från övriga högerpartier av nationalistiska skäl. Vänsterblocket vill skydda hyresgäster." },
   ],
   "Demokrati & Rättsstat": [
-    { fraga:"Göra det svårare att ändra grundlagen", svar:{M:"~",SD:"✗",KD:"~",L:"~",C:"✓✓",S:"~",V:"~",MP:"✓"}, info:"C och MP driver aktivt stärkt grundlagsskydd. Civil Rights Defenders lyfter detta som positivt för demokratin. SD skeptisk till begränsningar av majoritetsdemokratin." },
+    { fraga:"Göra det svårare att ändra grundlagen", svar:{M:"~",SD:"✗",KD:"~",L:"~",C:"✓✓",C:"✓✓",S:"~",V:"~",MP:"✓"}, info:"C och MP driver aktivt stärkt grundlagsskydd. Civil Rights Defenders lyfter detta som positivt för demokratin. SD skeptisk till begränsningar av majoritetsdemokratin." },
     { fraga:"Stärka domstolarnas oberoende", svar:{M:"~",SD:"✗",KD:"~",L:"✓✓",C:"✓✓",S:"~",V:"~",MP:"~"}, info:"C och L prioriterar oberoende domstolar som demokratisk grundsten. SD har uttryckt skepsis mot domstolar som upplevs motarbeta folkets vilja." },
     { fraga:"Stödja oberoende medier och pressfrihet", svar:{M:"~",SD:"~",KD:"~",L:"✓✓",C:"✓",S:"~",V:"~",MP:"✓"}, info:"L, C och MP driver pressfrihet och stöd till oberoende medier aktivt. L har detta som profilfråga. SD har vid flera tillfällen kritiserat etablerade medier." },
   ],
