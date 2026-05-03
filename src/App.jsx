@@ -1613,7 +1613,7 @@ const JAMFOR_DATA = {
     { fraga:"Reformera hyreslagen", svar:{M:"✓✓",SD:"✗",KD:"~",L:"✓✓",C:"✓",S:"✗",V:"✗",MP:"✗"}, info:"M och L vill ha marknadshyror och reformerad hyreslag. SD är emot — avviker från övriga högerpartier av nationalistiska skäl. Vänsterblocket vill skydda hyresgäster." },
   ],
   "Demokrati & Rättsstat": [
-    { fraga:"Göra det svårare att ändra grundlagen", svar:{M:"~",SD:"✗",KD:"~",L:"~",C:"✓✓",C:"✓✓",S:"~",V:"~",MP:"✓"}, info:"C och MP driver aktivt stärkt grundlagsskydd. Civil Rights Defenders lyfter detta som positivt för demokratin. SD skeptisk till begränsningar av majoritetsdemokratin." },
+    { fraga:"Göra det svårare att ändra grundlagen", svar:{M:"~",SD:"✗",KD:"~",L:"~",C:"✓✓",S:"~",V:"~",MP:"✓"}, info:"C och MP driver aktivt stärkt grundlagsskydd. Civil Rights Defenders lyfter detta som positivt för demokratin. SD skeptisk till begränsningar av majoritetsdemokratin." },
     { fraga:"Stärka domstolarnas oberoende", svar:{M:"~",SD:"✗",KD:"~",L:"✓✓",C:"✓✓",S:"~",V:"~",MP:"~"}, info:"C och L prioriterar oberoende domstolar som demokratisk grundsten. SD har uttryckt skepsis mot domstolar som upplevs motarbeta folkets vilja." },
     { fraga:"Stödja oberoende medier och pressfrihet", svar:{M:"~",SD:"~",KD:"~",L:"✓✓",C:"✓",S:"~",V:"~",MP:"✓"}, info:"L, C och MP driver pressfrihet och stöd till oberoende medier aktivt. L har detta som profilfråga. SD har vid flera tillfällen kritiserat etablerade medier." },
   ],
