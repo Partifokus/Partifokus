@@ -156,14 +156,14 @@ const NEWS_SOURCES = [
 ];
 
 const PRESS_SOURCES = [
-  { name:"Moderaterna",        party:"M",  url:"https://moderaterna.se/?feed=rss2" },
-  { name:"Socialdemokraterna", party:"S",  url:"https://www.socialdemokraterna.se/feed" },
-  { name:"Sverigedemokraterna",party:"SD", url:"https://sd.se/feed" },
-  { name:"Kristdemokraterna",  party:"KD", url:"https://kristdemokraterna.se/feed" },
-  { name:"Liberalerna",        party:"L",  url:"https://www.liberalerna.se/feed" },
-  { name:"Centerpartiet",      party:"C",  url:"https://www.centerpartiet.se/feed" },
-  { name:"Vänsterpartiet",     party:"V",  url:"https://www.vansterpartiet.se/feed" },
-  { name:"Miljöpartiet",       party:"MP", url:"https://www.mp.se/feed" },
+  { name:"Moderaterna",        party:"M",  url:"https://www.riksdagen.se/sv/rss/?parti=M&typ=pressmeddelande" },
+  { name:"Socialdemokraterna", party:"S",  url:"https://www.riksdagen.se/sv/rss/?parti=S&typ=pressmeddelande" },
+  { name:"Sverigedemokraterna",party:"SD", url:"https://www.riksdagen.se/sv/rss/?parti=SD&typ=pressmeddelande" },
+  { name:"Kristdemokraterna",  party:"KD", url:"https://www.riksdagen.se/sv/rss/?parti=KD&typ=pressmeddelande" },
+  { name:"Liberalerna",        party:"L",  url:"https://www.riksdagen.se/sv/rss/?parti=L&typ=pressmeddelande" },
+  { name:"Centerpartiet",      party:"C",  url:"https://www.riksdagen.se/sv/rss/?parti=C&typ=pressmeddelande" },
+  { name:"Vänsterpartiet",     party:"V",  url:"https://www.riksdagen.se/sv/rss/?parti=V&typ=pressmeddelande" },
+  { name:"Miljöpartiet",       party:"MP", url:"https://www.riksdagen.se/sv/rss/?parti=MP&typ=pressmeddelande" },
 ];
 
 // Shared poll key
@@ -380,14 +380,17 @@ function PollWidget({ compact }) {
 
   async function submit(){
     if(!sel||voted)return;
-    await sbIncrementVote(sel);
-    const fresh = await sbFetchVotes();
-    setVotes(fresh);
+    const optimistic = {...votes, [sel]:(votes[sel]||0)+1};
+    setVotes(optimistic);
     setVoted(sel);
     localStorage.setItem(POLL_VOTED_KEY, sel);
+    await sbIncrementVote(sel);
+    const fresh = await sbFetchVotes();
+    if(Object.keys(fresh).length>0) setVotes(fresh);
   }
 
-  const total=Object.values(votes).reduce((a,b)=>a+b,0);
+  const rawTotal=Object.values(votes).reduce((a,b)=>a+b,0);
+  const total=rawTotal>0?rawTotal:1;
 
   if(compact&&!voted){
     return(
@@ -1503,16 +1506,17 @@ function SearchBar({ articles, onTabChange }) {
 
 // ─── DELA-KNAPPAR ─────────────────────────────────────────────────────────────
 function ShareButtons({ article }) {
-  const url = encodeURIComponent(article.link);
-  const text = encodeURIComponent(article.title + " – PartiFokus");
+  // Dela via partifokus.se så att folk ser sajten i länken
+  const pfUrl = encodeURIComponent(`https://www.partifokus.se/?artikel=${encodeURIComponent(article.link)}`);
+  const text = encodeURIComponent(article.title + " – via PartiFokus");
   return(
     <div style={{display:"flex",gap:8,marginTop:10,alignItems:"center"}}>
       <span style={{fontSize:11,color:GRAY,fontWeight:600}}>Dela:</span>
-      <a href={`https://twitter.com/intent/tweet?text=${text}&url=${url}`} target="_blank" rel="noopener noreferrer"
+      <a href={`https://twitter.com/intent/tweet?text=${text}&url=${pfUrl}`} target="_blank" rel="noopener noreferrer"
         style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#000",borderRadius:6}}>𝕏</a>
-      <a href={`https://www.facebook.com/sharer/sharer.php?u=${url}`} target="_blank" rel="noopener noreferrer"
+      <a href={`https://www.facebook.com/sharer/sharer.php?u=${pfUrl}`} target="_blank" rel="noopener noreferrer"
         style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#1877F2",borderRadius:6}}>Facebook</a>
-      <a href={`https://wa.me/?text=${text}%20${url}`} target="_blank" rel="noopener noreferrer"
+      <a href={`https://wa.me/?text=${text}%20${pfUrl}`} target="_blank" rel="noopener noreferrer"
         style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#fff",fontWeight:600,textDecoration:"none",padding:"5px 10px",background:"#25D366",borderRadius:6}}>WhatsApp</a>
     </div>
   );
@@ -2010,6 +2014,10 @@ function VeckansQuiz({ initialPhase, onResetPhase }) {
   async function submitScore(){
     if(initials.length<1)return;
     if(!filterName(initials)){alert("Ogiltigt namn — försök igen");return;}
+    // Spärr - kolla om namn redan finns i topplistan denna vecka
+    const week=getWeekNumber();
+    const existing=leaderboard.find(r=>r.initials?.toLowerCase()===initials.toLowerCase()&&r.week===week);
+    if(existing){alert("Du har redan skickat in ett resultat denna vecka!");return;}
     await sbSubmitScore(initials,score,totalTime);
     const lb=await sbGetWeeklyLeaderboard();
     setLeaderboard(lb);setSubmitted(true);setPhase("leaderboard");
@@ -2145,7 +2153,7 @@ function QuizPage() {
 }
 
 
-// ─── NYHETSBREV (SENDER) ──────────────────────────────────────────────────────
+// ─── MAILCHIMP PRENUMERATION ─────────────────────────────────────────────────
 function NewsletterSignup({ compact }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(null); // null | "loading" | "success" | "error"
@@ -2155,16 +2163,13 @@ function NewsletterSignup({ compact }) {
     if(!email || !email.includes("@")) { setStatus("error"); return; }
     setStatus("loading");
     try {
-await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
+      // Mailchimp JSONP-submit
+      const url = `https://partifokus.us1.list-manage.com/subscribe/post-json?u=55d10e51c9fd236bbc5295eb1&id=9f60b86424&f_id=0098c5e5f0&EMAIL=${encodeURIComponent(email)}&c=?`;
+      await fetch(url, { mode: "no-cors" });
       setStatus("success");
       setEmail("");
-      }
-     catch {
-      setStatus("success");
+    } catch {
+      setStatus("success"); // Visa success — no-cors ger alltid "opaque" response
     }
   }
 
