@@ -2364,51 +2364,120 @@ const LIVE_KANALER = [
   { namn:"Miljöpartiet", kanal:"MP", link:"https://www.youtube.com/@miljopartiet", emoji:"🟢", beskrivning:"Partiets presskonferenser och debatter" },
 ];
 
+function YouTubeEmbed({ videoId, title }) {
+  if(!videoId) return null;
+  return(
+    <div style={{borderRadius:12,overflow:"hidden",aspectRatio:"16/9",background:"#000",marginBottom:12}}>
+      <iframe
+        width="100%" height="100%"
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`}
+        title={title||"Video"}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        style={{display:"block",width:"100%",height:"100%"}}
+      />
+    </div>
+  );
+}
+
 function LiveTab() {
   const mobile = useIsMobile();
+  const [kanaler, setKanaler] = useState([]);
+  const [valdKanal, setValdKanal] = useState(null);
+  const [senaste, setSenaste] = useState({});
+  const [loadingLive, setLoadingLive] = useState(true);
+
+  const KANALDATA = [
+    { namn:"SVT Nyheter", id:"UCN9NXaK7CzN4qw0pKAu2KSw", emoji:"📺", link:"https://www.youtube.com/@svtnyheter" },
+    { namn:"Riksdagen", id:"UCsyq5TikOg0MDexH3Pqcx4w", emoji:"⚖️", link:"https://www.youtube.com/@riksdagen" },
+    { namn:"Socialdemokraterna", id:"UCVnEHqg4pTcFqI6Q4vrUOkw", emoji:"🔴", link:"https://www.youtube.com/@socialdemokraterna" },
+    { namn:"Moderaterna", id:"UCzKoIJxAe4h7qeUfBSGE7mg", emoji:"🔵", link:"https://www.youtube.com/@moderaterna" },
+    { namn:"Sverigedemokraterna", id:"UCrpZ8nKB0FjhCGKSC2dkPZg", emoji:"🟡", link:"https://www.youtube.com/@sverigedemokraterna" },
+    { namn:"Centerpartiet", id:"UC6RNMcKoYFLrph9e7Cj3rEg", emoji:"🟢", link:"https://www.youtube.com/@centerpartiet" },
+    { namn:"Kristdemokraterna", id:"UCdznmT9bm_WNXZ5Zw-2bMZg", emoji:"🔵", link:"https://www.youtube.com/@kristdemokraterna" },
+    { namn:"Liberalerna", id:"UCTpqUEMiqo1IqKGMRDGBhJA", emoji:"🔵", link:"https://www.youtube.com/@liberalerna" },
+    { namn:"Vänsterpartiet", id:"UC6RNMcKoYFLrph9e7Cj3rEg", emoji:"🔴", link:"https://www.youtube.com/@vansterpartiet" },
+    { namn:"Miljöpartiet", id:"UCDlPRQe8BE8pPeB5e2gWr_g", emoji:"🟢", link:"https://www.youtube.com/@miljopartiet" },
+  ];
+
+  useEffect(()=>{
+    // Kolla live-status och hämta senaste video för varje kanal
+    async function fetchAll(){
+      setLoadingLive(true);
+      const results = await Promise.all(KANALDATA.map(async k=>{
+        try {
+          const [liveRes, latestRes] = await Promise.all([
+            fetch(`/api/youtube?channelId=${k.id}&type=live`),
+            fetch(`/api/youtube?channelId=${k.id}&type=latest`)
+          ]);
+          const liveData = await liveRes.json();
+          const latestData = await latestRes.json();
+          return { ...k, live:liveData.live, liveVideoId:liveData.videoId, latestVideoId:latestData.videoId, latestTitle:latestData.title };
+        } catch {
+          return { ...k, live:false, liveVideoId:null, latestVideoId:null };
+        }
+      }));
+      setKanaler(results);
+      // Sätt SVT som default om ingen sänder live
+      const liveKanal = results.find(k=>k.live);
+      setValdKanal(liveKanal || results[0]);
+      setLoadingLive(false);
+    }
+    fetchAll();
+  },[]);
+
+  const liveKanaler = kanaler.filter(k=>k.live);
+  const currentVideoId = valdKanal?.live ? valdKanal.liveVideoId : valdKanal?.latestVideoId;
+
   return(
     <div>
       <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:4}}>Live & Webb-TV</div>
-      <div style={{fontSize:13,color:GRAY,marginBottom:24}}>Direktlänkar till politiska livesändningar, presskonferenser och riksdagsdebatter.</div>
+      <div style={{fontSize:13,color:GRAY,marginBottom:20}}>Se politiska sändningar direkt — livestreams, presskonferenser och riksdagsdebatter.</div>
 
-      {/* SVT och Riksdagen – featured */}
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:16,marginBottom:28}}>
-        {LIVE_KANALER.slice(0,2).map((k,i)=>(
-          <a key={i} href={k.link} target="_blank" rel="noopener noreferrer"
-            style={{background:NAVY,borderRadius:14,padding:"20px 24px",textDecoration:"none",display:"block"}}
-            onMouseEnter={e=>e.currentTarget.style.opacity="0.9"}
-            onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-            <div style={{fontSize:32,marginBottom:8}}>{k.emoji}</div>
-            <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:"#fff",marginBottom:4}}>{k.namn}</div>
-            <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginBottom:12}}>{k.beskrivning}</div>
-            <div style={{background:GOLD,color:NAVY,borderRadius:6,padding:"6px 14px",fontSize:12,fontWeight:700,display:"inline-block"}}>▶ Se live</div>
-          </a>
-        ))}
-      </div>
+      {liveKanaler.length>0&&(
+        <div style={{background:"#DC2626",borderRadius:8,padding:"8px 14px",marginBottom:16,display:"inline-flex",alignItems:"center",gap:8}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:"#fff",animation:"pulse 1s infinite"}}/>
+          <span style={{fontSize:13,fontWeight:700,color:"#fff"}}>{liveKanaler.length} kanal{liveKanaler.length>1?"er":""} sänder live just nu</span>
+        </div>
+      )}
 
-      {/* Partiernas kanaler */}
-      <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:12}}>Partiernas YouTube-kanaler</div>
-      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr 1fr":"repeat(4,1fr)",gap:10}}>
-        {LIVE_KANALER.slice(2).map((k,i)=>{
-          const p=gp(k.kanal);
-          return(
-            <a key={i} href={k.link} target="_blank" rel="noopener noreferrer"
-              style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:10,padding:"12px 14px",textDecoration:"none",display:"flex",alignItems:"center",gap:10}}
-              onMouseEnter={e=>e.currentTarget.style.borderColor="#93C5FD"}
-              onMouseLeave={e=>e.currentTarget.style.borderColor="#E5E7EB"}>
-              <div style={{width:32,height:32,borderRadius:6,background:p?.bg||NAVY,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:p?.color||"#fff",flexShrink:0}}>{k.kanal}</div>
-              <div>
-                <div style={{fontSize:12,fontWeight:700,color:NAVY}}>{k.namn}</div>
-                <div style={{fontSize:11,color:BLUE}}>YouTube →</div>
-              </div>
-            </a>
-          );
-        })}
-      </div>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"2fr 1fr",gap:20}}>
+        {/* Videospelare */}
+        <div>
+          {loadingLive?(
+            <div style={{borderRadius:12,background:"#F3F4F6",aspectRatio:"16/9",display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <div style={{fontSize:14,color:GRAY}}>Laddar...</div>
+            </div>
+          ):(
+            <>
+              {valdKanal&&<YouTubeEmbed videoId={currentVideoId} title={valdKanal.namn}/>}
+              {valdKanal&&(
+                <div style={{fontSize:13,color:GRAY}}>
+                  {valdKanal.live?<span style={{color:"#DC2626",fontWeight:700}}>🔴 LIVE — </span>:<span>Senaste från </span>}
+                  {valdKanal.namn}
+                  {!valdKanal.live&&valdKanal.latestTitle&&<span> · {valdKanal.latestTitle?.slice(0,60)}...</span>}
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
-      <div style={{background:"#F9FAFB",border:"1px solid #E5E7EB",borderRadius:10,padding:"14px 18px",marginTop:24}}>
-        <div style={{fontSize:12,color:GRAY,lineHeight:1.6}}>
-          💡 <strong>Tips:</strong> SVT sänder partiledardebatter live under valrörelser. Riksdagens webb-tv arkiverar alla debatter och omröstningar. Partiernas YouTube-kanaler sänder presskonferenser direkt.
+        {/* Kanalväljare */}
+        <div>
+          <div style={{fontSize:12,fontWeight:700,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginBottom:8}}>Välj kanal</div>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {kanaler.map((k,i)=>(
+              <button key={i} onClick={()=>setValdKanal(k)}
+                style={{display:"flex",alignItems:"center",gap:10,background:valdKanal?.id===k.id?"#EFF6FF":"#fff",border:`1px solid ${valdKanal?.id===k.id?BLUE:"#E5E7EB"}`,borderRadius:8,padding:"8px 12px",cursor:"pointer",textAlign:"left"}}>
+                <span style={{fontSize:16}}>{k.emoji}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:12,fontWeight:600,color:NAVY,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{k.namn}</div>
+                  {k.live&&<div style={{fontSize:10,color:"#DC2626",fontWeight:700}}>● LIVE</div>}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
