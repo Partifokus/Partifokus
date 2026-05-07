@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
+const YOUTUBE_API_KEY = "AIzaSyD7FFVyUHpCu-Eml0oQ515og82ssB3WNmA";
 const GA_ID = "G-DB7QB8N6BE";
 // ── Supabase – fyll i dina uppgifter ──────────────────────────────────────────
 const SUPABASE_URL  = "https://lkegqtofaxbxzlxxweew.supabase.co";
