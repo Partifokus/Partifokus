@@ -2476,10 +2476,9 @@ function VeckoanalysTab() {
       {analys&&(
         <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:14,padding:mobile?"18px":"28px"}}>
           <div style={{fontSize:11,color:GRAY,fontWeight:600,marginBottom:16}}>Genererad {analys.datum} · AI-assisterad analys</div>
-          {analys.text.split("
-").filter(r=>r.trim()).map((rad,i)=>{
+          {analys.text.split("\n").filter(r=>r.trim()).map((rad,i)=>{
             if(rad.startsWith("##")||rad.startsWith("**")) {
-              return <div key={i} style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:NAVY,marginTop:i>0?20:0,marginBottom:6}}>{rad.replace(/^#+\s*/,"").replace(/\*\*/g,"")}</div>;
+              return <div key={i} style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:NAVY,marginTop:i>0?20:0,marginBottom:6}}>{rad.replace(/^#+\s*/g,"").replace(/\*\*/g,"")}</div>;
             }
             return <p key={i} style={{fontSize:14,color:"#374151",lineHeight:1.8,marginBottom:10}}>{rad}</p>;
           })}
