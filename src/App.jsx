@@ -2168,72 +2168,377 @@ const FORDJUPNING_ARTIKLAR = [
     id:"fyra-procent",
     titel:"4%-spärren: Vad händer med din röst?",
     kategori:"Demokratins spelregler",
-    lasttid:"5 min",
-    ingress:"Många är rädda för att 'kasta bort' sin röst på ett litet parti. Men hur fungerar spärren egentligen — och vad händer med rösterna som inte räknas?",
+    lasttid:"6 min",
+    emoji:"🗳️",
+    ingress:"Många är rädda för att kasta bort sin röst på ett litet parti. Men hur fungerar spärren egentligen — och vad händer med de röster som inte räknas in?",
     innehall:[
       { typ:"text", text:"Riksdagen har 349 platser som fördelas proportionellt baserat på hur många röster varje parti får. Men för att ett parti ska få några platser alls måste det nå minst 4% av alla röster i hela landet — eller 12% i en enda valkrets." },
       { typ:"rubrik", text:"Vad händer om ett parti inte når 4%?" },
-      { typ:"text", text:"Om ett parti får t.ex. 3,9% av rösterna — alltså nästan 200 000 röster — försvinner dessa röster ur beräkningen. De återstående 96,1% fördelas sedan på de partier som klarat spärren. Det innebär att de stora partierna i praktiken 'ärver' röster från partier under spärren." },
-      { typ:"fakta", text:"2022 fick Nyans 0,35% av rösterna — ca 28 000 röster som inte gav något riksdagsmandat." },
+      { typ:"text", text:"Om ett parti får t.ex. 3,9% av rösterna — nästan 200 000 röster — försvinner dessa röster ur beräkningen helt. De återstående 96,1% fördelas sedan på de partier som klarat spärren. Det innebär att de stora partierna i praktiken ärver röster från partier under spärren." },
+      { typ:"text", text:"Effekten är märkbar: om tre småpartier vardera får 3% och alla hamnar under spärren, försvinner 9% av rösterna ur mandatberäkningen. De partier som klarat spärren delar då på 100% av mandaten trots att de bara fått 91% av rösterna." },
+      { typ:"interaktiv", komponent:"SparrKalkylator" },
       { typ:"rubrik", text:"Varför finns spärren?" },
-      { typ:"text", text:"Spärren infördes 1952 för att undvika att riksdagen splittras i för många småpartier, vilket kan göra det svårt att bilda en stabil regering. Många länder utan spärr — som Israel med 3,25% — har ofta svårt att bilda majoriteter." },
-      { typ:"rubrik", text:"Taktikröstning" },
-      { typ:"text", text:"Spärren skapar taktikröstning. Många röstar på sitt 'näst-bästa' parti för att inte 'slösa' sin röst. Men om alla tänker så kan det leda till att partier man faktiskt vill ha i riksdagen aldrig når 4%." },
-      { typ:"fakta", text:"Slutsats: Din röst 'försvinner' bara om partiet hamnar under 4% och inte når 12% i någon valkrets. Annars räknas den fullt ut." },
+      { typ:"text", text:"Spärren infördes 1952 efter erfarenheterna från mellankrigstiden, då extremt splittrade parlament i Europa bidrog till politisk instabilitet. Tanken är att undvika att riksdagen fragmenteras i så många småpartier att det blir omöjligt att bilda en fungerande regering." },
+      { typ:"text", text:"Länder utan spärr eller med låg spärr — som Israel med 3,25% eller Niederländerna utan spärr alls — har ofta svårt att bilda majoriteter och koalitioner kan bli extremt komplicerade med 10+ partier i riksdagen." },
+      { typ:"fakta", text:"2022 fick Nyans 0,35% av rösterna — ca 28 000 röster — men nådde inte 4% och fick inga riksdagsmandat. Samma år fick Kristdemokraterna 5,34% och precis klarade sig in." },
+      { typ:"rubrik", text:"Taktikröstning och dess effekter" },
+      { typ:"text", text:"Spärren skapar ett dilemma som kallas taktikröstning. Många väljer att rösta på sitt näst-bästa parti för att inte riskera att kasta bort rösten. Men detta beteende är självuppfyllande: om alla tänker likadant kan det leda till att partier man faktiskt vill ha i riksdagen aldrig når 4%." },
+      { typ:"text", text:"Opinionsinstitutet Demoskop har visat att upp till 15% av väljarna taktikröstar i varje val. Det påverkar resultaten avsevärt — särskilt för partier som svänger runt 4%-gränsen." },
+      { typ:"fakta", text:"Slutsats: Din röst försvinner bara om partiet hamnar under 4% och inte når 12% i någon valkrets. Om partiet klarar spärren räknas din röst fullt ut och bidrar till varje mandat partiet vinner." },
     ]
   },
   {
     id:"blank-rosta",
     titel:"Blank röst vs. att inte rösta — vad är skillnaden?",
     kategori:"Demokratins spelregler",
-    lasttid:"4 min",
-    ingress:"Många tror att en blank röst och att stanna hemma är samma sak. Det är fel — de har helt olika effekter på valresultatet.",
+    lasttid:"5 min",
+    emoji:"📋",
+    ingress:"Många tror att en blank röst och att stanna hemma är samma sak. Det är fel — de har helt olika effekter och signalerar helt olika saker till politikerna.",
     innehall:[
-      { typ:"text", text:"I Sverige kan du rösta blankt genom att lämna in en tom valsedel. Du kan också välja att inte rösta alls. Skillnaden är viktig." },
-      { typ:"rubrik", text:"Att inte rösta" },
-      { typ:"text", text:"Om du stannar hemma påverkar du inte mandatfördelningen alls. Ditt 'nej' räknas inte. Valdeltagandet sjunker, men det påverkar inte vilka partier som får platser i riksdagen." },
-      { typ:"rubrik", text:"Blank röst" },
-      { typ:"text", text:"En blank röst räknas i valdeltagandet — du har röstat. Men den räknas inte in i den procentandel som fördelas på partierna. Effekten liknar att inte rösta när det gäller mandatfördelning, men du signalerar att du deltagit men inte hittat ett parti du stöder." },
-      { typ:"fakta", text:"2022 var valdeltagandet 84,2%. Av dessa röster var 0,71% blanka — ca 57 000 röster." },
-      { typ:"rubrik", text:"Vilket är 'bättre'?" },
-      { typ:"text", text:"Det beror på vad du vill signalera. Blank röst säger 'Jag är engagerad men missnöjd med alternativen.' Att inte rösta säger ingenting alls — det syns bara som frånvaro i statistiken." },
+      { typ:"text", text:"Sverige har ett av Europas högsta valdeltaganden. I riksdagsvalet 2022 röstade 84,2% av de röstberättigade. Men av dessa röster var 0,71% blanka — ca 57 000 röster." },
+      { typ:"rubrik", text:"Att inte rösta — vad signalerar det?" },
+      { typ:"text", text:"Om du stannar hemma på valdagen påverkar du inte mandatfördelningen alls. Din frånvaro syns i statistiken som lägre valdeltagande, men partier och politiker tolkar det på olika sätt — somliga ser det som ointresse, andra som protest. Det finns ingen officiell mekanism för att skilja ut varför folk inte röstar." },
+      { typ:"text", text:"Historiskt har lågt valdeltagande ofta gynnat etablerade partier med lojala väljargrupper. Valdeltagandet i Sverige sjönk kraftigt på 1990-talet från 90% till 80% och har aldrig riktigt återhämtat sig." },
+      { typ:"rubrik", text:"Blank röst — ett aktivt val" },
+      { typ:"text", text:"En blank röst kräver att du faktiskt tar dig till vallokalen och lämnar in en tom valsedel (eller en valsedel utan partibeteckning). Det räknas som att du har röstat — valdeltagandet ökar — men rösten fördelas inte till något parti." },
+      { typ:"text", text:"Effekten på mandatfördelningen liknar att inte rösta: ingen röst går till något parti. Däremot skickar du en tydlig signal — du är politiskt engagerad nog att rösta, men du hittar inget alternativ som representerar dig." },
+      { typ:"interaktiv", komponent:"BlankRostKarta" },
+      { typ:"rubrik", text:"Vad tycker partierna om blankröster?" },
+      { typ:"text", text:"Politiska partier tar blankröster på större allvar än uteblivna röster, just för att blankröstare bevisat sin motivation att delta. Högt antal blankröster i ett val brukar leda till diskussioner inom partierna om varför väljarna inte hittar hem." },
+      { typ:"text", text:"I kommunalval — där marginaler är mindre — kan blankröster ibland påverka maktbalansen indirekt, eftersom de sänker den totala procent som behövs för mandat utan att tillföra röster till något parti." },
+      { typ:"fakta", text:"Skillnaden i korthet: Blank röst = Jag röstar men hittar inget parti. Att inte rösta = Jag signalerar ingenting. Blank röst syns och räknas i valdeltagandet. Att inte rösta syns bara som frånvaro." },
     ]
   },
   {
     id:"skatteguide",
     titel:"Den stora skatteguiden: Vart tar dina pengar vägen?",
     kategori:"Plånboken & Ekonomin",
-    lasttid:"6 min",
-    ingress:"Du tjänar 35 000 kr i månaden. Men hur mycket stannar hos dig — och vart går resten? En genomgång av alla skattlager du kanske inte visste om.",
+    lasttid:"8 min",
+    emoji:"💰",
+    ingress:"Du tjänar 35 000 kr i månaden. Men hur mycket stannar hos dig, hur mycket går till skatt — och vad används skatterna egentligen till? En genomgång av alla skattlager.",
     innehall:[
-      { typ:"text", text:"De flesta tänker på skatten de betalar på lönen. Men det finns flera skattlager som tillsammans avgör vad arbete faktiskt kostar och vad du får ut." },
-      { typ:"rubrik", text:"Arbetsgivaravgift — den dolda skatten" },
-      { typ:"text", text:"Utöver din lön betalar din arbetsgivare en arbetsgivaravgift på 31,42% av din bruttolön. Om du tjänar 35 000 kr kostar du alltså arbetsgivaren ca 46 000 kr i månaden. Denna avgift finansierar pension, sjukförsäkring och föräldraförsäkring." },
-      { typ:"rubrik", text:"Inkomstskatt" },
-      { typ:"text", text:"På din bruttolön på 35 000 kr betalar du kommunalskatt (ca 32%) plus eventuell statlig skatt (20% på inkomst över ca 55 000 kr/månad). Med 32% kommunalskatt betalar du ca 11 200 kr i skatt och får ut ca 23 800 kr." },
-      { typ:"fakta", text:"Av varje 100 kr du kostar arbetsgivaren hamnar ca 51 kr i din ficka efter skatt." },
-      { typ:"rubrik", text:"Moms — skatten du inte tänker på" },
-      { typ:"text", text:"När du spenderar dina 23 800 kr betalar du också moms: 25% på de flesta varor, 12% på mat och 6% på böcker och kollektivtrafik. En stor del av din nettolön går alltså tillbaka till staten via konsumtionsskatter." },
+      { typ:"text", text:"De flesta tänker på inkomstskatten när de hör ordet skatt. Men det finns flera skattlager som tillsammans avgör vad arbete faktiskt kostar och vad du får ut. Låt oss ta dem en i taget." },
+      { typ:"rubrik", text:"Arbetsgivaravgift — den skatt du aldrig ser" },
+      { typ:"text", text:"Utöver din bruttolön betalar din arbetsgivare en arbetsgivaravgift på 31,42% av din bruttolön. Om du tjänar 35 000 kr kostar du alltså arbetsgivaren ca 46 000 kr totalt per månad. Denna avgift syns inte på ditt lönebesked men finansierar pension, sjukförsäkring, föräldraförsäkring och arbetsmarknadsstöd." },
+      { typ:"text", text:"Arbetsgivaravgiften är politiskt omdebatterad. Borgerliga partier vill ofta sänka den för att göra det billigare att anställa, medan vänsterpartier betonar att den finansierar trygghetssystem som gynnar alla." },
+      { typ:"rubrik", text:"Inkomstskatt — kommunal och statlig" },
+      { typ:"text", text:"På din bruttolön betalar du kommunalskatt, som varierar beroende på var du bor — genomsnittet är ca 32%. I Dorotea är kommunalskatten 35,25% — i Vellinge bara 29,26%. Statlig inkomstskatt på 20% tillkommer på inkomst över ca 55 000 kr/månad." },
+      { typ:"interaktiv", komponent:"SkatteKalkylator" },
+      { typ:"rubrik", text:"Jobbskatteavdraget" },
+      { typ:"text", text:"För att göra arbete mer lönsamt än bidrag finns jobbskatteavdraget — en skattereduktion för den som arbetar. Det innebär att du betalar lägre skatt på din arbetsinkomst jämfört med exempelvis pensionsinkomst. Avdraget är störst för låg- och medelinkomsttagare." },
+      { typ:"rubrik", text:"Moms — skatten du betalar varje dag" },
+      { typ:"text", text:"När du spenderar din nettolön betalar du moms på nästan allt. Standardnivån är 25% på de flesta varor och tjänster. Mat och restaurangbesök: 12%. Böcker, kollektivtrafik och konserter: 6%. Det innebär att en stor del av din nettolön försvinner tillbaka till staten via konsumtionsskatter." },
+      { typ:"rubrik", text:"Vart går skatterna?" },
+      { typ:"text", text:"Statens budget för 2025 är ca 1 400 miljarder kronor. De tre största utgiftsposterna är: Social trygghet (pensioner, sjukförsäkring, barnbidrag) ca 550 miljarder. Hälso- och sjukvård ca 160 miljarder via statsbidrag. Utbildning och forskning ca 120 miljarder." },
+      { typ:"fakta", text:"Av varje 100 kr du kostar arbetsgivaren: ca 24 kr går i arbetsgivaravgift, ca 32 kr i kommunalskatt, och ca 44 kr stannar i din ficka som nettolön — som du sedan betalar moms på när du handlar." },
     ]
   },
   {
     id:"eu-makt",
     titel:"Varför Bryssel har mer makt över ditt liv än du tror",
     kategori:"Sverige i Världen",
-    lasttid:"5 min",
-    ingress:"Många tror att svenska lagar stiftas i riksdagen. Men en stor del av det som påverkar din vardag bestäms faktiskt i Bryssel — utan att du röstat på någon av dem.",
+    lasttid:"7 min",
+    emoji:"🇪🇺",
+    ingress:"Många tror att svenska lagar stiftas i riksdagen. Men en stor del av det som påverkar din vardag — din mat, ditt arbete, din integritet — bestäms faktiskt i Bryssel.",
     innehall:[
-      { typ:"text", text:"Sverige gick med i EU 1995 och har sedan dess överlåtit en del av sin lagstiftningsmakt till EU. Det innebär att EU-direktiv och förordningar kan gälla i Sverige utan att riksdagen röstat för dem." },
-      { typ:"rubrik", text:"Förordningar vs. direktiv" },
-      { typ:"text", text:"En EU-förordning gäller direkt i alla medlemsländer — riksdagen kan inte rösta nej. Ett EU-direktiv är ett mål som Sverige måste uppnå, men kan välja hur. Riksdagen implementerar direktiv i svensk lag." },
-      { typ:"fakta", text:"Uppskattningsvis 60-70% av den svenska lagstiftning som berör näringsliv, miljö och konsumentskydd har sitt ursprung i EU-beslut." },
-      { typ:"rubrik", text:"Vad bestämmer EU?" },
-      { typ:"text", text:"EU bestämmer om handel, konkurrens, miljöstandarder, livsmedelssäkerhet, dataskydd (GDPR), arbetsmiljö och mycket mer. Även om riksdagen vill ha andra regler måste den följa EU-rätten." },
-      { typ:"rubrik", text:"Demokratisk legitimitet" },
-      { typ:"text", text:"EU-parlamentet väljs direkt av EU-medborgarna vart femte år. Sverige har 21 av 720 platser. Europavalet hålls alltid i juni — valdeltagandet i Sverige var 54% 2024, lägre än riksdagsvalet." },
+      { typ:"text", text:"Sverige gick med i EU 1995 och har sedan dess överlåtit en del av sin lagstiftningsmakt till EU. Vad innebär det konkret — och varför är det politiskt kontroversiellt?" },
+      { typ:"rubrik", text:"EU-förordningar vs. direktiv — vad är skillnaden?" },
+      { typ:"text", text:"En EU-förordning gäller direkt i alla 27 medlemsländer utan att riksdagen behöver rösta. GDPR — den lag som styr hur företag hanterar din data — är ett exempel. Riksdagen kunde inte säga nej." },
+      { typ:"text", text:"Ett EU-direktiv är ett mål som Sverige måste uppnå, men kan välja hur. Riksdagen implementerar direktiv i svensk lagstiftning och har viss handlingsfrihet. Arbetsmiljödirektivet är ett exempel — Sverige har ofta gått längre än EU kräver." },
+      { typ:"rubrik", text:"Hur stor andel av svenska lagar kommer från EU?" },
+      { typ:"text", text:"Det är svårt att mäta exakt, men vanliga uppskattningar är att 60-70% av lagstiftning inom näringsliv, miljö och konsumentskydd har sitt ursprung i EU-beslut. Inom jordbruk och fiske är siffran ännu högre — EU:s gemensamma jordbrukspolitik styr det mesta." },
+      { typ:"interaktiv", komponent:"EUPaverkan" },
+      { typ:"rubrik", text:"Demokratisk legitimitet — vem bestämmer egentligen?" },
+      { typ:"text", text:"EU-parlamentet väljs direkt av EU-medborgarna vart femte år. Sverige har 21 av 720 platser. Europaparlamentet delar lagstiftande makt med EU-rådet, där medlemsländernas ministrar sitter. Kommissionen — EU:s regering — föreslår lagar men är inte direktvald." },
+      { typ:"text", text:"Valdeltagandet i EU-valet är generellt lägre än i nationella val. I Sverige röstade 54% i EU-valet 2024, jämfört med 84% i riksdagsvalet 2022." },
+      { typ:"rubrik", text:"Varför är EU politiskt kontroversiellt i Sverige?" },
+      { typ:"text", text:"SD vill ha tillbaka mer makt till Sverige och är EU-skeptiska. V är EU-kritiska av socialistiska skäl — de menar att EU gynnar kapitalintressen. L driver däremot aktivt för mer EU-samarbete. M och S är pragmatiska — stöder EU men med reservationer på specifika frågor." },
+      { typ:"fakta", text:"Konkreta EU-beslut som påverkar dig: GDPR (integritet online), livsmedelssäkerhetsregler (vad du får äta), fordonsregler (utsläppskrav på din bil), konsumenträttigheter (returrätt vid köp), och klimatmål (hur Sverige ska minska sina utsläpp)." },
+    ]
+  },
+  {
+    id:"riksdag-vs-regering",
+    titel:"Riksdag vs. Regering: Vem har egentligen makten?",
+    kategori:"Demokratins spelregler",
+    lasttid:"6 min",
+    emoji:"🏛️",
+    ingress:"Många tror att statsministern och regeringen bestämmer allt. Men i Sverige är riksdagen chefen — och det skapar en maktbalans de flesta aldrig tänker på.",
+    innehall:[
+      { typ:"text", text:"Sverige är en parlamentarisk demokrati. Det betyder att regeringens makt är beroende av riksdagens förtroende. Till skillnad från t.ex. USA — där presidenten väljs direkt av folket och har separat makt från kongressen — utgår all makt i Sverige från riksdagen." },
+      { typ:"rubrik", text:"Riksdagen — lagstiftaren och granskaren" },
+      { typ:"text", text:"Riksdagen stiftar lagar, beslutar om statens budget och granskar regeringen. Utan riksdagens godkännande kan regeringen inte införa nya lagar eller höja skatter. Riksdagen kan också fälla en regering genom misstroendevotum om en majoritet av ledamöterna röstar emot statsministern eller en minister." },
+      { typ:"rubrik", text:"Regeringen — utföraren" },
+      { typ:"text", text:"Regeringen leder riket inom de ramar riksdagen satt upp. Statsministern utses av riksdagens talman och presenteras för riksdagen som röstar om ett godkännande. Regeringen styr myndigheterna, föreslår lagar (propositioner) och representerar Sverige internationellt." },
+      { typ:"interaktiv", komponent:"MaktFlode" },
+      { typ:"rubrik", text:"Myndigheterna — den tredje nivån" },
+      { typ:"text", text:"Under regeringen finns hundratals myndigheter som Skatteverket, Polismyndigheten och Försäkringskassan. De är formellt självständiga och kan inte ta order från enskilda ministrar i enskilda ärenden — det kallas ministerstyre och är förbjudet i Sverige. Det skiljer Sverige från många andra länder." },
+      { typ:"rubrik", text:"Kommuner och regioner — en fjärde nivå" },
+      { typ:"text", text:"Sverige har 290 kommuner och 21 regioner med stor självständighet. De beskattar invånarna själva och ansvarar för skola, socialtjänst (kommuner) samt sjukvård och kollektivtrafik (regioner). Det kommunala självstyret skyddat i grundlagen." },
+      { typ:"fakta", text:"Maktkedjan i korthet: Folket väljer riksdagen → Riksdagen utser regeringen → Regeringen styr myndigheterna → Myndigheterna verkställer besluten. Riksdagen kan när som helst fälla regeringen med misstroendevotum." },
+    ]
+  },
+  {
+    id:"opinion-forklarat",
+    titel:"Opinionsmätningar: Hur fungerar de och hur pålitliga är de?",
+    kategori:"Demokratins spelregler",
+    lasttid:"5 min",
+    emoji:"📊",
+    ingress:"Varje vecka publiceras nya opinionsmätningar. Partierna hoppar upp och ner i procent. Men vad mäter de egentligen — och varför skiljer de sig åt?",
+    innehall:[
+      { typ:"text", text:"En opinionsmätning är en enkätundersökning där ett slumpmässigt urval av väljare — vanligen 1 000-2 000 personer — tillfrågas vilket parti de skulle rösta på om det vore val idag." },
+      { typ:"rubrik", text:"Varför skiljer sig mätningarna åt?" },
+      { typ:"text", text:"Novus, Sifo, Ipsos och andra institut använder olika metoder. Skillnaderna beror på urvalsmetod (telefon, panel, webbenkät), hur frågan ställs, hur man hanterar osäkra väljare, och vilka tidpunkt mätningen görs på. Det är normalt att mätningar från samma period visar 1-3 procentenheters skillnad." },
+      { typ:"rubrik", text:"Felmarginal — vad innebär det?" },
+      { typ:"text", text:"Alla mätningar har en felmarginal — vanligen ±2-3 procentenheter. Det betyder att om ett parti mäts till 20% kan det egentliga stödet vara mellan 17% och 23%. Skillnader under felmarginalen är statistiskt osäkra och bör inte övertolkas." },
+      { typ:"rubrik", text:"Mätningarna påverkar opinionen" },
+      { typ:"text", text:"Forskning visar att opinionsmätningar kan påverka väljarnas beteende — en så kallad bandwagoneffekt. Väljare kan dras till ett parti som verkar vinna, eller taktikrösta bort från ett parti som verkar ligga under spärren." },
+      { typ:"fakta", text:"Viktigast att komma ihåg: En opinionsmätning mäter inte hur folk kommer rösta på valdagen — den mäter hur de svarar på en fråga en viss dag. Väljarrörelserna under de sista veckorna före ett val är ofta stora." },
+    ]
+  },
+  {
+    id:"lobbying",
+    titel:"Lobbyism: Vilka viskar i politikernas öron?",
+    kategori:"Ideologi & Politiska landskap",
+    lasttid:"6 min",
+    emoji:"🤫",
+    ingress:"Innan en lag röstats igenom i riksdagen har hundratals organisationer, företag och intressegrupper försökt påverka dess utformning. Hur fungerar det — och är det ett problem?",
+    innehall:[
+      { typ:"text", text:"Lobbyism är försöket att påverka politiska beslut genom direktkontakt med beslutsfattare. I Sverige är lobbying i stor utsträckning oreglerad — till skillnad från EU och USA där det finns register och regler." },
+      { typ:"rubrik", text:"Vem lobbyar?" },
+      { typ:"text", text:"De största aktörerna är fackförbund (LO, TCO, SACO), arbetsgivarorganisationer (Svenskt Näringsliv), branschorganisationer, miljöorganisationer och enskilda storföretag. De anställer ofta f.d. politiker och tjänstemän som har kontakter och känner till systemet." },
+      { typ:"rubrik", text:"Hur går det till?" },
+      { typ:"text", text:"Lobbyister kan bjuda in riksdagsledamöter på frukostmöten, ordna studieresor, skriva remissvar på lagförslag, bidra till utskottsutfrågningar och ha informella möten med statsråd. Mycket sker i gråzonen mellan öppen påverkan och hemlig informationspåverkan." },
+      { typ:"rubrik", text:"Är det ett demokratiskt problem?" },
+      { typ:"text", text:"Kritiker menar att lobbyism ger resursstarka aktörer oproportionerligt inflytande — ett storföretag kan anställa tio heltidslobbyister medan en medborgarorganisation kanske har en halvtid. Förespråkare menar att lobbyism ger beslutsfattare viktig expertkunskap och att alla har rätt att försöka påverka." },
+      { typ:"fakta", text:"Sverige saknar lobbyistregister — till skillnad från EU-parlamentet och USA:s kongress. Det innebär att det är omöjligt att veta exakt vilka som träffar vilka ministrar och på vems uppdrag." },
+    ]
+  },
+  {
+    id:"nato-sverige",
+    titel:"NATO-medlemskapet: Vad har Sverige egentligen lovat?",
+    kategori:"Sverige i Världen",
+    lasttid:"6 min",
+    emoji:"🛡️",
+    ingress:"Sverige gick med i NATO i mars 2024 efter 200 år av alliansfrihet. Vad innebär det konkret — vilka skyldigheter har vi tagit på oss och vad kostar det?",
+    innehall:[
+      { typ:"text", text:"Den 7 mars 2024 blev Sverige officiellt NATO:s 32:a medlemsland. Det markerade slutet på en lång tradition av militär alliansfrihet som sträckte sig tillbaka till Napoleonkrigen." },
+      { typ:"rubrik", text:"Artikel 5 — den avgörande klausulen" },
+      { typ:"text", text:"Kärnan i NATO-medlemskapet är Artikel 5 i Nordatlantiska fördraget: ett angrepp mot ett medlemsland ska betraktas som ett angrepp mot alla. Artikeln har bara aktiverats en gång — efter 11 september-attackerna 2001, varpå NATO-länderna stödde USA i Afghanistan." },
+      { typ:"text", text:"Viktigt att notera: Artikel 5 förpliktigar inte länder att gå i krig automatiskt. Varje land beslutar självt om och hur det ska reagera — inklusive om det räcker med diplomatiska eller ekonomiska åtgärder." },
+      { typ:"rubrik", text:"Försvarsanslaget — vad har Sverige lovat?" },
+      { typ:"text", text:"NATO:s riktlinje är att medlemmar ska lägga minst 2% av BNP på försvar. Sverige nådde 2%-målet 2024 för första gången. Moderaterna driver på för 3% av BNP, vilket skulle innebära ytterligare kraftiga höjningar av försvarsbudgeten." },
+      { typ:"rubrik", text:"Vad är kontroversiellt?" },
+      { typ:"text", text:"V är emot NATO-medlemskapet av principiella skäl — man ser det som inblandning i militarism. Turkiet krävde att Sverige skärpte lagstiftningen mot PKK-relaterade organisationer som villkor för godkännande av ansökan, vilket skapade en het debatt om integritetspolitik och yttrandefrihet." },
+      { typ:"fakta", text:"Fakta: Sverige har nu USA:s kärnvapenparaply som skydd. Amerikanska och brittiska trupper kan stationeras på svensk mark. Sverige bidrar till NATO-övningar och kan sättas in i NATO-operationer." },
+    ]
+  },
+  {
+    id:"karnkraft-vindkraft",
+    titel:"Energifrågan: Varför bråkar de om kärnkraft vs. vindkraft?",
+    kategori:"Aktuella samhällsutmaningar",
+    lasttid:"7 min",
+    emoji:"⚡",
+    ingress:"Energifrågan har blivit en av de hetaste politiska striderna inför valet 2026. Kärnkraft mot vindkraft — men vad handlar det egentligen om?",
+    innehall:[
+      { typ:"text", text:"Bakgrunden: Sverige stängde tre kärnkraftsreaktorer 2019-2020 och elproduktionen minskade. Samtidigt ökade elanvändningen — delvis på grund av elektrifieringen av industri och transporter. Resultatet: periodvis höga elpriser och politisk strid om energiframtiden." },
+      { typ:"rubrik", text:"Baskraft — den politiska kärnfrågan" },
+      { typ:"text", text:"Problemet med sol och vindkraft är intermittens — de producerar bara el när solen skiner eller vinden blåser. Elsystemet kräver balans i realtid. Kärnkraft och vattenkraft är baskraft — de producerar jämnt dygnet runt. Den politiska frågan är hur Sverige ska säkra stabil elförsörjning." },
+      { typ:"rubrik", text:"Varför vill M och KD ha ny kärnkraft?" },
+      { typ:"text", text:"Moderaterna och Kristdemokraterna argumenterar att Sverige behöver ny kärnkraft för att klara elektrifieringen av industrin (stål, cement) och transporten (elbilar, tåg). De pekar på att kärnkraft ger koldioxidfri baskraft och att SMR-reaktorer (Small Modular Reactors) kan byggas snabbt och billigt." },
+      { typ:"rubrik", text:"Varför är V och MP emot?" },
+      { typ:"text", text:"Vänsterpartiet och Miljöpartiet argumenterar att kärnkraft är för dyr och tar för lång tid att bygga (10-20 år). De föredrar en snabb utbyggnad av vindkraft och solenergi kombinerat med batterilagring och vätgas. De pekar också på kärnavfallsproblematiken som en olöst fråga." },
+      { typ:"rubrik", text:"Var står de andra?" },
+      { typ:"text", text:"SD stödjer kärnkraft men är ambivalenta till vindkraft — särskilt havsbaserad vindkraft som de menar hotar fisket och den maritima miljön. C är öppna för kärnkraft men driver starkare på förnybart. S balanserar mellan att stödja förnybart och att inte stänga dörren för kärnkraft." },
+      { typ:"fakta", text:"Sverige producerade 2023 ca 60% av sin el från vattenkraft och kärnkraft (baskraft) och ca 20% från vindkraft. Resterande kommer från kraftvärme och import. Kärnkraften bidrar med ca 30% — men den befintliga flotten är gammal och kommer att behöva fasas ut." },
+    ]
+  },
+  {
+    id:"gal-tan",
+    titel:"Vänster-Höger räcker inte: Förstå GAL-TAN-skalan",
+    kategori:"Ideologi & Politiska landskap",
+    lasttid:"5 min",
+    emoji:"🧭",
+    ingress:"Du har säkert hört om vänster och höger i politiken. Men det finns en annan dimension som är minst lika viktig — och som förklarar varför SD och V ibland verkar mer lika varandra än man tror.",
+    innehall:[
+      { typ:"text", text:"Vänster-höger handlar om ekonomi: hur mycket ska staten styra, hur höga ska skatterna vara, hur fördelas resurser. Men politik handlar också om värderingar — och här räcker inte vänster-höger till." },
+      { typ:"rubrik", text:"Vad är GAL-TAN?" },
+      { typ:"text", text:"GAL-TAN är en politisk kompassmodell med två axlar. Den ekonomiska axeln (vänster-höger) och en värderingsaxel. GAL står för Grön, Alternativ, Libertär — värderingar som betonar miljö, mångkultur, individuell frihet och globalism. TAN står för Traditionell, Auktoritär, Nationalistisk — värderingar som betonar tradition, ordning, nationell identitet och familjens roll." },
+      { typ:"interaktiv", komponent:"GalTanKarta" },
+      { typ:"rubrik", text:"Var hamnar svenska partier?" },
+      { typ:"text", text:"MP och V är tydliga GAL-partier — de kombinerar vänsterekonomi med progressiva värderingar. SD är ett tydligt TAN-parti — de kombinerar ekonomisk nationalism med konservativa värderingar. M och KD är höger-TAN. L är höger-GAL. S och C befinner sig mer i mitten på värderingsaxeln." },
+      { typ:"rubrik", text:"Varför spelar det roll?" },
+      { typ:"text", text:"GAL-TAN förklarar varför SD och V ibland röstar lika trots att de är ekonomiska motpoler — på värderingsfrågor som NATO var båda emot. Det förklarar också varför L och SD aldrig kan samarbeta trots att de ekonomiskt är ganska nära varandra." },
+      { typ:"fakta", text:"Forskning från Göteborgsuniversitetets Valforskningsprogram visar att värderingsaxeln (GAL-TAN) har blivit allt viktigare i Sverige sedan 1990-talet och nu är nästan lika förklarande som den ekonomiska axeln för hur folk röstar." },
     ]
   },
 ];
+
+
+// ─── INTERAKTIVA FÖRDJUPNINGS-KOMPONENTER ────────────────────────────────────
+
+function SparrKalkylator() {
+  const [parti1, setParti1] = useState(3.9);
+  const [parti2, setParti2] = useState(2.5);
+  const [parti3, setParti3] = useState(1.8);
+  const total = parti1 + parti2 + parti3;
+  const forsvinner = total;
+  const kvar = 100 - total;
+
+  return(
+    <div style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:12,padding:20,margin:"16px 0"}}>
+      <div style={{fontSize:13,fontWeight:700,color:"#1D4ED8",marginBottom:12}}>🧮 Räkna ut effekten av 4%-spärren</div>
+      <div style={{fontSize:12,color:"#374151",marginBottom:12}}>Ange tre partiers procentandel (alla under 4%) och se hur många röster som "försvinner":</div>
+      {[["Parti A",parti1,setParti1],["Parti B",parti2,setParti2],["Parti C",parti3,setParti3]].map(([label,val,set])=>(
+        <div key={label} style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
+          <div style={{width:60,fontSize:12,color:NAVY,fontWeight:600}}>{label}</div>
+          <input type="range" min="0.1" max="3.9" step="0.1" value={val} onChange={e=>set(parseFloat(e.target.value))}
+            style={{flex:1}}/>
+          <div style={{width:40,fontSize:13,fontWeight:700,color:"#DC2626",textAlign:"right"}}>{val}%</div>
+        </div>
+      ))}
+      <div style={{borderTop:"1px solid #BFDBFE",marginTop:12,paddingTop:12}}>
+        <div style={{fontSize:13,color:"#374151"}}>Totalt under spärren: <strong style={{color:"#DC2626"}}>{total.toFixed(1)}%</strong> av alla röster försvinner</div>
+        <div style={{fontSize:13,color:"#374151",marginTop:4}}>De övriga partierna delar på: <strong style={{color:"#16A34A"}}>{kvar.toFixed(1)}%</strong> av rösterna men 100% av mandaten</div>
+      </div>
+    </div>
+  );
+}
+
+function SkatteKalkylator() {
+  const [lon, setLon] = useState(35000);
+  const [kommunalskatt, setKommunalskatt] = useState(32);
+  const arbgivarAvg = lon * 0.3142;
+  const totalKostnad = lon + arbgivarAvg;
+  const skatt = lon * (kommunalskatt / 100);
+  const netto = lon - skatt;
+  const effektivSkatt = ((totalKostnad - netto) / totalKostnad * 100);
+
+  return(
+    <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:12,padding:20,margin:"16px 0"}}>
+      <div style={{fontSize:13,fontWeight:700,color:"#15803D",marginBottom:12}}>💰 Din skatteberäkning</div>
+      <div style={{display:"flex",gap:16,flexWrap:"wrap",marginBottom:12}}>
+        <div style={{flex:1,minWidth:200}}>
+          <div style={{fontSize:11,color:GRAY,marginBottom:4}}>Din bruttolön (kr/mån)</div>
+          <input type="number" value={lon} onChange={e=>setLon(parseInt(e.target.value)||0)}
+            style={{width:"100%",border:"1px solid #BBF7D0",borderRadius:6,padding:"8px 12px",fontSize:14,color:NAVY}}/>
+        </div>
+        <div style={{flex:1,minWidth:200}}>
+          <div style={{fontSize:11,color:GRAY,marginBottom:4}}>Kommunalskatt (%)</div>
+          <input type="range" min="28" max="36" step="0.25" value={kommunalskatt}
+            onChange={e=>setKommunalskatt(parseFloat(e.target.value))}
+            style={{width:"100%",marginTop:8}}/>
+          <div style={{fontSize:12,color:NAVY,textAlign:"center"}}>{kommunalskatt}%</div>
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+        {[
+          ["Du kostar arbetsgivaren",`${Math.round(totalKostnad).toLocaleString("sv")} kr`,"#374151"],
+          ["Arbetsgivaravgift",`${Math.round(arbgivarAvg).toLocaleString("sv")} kr`,"#DC2626"],
+          ["Kommunalskatt",`${Math.round(skatt).toLocaleString("sv")} kr`,"#D97706"],
+          ["Din nettolön",`${Math.round(netto).toLocaleString("sv")} kr`,"#16A34A"],
+        ].map(([label,val,color])=>(
+          <div key={label} style={{background:"#fff",borderRadius:8,padding:"10px 12px"}}>
+            <div style={{fontSize:11,color:GRAY}}>{label}</div>
+            <div style={{fontSize:16,fontWeight:700,color}}>{val}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:10,fontSize:12,color:GRAY}}>Effektiv skattesats (inkl. arbetsgivaravgift): <strong>{effektivSkatt.toFixed(1)}%</strong></div>
+    </div>
+  );
+}
+
+function GalTanKarta() {
+  const partier = [
+    { namn:"MP", x:20, y:15, bg:"#6EBF45", color:"#fff" },
+    { namn:"V", x:10, y:25, bg:"#E8112D", color:"#fff" },
+    { namn:"S", x:35, y:50, bg:"#E8112D", color:"#fff" },
+    { namn:"C", x:55, y:40, bg:"#009933", color:"#fff" },
+    { namn:"L", x:70, y:30, bg:"#006AB3", color:"#fff" },
+    { namn:"M", x:80, y:55, bg:"#1B49A5", color:"#fff" },
+    { namn:"KD", x:75, y:65, bg:"#005BAA", color:"#fff" },
+    { namn:"SD", x:65, y:80, bg:"#DDCF0A", color:"#000" },
+  ];
+  return(
+    <div style={{background:"#F9FAFB",border:"1px solid #E5E7EB",borderRadius:12,padding:16,margin:"16px 0"}}>
+      <div style={{fontSize:13,fontWeight:700,color:NAVY,marginBottom:8}}>🧭 GAL-TAN-kartan för svenska partier</div>
+      <div style={{position:"relative",width:"100%",paddingBottom:"60%",background:"#fff",border:"1px solid #E5E7EB",borderRadius:8}}>
+        {/* Axlar */}
+        <div style={{position:"absolute",top:"50%",left:0,right:0,height:1,background:"#E5E7EB"}}/>
+        <div style={{position:"absolute",left:"50%",top:0,bottom:0,width:1,background:"#E5E7EB"}}/>
+        {/* Labels */}
+        <div style={{position:"absolute",top:4,left:"50%",transform:"translateX(-50%)",fontSize:10,color:GRAY,fontWeight:600}}>GAL (Grön/Liberal)</div>
+        <div style={{position:"absolute",bottom:4,left:"50%",transform:"translateX(-50%)",fontSize:10,color:GRAY,fontWeight:600}}>TAN (Traditionell/Nationalistisk)</div>
+        <div style={{position:"absolute",left:4,top:"50%",transform:"translateY(-50%)",fontSize:10,color:GRAY,fontWeight:600,writingMode:"vertical-rl"}}>Vänster</div>
+        <div style={{position:"absolute",right:4,top:"50%",transform:"translateY(-50%)",fontSize:10,color:GRAY,fontWeight:600,writingMode:"vertical-rl"}}>Höger</div>
+        {/* Partier */}
+        {partier.map(p=>(
+          <div key={p.namn} style={{position:"absolute",left:`${p.x}%`,top:`${p.y}%`,transform:"translate(-50%,-50%)",
+            background:p.bg,color:p.color,borderRadius:"50%",width:32,height:32,display:"flex",alignItems:"center",
+            justifyContent:"center",fontSize:10,fontWeight:700,boxShadow:"0 2px 4px rgba(0,0,0,0.2)"}}>
+            {p.namn}
+          </div>
+        ))}
+      </div>
+      <div style={{fontSize:11,color:GRAY,marginTop:8}}>Illustrativ placering baserad på Valforskningsprogrammets data. Ungefärlig och förenklad.</div>
+    </div>
+  );
+}
+
+function MaktFlode() {
+  const steg = [
+    { ikon:"👥", titel:"Folket", text:"Röstar i val vart 4:e år" },
+    { ikon:"🏛️", titel:"Riksdagen", text:"349 ledamöter stiftar lagar och beslutar om budget" },
+    { ikon:"👤", titel:"Talmannen", text:"Föreslår statsministerkandidat" },
+    { ikon:"🏢", titel:"Regeringen", text:"Verkställer riksdagens beslut, styr myndigheterna" },
+    { ikon:"⚖️", titel:"Myndigheterna", text:"Skatteverket, Polisen, Försäkringskassan m.fl." },
+  ];
+  return(
+    <div style={{background:"#F9FAFB",border:"1px solid #E5E7EB",borderRadius:12,padding:16,margin:"16px 0"}}>
+      <div style={{fontSize:13,fontWeight:700,color:NAVY,marginBottom:12}}>🔄 Maktkedjan i Sverige</div>
+      {steg.map((s,i)=>(
+        <div key={i}>
+          <div style={{display:"flex",alignItems:"center",gap:12,background:"#fff",border:"1px solid #E5E7EB",borderRadius:8,padding:"10px 14px"}}>
+            <div style={{fontSize:24}}>{s.ikon}</div>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:NAVY}}>{s.titel}</div>
+              <div style={{fontSize:11,color:GRAY}}>{s.text}</div>
+            </div>
+          </div>
+          {i<steg.length-1&&<div style={{width:2,height:16,background:"#E5E7EB",margin:"0 auto"}}/>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function EUPaverkan() {
+  const omraden = [
+    { namn:"Jordbruk & Fiske", eu:90, label:"90% EU-styrt" },
+    { namn:"Handel & Konkurrens", eu:85, label:"85% EU-styrt" },
+    { namn:"Miljö & Klimat", eu:70, label:"70% EU-styrt" },
+    { namn:"Konsumentskydd", eu:65, label:"65% EU-styrt" },
+    { namn:"Arbetsrätt", eu:40, label:"40% EU-styrt" },
+    { namn:"Sjukvård & Skola", eu:10, label:"10% EU-styrt" },
+  ];
+  return(
+    <div style={{background:"#FFF7ED",border:"1px solid #FED7AA",borderRadius:12,padding:16,margin:"16px 0"}}>
+      <div style={{fontSize:13,fontWeight:700,color:"#C2410C",marginBottom:12}}>🇪🇺 Hur mycket styr EU i olika politikområden?</div>
+      {omraden.map((o,i)=>(
+        <div key={i} style={{marginBottom:8}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:12,marginBottom:3}}>
+            <span style={{color:NAVY,fontWeight:600}}>{o.namn}</span>
+            <span style={{color:"#C2410C",fontWeight:700}}>{o.label}</span>
+          </div>
+          <div style={{background:"#FED7AA",borderRadius:4,height:8}}>
+            <div style={{background:"#C2410C",borderRadius:4,height:8,width:`${o.eu}%`,transition:"width .5s"}}/>
+          </div>
+        </div>
+      ))}
+      <div style={{fontSize:11,color:GRAY,marginTop:8}}>Uppskattningar baserade på andel lagstiftning med EU-ursprung. Källa: Riksdagens EU-information.</div>
+    </div>
+  );
+}
 
 function FordjupningArtikel({ artikel, onBack }) {
   return(
@@ -2245,10 +2550,35 @@ function FordjupningArtikel({ artikel, onBack }) {
       {artikel.innehall.map((block,i)=>{
         if(block.typ==="text") return <p key={i} style={{fontSize:15,color:"#374151",lineHeight:1.8,marginBottom:16}}>{block.text}</p>;
         if(block.typ==="rubrik") return <h2 key={i} style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginTop:28,marginBottom:8}}>{block.text}</h2>;
-        if(block.typ==="fakta") return <div key={i} style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:10,padding:"14px 18px",marginBottom:16,marginTop:8}}>
-          <div style={{fontSize:11,fontWeight:700,color:"#1D4ED8",textTransform:"uppercase",letterSpacing:"1px",marginBottom:4}}>💡 Att tänka på</div>
-          <div style={{fontSize:14,color:"#1E40AF",lineHeight:1.6}}>{block.text}</div>
-        </div>;
+        if(block.typ==="fakta") return(
+          <div key={i} style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:10,padding:"14px 18px",marginBottom:16,marginTop:8}}>
+            <div style={{fontSize:11,fontWeight:700,color:"#1D4ED8",textTransform:"uppercase",letterSpacing:"1px",marginBottom:4}}>💡 Att tänka på</div>
+            <div style={{fontSize:14,color:"#1E40AF",lineHeight:1.6}}>{block.text}</div>
+          </div>
+        );
+        if(block.typ==="interaktiv"){
+          if(block.komponent==="SparrKalkylator") return <SparrKalkylator key={i}/>;
+          if(block.komponent==="SkatteKalkylator") return <SkatteKalkylator key={i}/>;
+          if(block.komponent==="GalTanKarta") return <GalTanKarta key={i}/>;
+          if(block.komponent==="MaktFlode") return <MaktFlode key={i}/>;
+          if(block.komponent==="EUPaverkan") return <EUPaverkan key={i}/>;
+          if(block.komponent==="BlankRostKarta") return(
+            <div key={i} style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:10,padding:16,margin:"16px 0"}}>
+              <div style={{fontSize:13,fontWeight:700,color:"#15803D",marginBottom:8}}>📊 Blankröster i riksdagsvalet 2022</div>
+              <div style={{display:"flex",gap:8,alignItems:"flex-end",height:80}}>
+                {[["2010","0.8%",80],["2014","0.5%",50],["2018","0.7%",70],["2022","0.71%",71]].map(([ar,pct,h])=>(
+                  <div key={ar} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                    <div style={{fontSize:10,color:"#15803D",fontWeight:700}}>{pct}</div>
+                    <div style={{width:"100%",background:"#16A34A",borderRadius:"3px 3px 0 0",height:`${h}%`}}/>
+                    <div style={{fontSize:10,color:GRAY}}>{ar}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{fontSize:11,color:GRAY,marginTop:8}}>Andel blankröster av totalt avgivna röster. Källa: Valmyndigheten.</div>
+            </div>
+          );
+          return null;
+        }
         return null;
       })}
     </div>
