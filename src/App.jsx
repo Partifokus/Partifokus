@@ -94,6 +94,8 @@ const TABS = [
   { id:"quiz",         label:"Veckans quiz" },
   { id:"fordjupning",   label:"Fördjupning" },
   { id:"tabla",          label:"Tablå" },
+  { id:"live",           label:"Live & Webb-TV" },
+  { id:"veckoanalys",    label:"Veckans analys" },
 ];
 
 // Updated party leaders 2026
@@ -2347,6 +2349,149 @@ function TablaTab() {
   );
 }
 
+
+// ─── LIVE-SÄNDNINGAR ─────────────────────────────────────────────────────────
+const LIVE_KANALER = [
+  { namn:"SVT Play — Politik", kanal:"SVT", ytId:"UCN9NXaK7CzN4qw0pKAu2KSw", link:"https://www.svtplay.se/kanaler", emoji:"📺", beskrivning:"SVT:s politiska direktsändningar och debatter" },
+  { namn:"Riksdagen Webb-TV", kanal:"Riksdagen", ytId:"UCsyq5TikOg0MDexH3Pqcx4w", link:"https://www.riksdagen.se/sv/webb-tv/", emoji:"⚖️", beskrivning:"Direktsändningar från riksdagens kammare och utskott" },
+  { namn:"Socialdemokraterna", kanal:"S", link:"https://www.youtube.com/@socialdemokraterna", emoji:"🔴", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Moderaterna", kanal:"M", link:"https://www.youtube.com/@moderaterna", emoji:"🔵", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Sverigedemokraterna", kanal:"SD", link:"https://www.youtube.com/@sverigedemokraterna", emoji:"🟡", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Centerpartiet", kanal:"C", link:"https://www.youtube.com/@centerpartiet", emoji:"🟢", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Vänsterpartiet", kanal:"V", link:"https://www.youtube.com/@vansterpartiet", emoji:"🔴", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Kristdemokraterna", kanal:"KD", link:"https://www.youtube.com/@kristdemokraterna", emoji:"🔵", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Liberalerna", kanal:"L", link:"https://www.youtube.com/@liberalerna", emoji:"🔵", beskrivning:"Partiets presskonferenser och debatter" },
+  { namn:"Miljöpartiet", kanal:"MP", link:"https://www.youtube.com/@miljopartiet", emoji:"🟢", beskrivning:"Partiets presskonferenser och debatter" },
+];
+
+function LiveTab() {
+  const mobile = useIsMobile();
+  return(
+    <div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:4}}>Live & Webb-TV</div>
+      <div style={{fontSize:13,color:GRAY,marginBottom:24}}>Direktlänkar till politiska livesändningar, presskonferenser och riksdagsdebatter.</div>
+
+      {/* SVT och Riksdagen – featured */}
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:16,marginBottom:28}}>
+        {LIVE_KANALER.slice(0,2).map((k,i)=>(
+          <a key={i} href={k.link} target="_blank" rel="noopener noreferrer"
+            style={{background:NAVY,borderRadius:14,padding:"20px 24px",textDecoration:"none",display:"block"}}
+            onMouseEnter={e=>e.currentTarget.style.opacity="0.9"}
+            onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+            <div style={{fontSize:32,marginBottom:8}}>{k.emoji}</div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:18,fontWeight:700,color:"#fff",marginBottom:4}}>{k.namn}</div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginBottom:12}}>{k.beskrivning}</div>
+            <div style={{background:GOLD,color:NAVY,borderRadius:6,padding:"6px 14px",fontSize:12,fontWeight:700,display:"inline-block"}}>▶ Se live</div>
+          </a>
+        ))}
+      </div>
+
+      {/* Partiernas kanaler */}
+      <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:12}}>Partiernas YouTube-kanaler</div>
+      <div style={{display:"grid",gridTemplateColumns:mobile?"1fr 1fr":"repeat(4,1fr)",gap:10}}>
+        {LIVE_KANALER.slice(2).map((k,i)=>{
+          const p=gp(k.kanal);
+          return(
+            <a key={i} href={k.link} target="_blank" rel="noopener noreferrer"
+              style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:10,padding:"12px 14px",textDecoration:"none",display:"flex",alignItems:"center",gap:10}}
+              onMouseEnter={e=>e.currentTarget.style.borderColor="#93C5FD"}
+              onMouseLeave={e=>e.currentTarget.style.borderColor="#E5E7EB"}>
+              <div style={{width:32,height:32,borderRadius:6,background:p?.bg||NAVY,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:p?.color||"#fff",flexShrink:0}}>{k.kanal}</div>
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:NAVY}}>{k.namn}</div>
+                <div style={{fontSize:11,color:BLUE}}>YouTube →</div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+      <div style={{background:"#F9FAFB",border:"1px solid #E5E7EB",borderRadius:10,padding:"14px 18px",marginTop:24}}>
+        <div style={{fontSize:12,color:GRAY,lineHeight:1.6}}>
+          💡 <strong>Tips:</strong> SVT sänder partiledardebatter live under valrörelser. Riksdagens webb-tv arkiverar alla debatter och omröstningar. Partiernas YouTube-kanaler sänder presskonferenser direkt.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ─── VECKOANALYS ─────────────────────────────────────────────────────────────
+function VeckoanalysTab() {
+  const [analys, setAnalys] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const mobile = useIsMobile();
+
+  async function hamtaAnalys() {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
+          messages: [{
+            role: "user",
+            content: `Sök efter de viktigaste svenska politiska nyheterna den senaste veckan och skriv en kort neutral analys på svenska. Fokusera på: riksdagsbeslut, partiernas utspel, opinion och viktiga debatter. Skriv som en faktabaserad journalist, inte opinionsbildare. Max 300 ord. Strukturera med 3-4 korta stycken med rubrik.`
+          }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content?.filter(b=>b.type==="text").map(b=>b.text).join("") || "";
+      setAnalys({ text, datum: new Date().toLocaleDateString("sv-SE", {day:"numeric",month:"long",year:"numeric"}) });
+    } catch(e) {
+      setError("Kunde inte hämta analysen just nu. Försök igen.");
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => { hamtaAnalys(); }, []);
+
+  return(
+    <div style={{maxWidth:720}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY}}>Veckans politiska analys</div>
+        <button onClick={hamtaAnalys} disabled={loading}
+          style={{background:NAVY,color:"#fff",border:"none",borderRadius:8,padding:"8px 16px",fontSize:12,fontWeight:600,cursor:"pointer",opacity:loading?0.6:1}}>
+          {loading?"Laddar...":"🔄 Uppdatera"}
+        </button>
+      </div>
+      <div style={{fontSize:13,color:GRAY,marginBottom:24}}>AI-genererad neutral sammanfattning av veckans viktigaste politiska händelser i Sverige.</div>
+
+      {loading&&!analys&&(
+        <div style={{background:"#F9FAFB",borderRadius:12,padding:32,textAlign:"center"}}>
+          <div style={{fontSize:24,marginBottom:8}}>🔍</div>
+          <div style={{fontSize:14,color:GRAY}}>Söker och analyserar veckans politiska nyheter...</div>
+        </div>
+      )}
+
+      {error&&(
+        <div style={{background:"#FEF2F2",border:"1px solid #FECACA",borderRadius:10,padding:16,color:"#DC2626",fontSize:14}}>{error}</div>
+      )}
+
+      {analys&&(
+        <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:14,padding:mobile?"18px":"28px"}}>
+          <div style={{fontSize:11,color:GRAY,fontWeight:600,marginBottom:16}}>Genererad {analys.datum} · AI-assisterad analys</div>
+          {analys.text.split("
+").filter(r=>r.trim()).map((rad,i)=>{
+            if(rad.startsWith("##")||rad.startsWith("**")) {
+              return <div key={i} style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:NAVY,marginTop:i>0?20:0,marginBottom:6}}>{rad.replace(/^#+\s*/,"").replace(/\*\*/g,"")}</div>;
+            }
+            return <p key={i} style={{fontSize:14,color:"#374151",lineHeight:1.8,marginBottom:10}}>{rad}</p>;
+          })}
+          <div style={{borderTop:"1px solid #E5E7EB",marginTop:16,paddingTop:12,fontSize:11,color:GRAY}}>
+            ⚠️ Analysen är AI-genererad och kan innehålla fel. Verifiera alltid med primärkällor.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── MAILCHIMP PRENUMERATION ─────────────────────────────────────────────────
 function NewsletterSignup({ compact }) {
   const [email, setEmail] = useState("");
@@ -2589,7 +2734,7 @@ export default function App() {
               </button>
             ))}
             {[
-              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"tabla",label:"📺 Politisk tablå"}]},
+              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"tabla",label:"📺 Politisk tablå"},{id:"live",label:"🎬 Live & Webb-TV"},{id:"veckoanalys",label:"📝 Veckans analys"}]},
               {label:"Riksdag ▾",items:[{id:"omrostningar",label:"⚖️ Omröstningar"},{id:"ledamoter",label:"👤 Ledamöter"}]},
             ].map(group=>(
               <div key={group.label} style={{position:"relative"}}
@@ -2643,6 +2788,8 @@ export default function App() {
         {tab==="quiz"        &&<QuizPage/>}
         {tab==="fordjupning" &&<FordjupningTab/>}
         {tab==="tabla"       &&<TablaTab/>}
+        {tab==="live"        &&<LiveTab/>}
+        {tab==="veckoanalys" &&<VeckoanalysTab/>}
         {tab==="valkompass"  &&(
           <div>
             {/* Hero-header för valkompassen */}

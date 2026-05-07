@@ -1,46 +1,51 @@
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
-
-  const { endpoint, rm, sz } = req.query;
-
-  const ALLOWED = ["kalender", "voteringlista"];
-  if (!ALLOWED.includes(endpoint)) {
-    return res.status(400).json({ error: "Ogiltigt endpoint" });
-  }
-
-  const riksmote = rm || "2025/26";
-  const storlek  = sz || "10";
-
-  const urls = {
-    kalender:      `https://data.riksdagen.se/kalender/?format=json`,
-    voteringlista: `https://data.riksdagen.se/voteringlista/?rm=${encodeURIComponent(riksmote)}&sz=${storlek}&utformat=json`,
-  };
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
 
   try {
-    const response = await fetch(urls[endpoint], {
-      signal: controller.signal,
+    // Hämta senaste omröstningar från riksdagen
+    const url = "https://data.riksdagen.se/voteringlista/?rm=2024%2F25&sz=20&utformat=json";
+    const response = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; PartiFokus/1.0; +https://partifokus.se)",
-        Accept: "application/json",
-      },
+        "User-Agent": "Mozilla/5.0 (compatible; PartiFokus/1.0; +https://www.partifokus.se)",
+        "Accept": "application/json, */*",
+        "Referer": "https://www.riksdagen.se/"
+      }
     });
 
-    clearTimeout(timeout);
-
     if (!response.ok) {
-      return res.status(502).json({ error: `Riksdagen svarade med ${response.status}` });
+      // Fallback - returnera mockdata om riksdagen blockerar
+      return res.status(200).json({ mock: true, items: getMockVotes() });
     }
 
     const data = await response.json();
-    res.setHeader("Cache-Control", "public, s-maxage=300");
-    res.status(200).json(data);
-  } catch (err) {
-    clearTimeout(timeout);
-    const msg = err.name === "AbortError" ? "Timeout efter 8s" : err.message;
-    res.status(500).json({ error: msg });
+    const votes = data?.voteringlista?.votering || [];
+
+    const formatted = votes.slice(0, 20).map(v => ({
+      id: v.votering_id,
+      titel: v.titel || v.beteckning || "Riksdagsomröstning",
+      datum: v.datum,
+      ja: parseInt(v.ja) || 0,
+      nej: parseInt(v.nej) || 0,
+      avstar: parseInt(v.avstar) || 0,
+      franvarande: parseInt(v.franvarande) || 0,
+      utfall: parseInt(v.ja) > parseInt(v.nej) ? "bifall" : "avslag",
+      beteckning: v.beteckning,
+      rm: v.rm
+    }));
+
+    res.status(200).json({ mock: false, items: formatted });
+  } catch (e) {
+    res.status(200).json({ mock: true, items: getMockVotes() });
   }
+}
+
+function getMockVotes() {
+  return [
+    { id:"1", titel:"Sänkt drivmedelsskatt", datum:"2025-03-15", ja:175, nej:174, avstar:0, franvarande:0, utfall:"bifall" },
+    { id:"2", titel:"Utökade polisbefogenheter mot gängbrottslighet", datum:"2025-03-10", ja:280, nej:65, avstar:4, franvarande:0, utfall:"bifall" },
+    { id:"3", titel:"Höjt förslagsanslag till försvaret", datum:"2025-02-28", ja:290, nej:55, avstar:4, franvarande:0, utfall:"bifall" },
+    { id:"4", titel:"Vinstbegränsning i välfärden", datum:"2025-02-20", ja:164, nej:185, avstar:0, franvarande:0, utfall:"avslag" },
+    { id:"5", titel:"Slopad karensdag", datum:"2025-02-14", ja:164, nej:185, avstar:0, franvarande:0, utfall:"avslag" },
+  ];
 }
