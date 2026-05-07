@@ -92,6 +92,8 @@ const TABS = [
   { id:"politikskola", label:"Politikskola" },
   { id:"jamfor",       label:"Partierna jämför" },
   { id:"quiz",         label:"Veckans quiz" },
+  { id:"fordjupning",   label:"Fördjupning" },
+  { id:"tabla",          label:"Tablå" },
 ];
 
 // Updated party leaders 2026
@@ -750,16 +752,17 @@ function MedCard({ article }) {
 
 function RowCard({ article }) {
   const [h,setH]=useState(false);
+  const mobile=useIsMobile();
   const img=getCatImage(article.category,(article.imgSeed||0)+2);
   return(
     <div onClick={()=>openArticle(article)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
-      style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s",display:"flex",marginBottom:16}}>
-      <div style={{width:160,flexShrink:0,overflow:"hidden"}}>
+      style={{background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",border:`1px solid ${h?"#D1D5DB":"#E5E7EB"}`,boxShadow:h?"0 8px 24px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.05)",transition:"all .2s",display:"flex",flexDirection:mobile?"column":"row",marginBottom:16}}>
+      <div style={{width:mobile?"100%":160,height:mobile?180:"auto",flexShrink:0,overflow:"hidden"}}>
         <ImgWithFallback src={img} style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .3s",transform:h?"scale(1.04)":"scale(1)"}}/>
       </div>
       <div style={{padding:"16px 20px",flex:1}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><CatTag cat={article.category}/><span style={{fontSize:10,color:"#9CA3AF",marginLeft:"auto"}}>{timeAgo(article.pubDate)}</span></div>
-        <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,lineHeight:1.4,color:NAVY,marginBottom:6}}>{article.title}</div>
+        <div style={{fontFamily:"Georgia,serif",fontSize:mobile?15:17,fontWeight:700,lineHeight:1.4,color:NAVY,marginBottom:6}}>{article.title}</div>
         <div style={{fontSize:13,color:GRAY,lineHeight:1.5,marginBottom:10}}>{article.description}…</div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
@@ -2156,6 +2159,194 @@ function QuizPage() {
 }
 
 
+
+// ─── FÖRDJUPNING ─────────────────────────────────────────────────────────────
+const FORDJUPNING_ARTIKLAR = [
+  {
+    id:"fyra-procent",
+    titel:"4%-spärren: Vad händer med din röst?",
+    kategori:"Demokratins spelregler",
+    lasttid:"5 min",
+    ingress:"Många är rädda för att 'kasta bort' sin röst på ett litet parti. Men hur fungerar spärren egentligen — och vad händer med rösterna som inte räknas?",
+    innehall:[
+      { typ:"text", text:"Riksdagen har 349 platser som fördelas proportionellt baserat på hur många röster varje parti får. Men för att ett parti ska få några platser alls måste det nå minst 4% av alla röster i hela landet — eller 12% i en enda valkrets." },
+      { typ:"rubrik", text:"Vad händer om ett parti inte når 4%?" },
+      { typ:"text", text:"Om ett parti får t.ex. 3,9% av rösterna — alltså nästan 200 000 röster — försvinner dessa röster ur beräkningen. De återstående 96,1% fördelas sedan på de partier som klarat spärren. Det innebär att de stora partierna i praktiken 'ärver' röster från partier under spärren." },
+      { typ:"fakta", text:"2022 fick Nyans 0,35% av rösterna — ca 28 000 röster som inte gav något riksdagsmandat." },
+      { typ:"rubrik", text:"Varför finns spärren?" },
+      { typ:"text", text:"Spärren infördes 1952 för att undvika att riksdagen splittras i för många småpartier, vilket kan göra det svårt att bilda en stabil regering. Många länder utan spärr — som Israel med 3,25% — har ofta svårt att bilda majoriteter." },
+      { typ:"rubrik", text:"Taktikröstning" },
+      { typ:"text", text:"Spärren skapar taktikröstning. Många röstar på sitt 'näst-bästa' parti för att inte 'slösa' sin röst. Men om alla tänker så kan det leda till att partier man faktiskt vill ha i riksdagen aldrig når 4%." },
+      { typ:"fakta", text:"Slutsats: Din röst 'försvinner' bara om partiet hamnar under 4% och inte når 12% i någon valkrets. Annars räknas den fullt ut." },
+    ]
+  },
+  {
+    id:"blank-rosta",
+    titel:"Blank röst vs. att inte rösta — vad är skillnaden?",
+    kategori:"Demokratins spelregler",
+    lasttid:"4 min",
+    ingress:"Många tror att en blank röst och att stanna hemma är samma sak. Det är fel — de har helt olika effekter på valresultatet.",
+    innehall:[
+      { typ:"text", text:"I Sverige kan du rösta blankt genom att lämna in en tom valsedel. Du kan också välja att inte rösta alls. Skillnaden är viktig." },
+      { typ:"rubrik", text:"Att inte rösta" },
+      { typ:"text", text:"Om du stannar hemma påverkar du inte mandatfördelningen alls. Ditt 'nej' räknas inte. Valdeltagandet sjunker, men det påverkar inte vilka partier som får platser i riksdagen." },
+      { typ:"rubrik", text:"Blank röst" },
+      { typ:"text", text:"En blank röst räknas i valdeltagandet — du har röstat. Men den räknas inte in i den procentandel som fördelas på partierna. Effekten liknar att inte rösta när det gäller mandatfördelning, men du signalerar att du deltagit men inte hittat ett parti du stöder." },
+      { typ:"fakta", text:"2022 var valdeltagandet 84,2%. Av dessa röster var 0,71% blanka — ca 57 000 röster." },
+      { typ:"rubrik", text:"Vilket är 'bättre'?" },
+      { typ:"text", text:"Det beror på vad du vill signalera. Blank röst säger 'Jag är engagerad men missnöjd med alternativen.' Att inte rösta säger ingenting alls — det syns bara som frånvaro i statistiken." },
+    ]
+  },
+  {
+    id:"skatteguide",
+    titel:"Den stora skatteguiden: Vart tar dina pengar vägen?",
+    kategori:"Plånboken & Ekonomin",
+    lasttid:"6 min",
+    ingress:"Du tjänar 35 000 kr i månaden. Men hur mycket stannar hos dig — och vart går resten? En genomgång av alla skattlager du kanske inte visste om.",
+    innehall:[
+      { typ:"text", text:"De flesta tänker på skatten de betalar på lönen. Men det finns flera skattlager som tillsammans avgör vad arbete faktiskt kostar och vad du får ut." },
+      { typ:"rubrik", text:"Arbetsgivaravgift — den dolda skatten" },
+      { typ:"text", text:"Utöver din lön betalar din arbetsgivare en arbetsgivaravgift på 31,42% av din bruttolön. Om du tjänar 35 000 kr kostar du alltså arbetsgivaren ca 46 000 kr i månaden. Denna avgift finansierar pension, sjukförsäkring och föräldraförsäkring." },
+      { typ:"rubrik", text:"Inkomstskatt" },
+      { typ:"text", text:"På din bruttolön på 35 000 kr betalar du kommunalskatt (ca 32%) plus eventuell statlig skatt (20% på inkomst över ca 55 000 kr/månad). Med 32% kommunalskatt betalar du ca 11 200 kr i skatt och får ut ca 23 800 kr." },
+      { typ:"fakta", text:"Av varje 100 kr du kostar arbetsgivaren hamnar ca 51 kr i din ficka efter skatt." },
+      { typ:"rubrik", text:"Moms — skatten du inte tänker på" },
+      { typ:"text", text:"När du spenderar dina 23 800 kr betalar du också moms: 25% på de flesta varor, 12% på mat och 6% på böcker och kollektivtrafik. En stor del av din nettolön går alltså tillbaka till staten via konsumtionsskatter." },
+    ]
+  },
+  {
+    id:"eu-makt",
+    titel:"Varför Bryssel har mer makt över ditt liv än du tror",
+    kategori:"Sverige i Världen",
+    lasttid:"5 min",
+    ingress:"Många tror att svenska lagar stiftas i riksdagen. Men en stor del av det som påverkar din vardag bestäms faktiskt i Bryssel — utan att du röstat på någon av dem.",
+    innehall:[
+      { typ:"text", text:"Sverige gick med i EU 1995 och har sedan dess överlåtit en del av sin lagstiftningsmakt till EU. Det innebär att EU-direktiv och förordningar kan gälla i Sverige utan att riksdagen röstat för dem." },
+      { typ:"rubrik", text:"Förordningar vs. direktiv" },
+      { typ:"text", text:"En EU-förordning gäller direkt i alla medlemsländer — riksdagen kan inte rösta nej. Ett EU-direktiv är ett mål som Sverige måste uppnå, men kan välja hur. Riksdagen implementerar direktiv i svensk lag." },
+      { typ:"fakta", text:"Uppskattningsvis 60-70% av den svenska lagstiftning som berör näringsliv, miljö och konsumentskydd har sitt ursprung i EU-beslut." },
+      { typ:"rubrik", text:"Vad bestämmer EU?" },
+      { typ:"text", text:"EU bestämmer om handel, konkurrens, miljöstandarder, livsmedelssäkerhet, dataskydd (GDPR), arbetsmiljö och mycket mer. Även om riksdagen vill ha andra regler måste den följa EU-rätten." },
+      { typ:"rubrik", text:"Demokratisk legitimitet" },
+      { typ:"text", text:"EU-parlamentet väljs direkt av EU-medborgarna vart femte år. Sverige har 21 av 720 platser. Europavalet hålls alltid i juni — valdeltagandet i Sverige var 54% 2024, lägre än riksdagsvalet." },
+    ]
+  },
+];
+
+function FordjupningArtikel({ artikel, onBack }) {
+  return(
+    <div style={{maxWidth:680,margin:"0 auto"}}>
+      <button onClick={onBack} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16}}>← Tillbaka</button>
+      <div style={{fontSize:11,color:GRAY,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:8}}>{artikel.kategori} · {artikel.lasttid} läsning</div>
+      <h1 style={{fontFamily:"Georgia,serif",fontSize:28,fontWeight:700,color:NAVY,marginBottom:12,lineHeight:1.3}}>{artikel.titel}</h1>
+      <p style={{fontSize:16,color:GRAY,lineHeight:1.7,marginBottom:32,borderBottom:"1px solid #E5E7EB",paddingBottom:24}}>{artikel.ingress}</p>
+      {artikel.innehall.map((block,i)=>{
+        if(block.typ==="text") return <p key={i} style={{fontSize:15,color:"#374151",lineHeight:1.8,marginBottom:16}}>{block.text}</p>;
+        if(block.typ==="rubrik") return <h2 key={i} style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginTop:28,marginBottom:8}}>{block.text}</h2>;
+        if(block.typ==="fakta") return <div key={i} style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:10,padding:"14px 18px",marginBottom:16,marginTop:8}}>
+          <div style={{fontSize:11,fontWeight:700,color:"#1D4ED8",textTransform:"uppercase",letterSpacing:"1px",marginBottom:4}}>💡 Att tänka på</div>
+          <div style={{fontSize:14,color:"#1E40AF",lineHeight:1.6}}>{block.text}</div>
+        </div>;
+        return null;
+      })}
+    </div>
+  );
+}
+
+function FordjupningTab() {
+  const [vald, setVald] = useState(null);
+  const kategorier = [...new Set(FORDJUPNING_ARTIKLAR.map(a=>a.kategori))];
+
+  if(vald) return <FordjupningArtikel artikel={vald} onBack={()=>setVald(null)}/>;
+
+  return(
+    <div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:4}}>Fördjupning</div>
+      <div style={{fontSize:13,color:GRAY,marginBottom:28}}>Förstå politiken på djupet — faktabaserade guider om hur Sverige fungerar.</div>
+      {kategorier.map(kat=>(
+        <div key={kat} style={{marginBottom:32}}>
+          <div style={{fontSize:11,fontWeight:700,color:GRAY,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>{kat}</div>
+          {FORDJUPNING_ARTIKLAR.filter(a=>a.kategori===kat).map(a=>(
+            <div key={a.id} onClick={()=>setVald(a)}
+              style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:"16px 20px",marginBottom:12,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",gap:16}}
+              onMouseEnter={e=>e.currentTarget.style.borderColor="#93C5FD"}
+              onMouseLeave={e=>e.currentTarget.style.borderColor="#E5E7EB"}>
+              <div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:NAVY,marginBottom:4}}>{a.titel}</div>
+                <div style={{fontSize:13,color:GRAY,lineHeight:1.5}}>{a.ingress}</div>
+              </div>
+              <div style={{flexShrink:0,textAlign:"right"}}>
+                <div style={{fontSize:11,color:GRAY,marginBottom:4}}>{a.lasttid}</div>
+                <div style={{fontSize:12,color:BLUE,fontWeight:600}}>Läs →</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+// ─── POLITISK TABLÅ ──────────────────────────────────────────────────────────
+const ATERKOMMER_PROGRAM = [
+  { dag:"Söndag", tid:"21:00", program:"Agenda", kanal:"SVT1", beskrivning:"Politisk debatt och intervjuer med ledande politiker.", link:"https://www.svtplay.se/agenda" },
+  { dag:"Måndag–Fredag", tid:"09:00", program:"Ekot", kanal:"SR P1", beskrivning:"Sveriges Radios nyheter och politiska rapportering.", link:"https://sverigesradio.se/ekot" },
+  { dag:"Måndag–Fredag", tid:"21:00", program:"Aktuellt", kanal:"SVT2", beskrivning:"SVT:s kvällsekot med politiska nyheter.", link:"https://www.svtplay.se/aktuellt" },
+  { dag:"Tisdag", tid:"Varierar", program:"Riksdagens debatter", kanal:"SVT Extra/Riksdagen.se", beskrivning:"Direktsändningar från riksdagens kammare.", link:"https://www.riksdagen.se/sv/webb-tv/" },
+  { dag:"Söndag", tid:"10:00", program:"Söndagsintervjun", kanal:"SR P1", beskrivning:"Fördjupande intervju med politiker eller samhällsprofil.", link:"https://sverigesradio.se/soendagsintervjun" },
+];
+
+const KOMMANDE_HANDELSER = [
+  { datum:"13 sep 2026", titel:"Riksdagsval 2026", beskrivning:"Allmänna val till riksdag, landsting och kommuner.", viktigt:true },
+  { datum:"Maj 2026", titel:"Partikongresser inför valet", beskrivning:"Partierna fastställer sina valmanifest.", viktigt:false },
+  { datum:"Aug–Sep 2026", titel:"Valdebatter i SVT", beskrivning:"SVT sänder partiledardebatter inför valet.", viktigt:false },
+];
+
+function TablaTab() {
+  const mobile = useIsMobile();
+  return(
+    <div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:26,fontWeight:700,color:NAVY,marginBottom:4}}>Politisk tablå</div>
+      <div style={{fontSize:13,color:GRAY,marginBottom:28}}>Återkommande politiska program och kommande händelser inför valet 2026.</div>
+
+      {/* Kommande viktiga händelser */}
+      <div style={{background:"linear-gradient(135deg,#7F1D1D,#991B1B)",borderRadius:14,padding:"20px 24px",marginBottom:28}}>
+        <div style={{fontSize:11,color:"rgba(255,255,255,0.6)",fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",marginBottom:12}}>📅 Kommande händelser</div>
+        {KOMMANDE_HANDELSER.map((h,i)=>(
+          <div key={i} style={{display:"flex",gap:16,marginBottom:i<KOMMANDE_HANDELSER.length-1?12:0,alignItems:"flex-start"}}>
+            <div style={{background:"rgba(255,255,255,0.15)",borderRadius:6,padding:"4px 10px",fontSize:11,fontWeight:700,color:"#fff",whiteSpace:"nowrap",flexShrink:0}}>{h.datum}</div>
+            <div>
+              <div style={{fontSize:14,fontWeight:700,color:"#fff",marginBottom:2}}>{h.titel}</div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.7)"}}>{h.beskrivning}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Återkommande program */}
+      <div style={{fontFamily:"Georgia,serif",fontSize:20,fontWeight:700,color:NAVY,marginBottom:16}}>Återkommande program</div>
+      {ATERKOMMER_PROGRAM.map((p,i)=>(
+        <a key={i} href={p.link} target="_blank" rel="noopener noreferrer"
+          style={{display:"flex",gap:16,background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:"14px 18px",marginBottom:10,alignItems:"center",textDecoration:"none",cursor:"pointer"}}
+          onMouseEnter={e=>e.currentTarget.style.borderColor="#93C5FD"}
+          onMouseLeave={e=>e.currentTarget.style.borderColor="#E5E7EB"}>
+          <div style={{textAlign:"center",flexShrink:0,minWidth:60}}>
+            <div style={{fontSize:11,fontWeight:700,color:BLUE}}>{p.tid}</div>
+            <div style={{fontSize:10,color:GRAY}}>{p.dag}</div>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:15,fontWeight:700,color:NAVY}}>{p.program}</div>
+            <div style={{fontSize:12,color:GRAY}}>{p.kanal} · {p.beskrivning}</div>
+          </div>
+          <div style={{fontSize:12,color:BLUE,fontWeight:600,flexShrink:0}}>▶ Titta</div>
+        </a>
+      ))}
+      <div style={{fontSize:11,color:GRAY,marginTop:12}}>Tiderna kan variera. Klicka på programmet för direktlänk.</div>
+    </div>
+  );
+}
+
 // ─── MAILCHIMP PRENUMERATION ─────────────────────────────────────────────────
 function NewsletterSignup({ compact }) {
   const [email, setEmail] = useState("");
@@ -2390,9 +2581,35 @@ export default function App() {
             <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY}}>Parti<span style={{color:BLUE,borderBottom:`2px solid ${BLUE}`,paddingBottom:1}}>Fokus</span></div>
             <div style={{fontSize:11,color:GRAY,letterSpacing:"1px",marginTop:4,fontWeight:600}}>Politik. Inget annat.</div>
           </button>
-          {!mobile&&<nav style={{display:"flex",gap:2}}>
-            <button onClick={()=>changeTab("hem")} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab==="hem"?700:400,color:tab==="hem"?NAVY:GRAY,borderBottom:tab==="hem"?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>Hem</button>
-            {TABS.map(t=><button key={t.id} onClick={()=>changeTab(t.id)} style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:GRAY,borderBottom:tab===t.id?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>{t.label}</button>)}
+          {!mobile&&<nav style={{display:"flex",gap:2,alignItems:"center"}}>
+            {[{id:"hem",label:"Hem"},{id:"nyheter",label:"Nyheter"},{id:"press",label:"Pressmeddelanden"},{id:"opinion",label:"Opinion"},{id:"quiz",label:"🧠 Veckans quiz"}].map(t=>(
+              <button key={t.id} onClick={()=>changeTab(t.id)}
+                style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:GRAY,borderBottom:tab===t.id?`2px solid ${NAVY}`:"2px solid transparent",whiteSpace:"nowrap"}}>
+                {t.label}
+              </button>
+            ))}
+            {[
+              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"tabla",label:"📺 Politisk tablå"}]},
+              {label:"Riksdag ▾",items:[{id:"omrostningar",label:"⚖️ Omröstningar"},{id:"ledamoter",label:"👤 Ledamöter"}]},
+            ].map(group=>(
+              <div key={group.label} style={{position:"relative"}}
+                onMouseEnter={e=>e.currentTarget.querySelector(".dd").style.display="block"}
+                onMouseLeave={e=>e.currentTarget.querySelector(".dd").style.display="none"}>
+                <button style={{background:"none",border:"none",cursor:"pointer",padding:"8px 14px",fontSize:14,fontWeight:400,color:GRAY,borderBottom:"2px solid transparent",whiteSpace:"nowrap"}}>
+                  {group.label}
+                </button>
+                <div className="dd" style={{display:"none",position:"absolute",top:"100%",left:0,background:"#fff",borderRadius:8,boxShadow:"0 8px 24px rgba(0,0,0,0.12)",minWidth:190,zIndex:1000,padding:"6px 0",border:"1px solid #E5E7EB"}}>
+                  {group.items.map(item=>(
+                    <button key={item.id} onClick={()=>changeTab(item.id)}
+                      style={{display:"block",width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",fontSize:13,color:NAVY,padding:"9px 16px",fontWeight:500}}
+                      onMouseEnter={e=>e.target.style.background="#F9FAFB"}
+                      onMouseLeave={e=>e.target.style.background="none"}>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </nav>}
           {mobile&&(
             <button onClick={()=>setMobileMenuOpen(!mobileMenuOpen)} style={{background:"none",border:"1px solid #E5E7EB",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontSize:18,color:NAVY}}>
@@ -2424,6 +2641,8 @@ export default function App() {
         {tab==="om"          &&<OmOssTab/>}
         {tab==="jamfor"      &&<PartierJamforTab/>}
         {tab==="quiz"        &&<QuizPage/>}
+        {tab==="fordjupning" &&<FordjupningTab/>}
+        {tab==="tabla"       &&<TablaTab/>}
         {tab==="valkompass"  &&(
           <div>
             {/* Hero-header för valkompassen */}
