@@ -2389,16 +2389,16 @@ function LiveTab() {
   const [loadingLive, setLoadingLive] = useState(true);
 
   const KANALDATA = [
-    { namn:"SVT Nyheter", id:"UCN9NXaK7CzN4qw0pKAu2KSw", emoji:"📺", link:"https://www.youtube.com/@svtnyheter" },
-    { namn:"Riksdagen", id:"UCsyq5TikOg0MDexH3Pqcx4w", emoji:"⚖️", link:"https://www.youtube.com/@riksdagen" },
-    { namn:"Socialdemokraterna", id:"UCVnEHqg4pTcFqI6Q4vrUOkw", emoji:"🔴", link:"https://www.youtube.com/@socialdemokraterna" },
-    { namn:"Moderaterna", id:"UCzKoIJxAe4h7qeUfBSGE7mg", emoji:"🔵", link:"https://www.youtube.com/@moderaterna" },
-    { namn:"Sverigedemokraterna", id:"UCrpZ8nKB0FjhCGKSC2dkPZg", emoji:"🟡", link:"https://www.youtube.com/@sverigedemokraterna" },
-    { namn:"Centerpartiet", id:"UC6RNMcKoYFLrph9e7Cj3rEg", emoji:"🟢", link:"https://www.youtube.com/@centerpartiet" },
-    { namn:"Kristdemokraterna", id:"UCdznmT9bm_WNXZ5Zw-2bMZg", emoji:"🔵", link:"https://www.youtube.com/@kristdemokraterna" },
-    { namn:"Liberalerna", id:"UCTpqUEMiqo1IqKGMRDGBhJA", emoji:"🔵", link:"https://www.youtube.com/@liberalerna" },
-    { namn:"Vänsterpartiet", id:"UC6RNMcKoYFLrph9e7Cj3rEg", emoji:"🔴", link:"https://www.youtube.com/@vansterpartiet" },
-    { namn:"Miljöpartiet", id:"UCDlPRQe8BE8pPeB5e2gWr_g", emoji:"🟢", link:"https://www.youtube.com/@miljopartiet" },
+    { namn:"SVT Nyheter", id:"UCE-Q-I4ZM16oTZqRPQfVCqA", emoji:"📺", link:"https://www.youtube.com/@SVTNyheter" },
+    { namn:"Riksdagen", id:"UC7g6E-TDkuoJHnJKsyIyLBg", emoji:"⚖️", link:"https://www.youtube.com/@riksdagenswedenparliament" },
+    { namn:"Socialdemokraterna", id:"UCFR62TKgCgN8m11xYtdBM-g", emoji:"🔴", link:"https://www.youtube.com/channel/UCFR62TKgCgN8m11xYtdBM-g" },
+    { namn:"Moderaterna", id:"UCwtDFwp9jzRWD_NKBZO2GEg", emoji:"🔵", link:"https://www.youtube.com/@moderaterna" },
+    { namn:"Sverigedemokraterna", id:"UCDxNpBMoYWi6MFrv9RplEaQ", emoji:"🟡", link:"https://www.youtube.com/@sverigedemokraterna" },
+    { namn:"Centerpartiet", id:"UCnF6pbE3XqkBJcuHi0-kYqA", emoji:"🟢", link:"https://www.youtube.com/@centerpartiet" },
+    { namn:"Kristdemokraterna", id:"UCrQoVY3Bvs5MFKsIEJDZqug", emoji:"🔵", link:"https://www.youtube.com/@kristdemokraterna" },
+    { namn:"Liberalerna", id:"UCpqkZ4KYTLG7FP5nxnJz3oA", emoji:"🔵", link:"https://www.youtube.com/@liberalerna" },
+    { namn:"Vänsterpartiet", id:"UCiGmx-LZXCJ2GgpKPMTrKrQ", emoji:"🔴", link:"https://www.youtube.com/@vansterpartiet" },
+    { namn:"Miljöpartiet", id:"UCjUi8gNaIFWfpJMvwfJpFEg", emoji:"🟢", link:"https://www.youtube.com/@miljopartiet" },
   ];
 
   useEffect(()=>{
