@@ -2539,6 +2539,7 @@ function EUPaverkan() {
 }
 
 function FordjupningArtikel({ artikel, onBack }) {
+  useEffect(()=>{ window.scrollTo({top:0,behavior:"smooth"}); },[]);
   return(
     <div style={{maxWidth:680,margin:"0 auto"}}>
       <button onClick={onBack} style={{background:"none",border:"none",color:BLUE,fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16}}>← Tillbaka</button>
@@ -3280,7 +3281,7 @@ export default function App() {
               </button>
             ))}
             {[
-              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"tabla",label:"📺 Politisk tablå"},{id:"veckoanalys",label:"📝 Veckans analys"}]},
+              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"veckoanalys",label:"📝 Veckans analys"}]},
               {label:"Riksdag ▾",items:[{id:"omrostningar",label:"⚖️ Omröstningar"},{id:"ledamoter",label:"👤 Ledamöter"}]},
             ].map(group=>(
               <div key={group.label} style={{position:"relative"}}
