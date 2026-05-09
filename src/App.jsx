@@ -889,22 +889,85 @@ const MOCK_DEBATES = [
 ];
 
 function OmrostningarTab() {
+  const [votes, setVotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isMock, setIsMock] = useState(false);
+
+  useEffect(()=>{
+    fetch("/api/riksdag")
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.items?.length>0){
+          // Konvertera API-format till display-format
+          const formatted = data.items.map(v=>({
+            id: v.id,
+            titel: v.titel,
+            datum: v.datum,
+            ja: v.ja,
+            nej: v.nej,
+            beteckning: v.beteckning||"",
+            utfall: v.utfall,
+            parter: Object.entries(v.partiRoster||{}).map(([p,r])=>({p,r}))
+          }));
+          setVotes(formatted);
+          setIsMock(data.mock);
+        } else {
+          setVotes(MOCK_VOTES);
+          setIsMock(true);
+        }
+      })
+      .catch(()=>{ setVotes(MOCK_VOTES); setIsMock(true); })
+      .finally(()=>setLoading(false));
+  },[]);
+
+  const displayVotes = votes.length>0 ? votes : MOCK_VOTES;
+
   return(
     <div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>Senaste omröstningar</div>
-      {MOCK_VOTES.map(v=>{const tot=v.ja+v.nej,jaPct=Math.round(v.ja/tot*100);return(
-        <div key={v.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,marginBottom:14}}>
-          <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,marginBottom:10,color:NAVY}}>{v.titel}</div>
-          <div style={{display:"flex",gap:16,fontSize:12,color:GRAY,marginBottom:8}}><span style={{color:"#059669",fontWeight:700}}>✓ Ja: {v.ja}</span><span style={{color:"#DC2626",fontWeight:700}}>✗ Nej: {v.nej}</span><span style={{marginLeft:"auto"}}>{v.datum} · {v.beteckning}</span></div>
-          <div style={{height:8,background:"#F3F4F6",borderRadius:2,overflow:"hidden",display:"flex",marginBottom:14}}><div style={{width:`${jaPct}%`,background:"#059669"}}/><div style={{width:`${100-jaPct}%`,background:"#DC2626"}}/></div>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{v.parter.map(({p,r})=><span key={p} style={{display:"flex",alignItems:"center",gap:3}}><Badge id={p}/><span style={{fontSize:11,color:r==="Ja"?"#059669":"#DC2626",fontWeight:700}}>{r}</span></span>)}</div>
-        </div>
-      );})}
+      <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY}}>Senaste omröstningar</div>
+        {isMock&&<div style={{fontSize:11,color:GRAY}}>Exempeldata · riksdagen.se blockerar tillfälligt</div>}
+      </div>
+      {loading?(
+        <div style={{textAlign:"center",padding:32,color:GRAY}}>Hämtar omröstningar från riksdagen...</div>
+      ):(
+        displayVotes.map(v=>{
+          const tot=Math.max(v.ja+v.nej,1);
+          const jaPct=Math.round(v.ja/tot*100);
+          return(
+            <div key={v.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:12,padding:20,marginBottom:14}}>
+              <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,marginBottom:10,color:NAVY}}>{v.titel}</div>
+              <div style={{display:"flex",gap:16,fontSize:12,color:GRAY,marginBottom:8,flexWrap:"wrap"}}>
+                <span style={{color:"#059669",fontWeight:700}}>✓ Ja: {v.ja}</span>
+                <span style={{color:"#DC2626",fontWeight:700}}>✗ Nej: {v.nej}</span>
+                <span style={{marginLeft:"auto"}}>{v.datum}{v.beteckning?` · ${v.beteckning}`:""}</span>
+              </div>
+              <div style={{height:8,background:"#F3F4F6",borderRadius:2,overflow:"hidden",display:"flex",marginBottom:14}}>
+                <div style={{width:`${jaPct}%`,background:"#059669"}}/>
+                <div style={{width:`${100-jaPct}%`,background:"#DC2626"}}/>
+              </div>
+              {v.parter?.length>0&&(
+                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                  {v.parter.map(({p,r})=>(
+                    <span key={p} style={{display:"flex",alignItems:"center",gap:3}}>
+                      <Badge id={p}/>
+                      <span style={{fontSize:11,color:r==="Ja"?"#059669":r==="Nej"?"#DC2626":"#D97706",fontWeight:700}}>{r}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })
+      )}
       <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,borderBottom:`2px solid ${NAVY}`,paddingBottom:8,marginBottom:24,marginTop:32}}>Kommande debatter</div>
       {MOCK_DEBATES.map(d=>(
         <div key={d.id} style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:10,padding:"14px 20px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
           <div style={{fontFamily:"Georgia,serif",fontWeight:700,color:GOLD,minWidth:60,fontSize:13}}>{d.datum.slice(5)}</div>
-          <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{d.titel}</div><div style={{fontSize:11,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginTop:2}}>{d.typ} · {d.tid}</div></div>
+          <div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:NAVY}}>{d.titel}</div>
+            <div style={{fontSize:11,color:GRAY,textTransform:"uppercase",letterSpacing:"1px",marginTop:2}}>{d.typ} · {d.tid}</div>
+          </div>
         </div>
       ))}
     </div>
