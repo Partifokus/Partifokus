@@ -94,8 +94,6 @@ const TABS = [
   { id:"quiz",         label:"Veckans quiz" },
   { id:"fordjupning",   label:"Fördjupning" },
   { id:"tabla",          label:"Tablå" },
-  { id:"live",           label:"Live & Webb-TV" },
-  { id:"veckoanalys",    label:"Veckans analys" },
 ];
 
 // Updated party leaders 2026
@@ -2826,21 +2824,9 @@ function VeckoanalysTab() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          tools: [{ type: "web_search_20250305", name: "web_search" }],
-          messages: [{
-            role: "user",
-            content: `Sök efter de viktigaste svenska politiska nyheterna den senaste veckan och skriv en kort neutral analys på svenska. Fokusera på: riksdagsbeslut, partiernas utspel, opinion och viktiga debatter. Skriv som en faktabaserad journalist, inte opinionsbildare. Max 300 ord. Strukturera med 3-4 korta stycken med rubrik.`
-          }]
-        })
-      });
+      const response = await fetch("/api/analys", { method: "POST" });
       const data = await response.json();
-      const text = data.content?.filter(b=>b.type==="text").map(b=>b.text).join("") || "";
+      const text = data.text || "";
       setAnalys({ text, datum: new Date().toLocaleDateString("sv-SE", {day:"numeric",month:"long",year:"numeric"}) });
     } catch(e) {
       setError("Kunde inte hämta analysen just nu. Försök igen.");
@@ -2885,6 +2871,153 @@ function VeckoanalysTab() {
             ⚠️ Analysen är AI-genererad och kan innehålla fel. Verifiera alltid med primärkällor.
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+
+// ─── TV-SPELARE & TABLÅ ──────────────────────────────────────────────────────
+const TABLÅ_DATA = [
+  { datum:"2026-05-12 21:00", program:"Agenda", kanal:"SVT1", ytId:"UCE-Q-I4ZM16oTZqRPQfVCqA", beskrivning:"Politisk debatt och intervjuer" },
+  { datum:"2026-05-13 09:00", program:"Ekot Morgon", kanal:"SR P1", ytId:null, beskrivning:"Morgonens politiska nyheter" },
+  { datum:"2026-05-14 21:00", program:"Aktuellt", kanal:"SVT2", ytId:"UCE-Q-I4ZM16oTZqRPQfVCqA", beskrivning:"Kvällsnyheterna med politiska nyheter" },
+  { datum:"2026-05-19 10:00", program:"Riksdagsdebatt", kanal:"Riksdagen", ytId:"UC7g6E-TDkuoJHnJKsyIyLBg", beskrivning:"Debatt i kammaren" },
+  { datum:"2026-05-19 21:00", program:"Agenda", kanal:"SVT1", ytId:"UCE-Q-I4ZM16oTZqRPQfVCqA", beskrivning:"Politisk debatt och intervjuer" },
+  { datum:"2026-05-24 14:00", program:"Partiledardebatt", kanal:"SVT1", ytId:"UCE-Q-I4ZM16oTZqRPQfVCqA", beskrivning:"Alla partiledare debatterar" },
+  { datum:"2026-06-02 21:00", program:"Agenda", kanal:"SVT1", ytId:"UCE-Q-I4ZM16oTZqRPQfVCqA", beskrivning:"Politisk debatt och intervjuer" },
+];
+
+// Kanaler att kolla för live
+const LIVE_CHANNEL_IDS = [
+  { namn:"SVT Nyheter", id:"UCE-Q-I4ZM16oTZqRPQfVCqA" },
+  { namn:"Riksdagen", id:"UC7g6E-TDkuoJHnJKsyIyLBg" },
+  { namn:"Socialdemokraterna", id:"UCFR62TKgCgN8m11xYtdBM-g" },
+  { namn:"Moderaterna", id:"UCwtDFwp9jzRWD_NKBZO2GEg" },
+  { namn:"Sverigedemokraterna", id:"UCDxNpBMoYWi6MFrv9RplEaQ" },
+];
+
+function TVSpelare() {
+  const [videoId, setVideoId] = useState("UCE-Q-I4ZM16oTZqRPQfVCqA"); // SVT default
+  const [isLive, setIsLive] = useState(false);
+  const [liveKanal, setLiveKanal] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    async function checkLive(){
+      setLoading(true);
+      try {
+        // Kolla varje kanal för live-sändning
+        for(const kanal of LIVE_CHANNEL_IDS){
+          const r = await fetch(`/api/youtube?channelId=${kanal.id}&type=live`);
+          const data = await r.json();
+          if(data.live && data.videoId){
+            setVideoId(data.videoId);
+            setIsLive(true);
+            setLiveKanal(kanal.namn);
+            setLoading(false);
+            return;
+          }
+        }
+        // Ingen live — hämta senaste SVT-video
+        const r = await fetch(`/api/youtube?channelId=UCE-Q-I4ZM16oTZqRPQfVCqA&type=latest`);
+        const data = await r.json();
+        if(data.videoId) setVideoId(data.videoId);
+        setIsLive(false);
+      } catch {}
+      setLoading(false);
+    }
+    checkLive();
+    // Kolla var 5:e minut
+    const interval = setInterval(checkLive, 300000);
+    return ()=>clearInterval(interval);
+  },[]);
+
+  return(
+    <div>
+      {isLive&&(
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:"#DC2626"}}/>
+          <span style={{fontSize:12,fontWeight:700,color:"#DC2626"}}>LIVE — {liveKanal}</span>
+        </div>
+      )}
+      <div style={{
+        border:"2px solid #E5E7EB",
+        borderRadius:12,
+        overflow:"hidden",
+        background:"#0D1B2A",
+        aspectRatio:"16/9",
+        position:"relative"
+      }}>
+        {loading?(
+          <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,0.4)",fontSize:13}}>
+            Söker live-sändning...
+          </div>
+        ):(
+          <iframe
+            width="100%" height="100%"
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`}
+            title="Politiskt webb-TV"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowFullScreen
+            style={{display:"block",width:"100%",height:"100%",position:"absolute",top:0,left:0}}
+          />
+        )}
+      </div>
+      {!isLive&&<div style={{fontSize:11,color:"#9CA3AF",marginTop:6}}>Senaste från SVT Nyheter · Uppdateras automatiskt vid livesändning</div>}
+    </div>
+  );
+}
+
+function TablaWidget() {
+  const now = new Date();
+  const kommande = TABLÅ_DATA
+    .filter(r=>new Date(r.datum) > now)
+    .sort((a,b)=>new Date(a.datum)-new Date(b.datum))
+    .slice(0,6);
+
+  function formatDatum(datum){
+    const d = new Date(datum);
+    const dagar = ["Sön","Mån","Tis","Ons","Tor","Fre","Lör"];
+    const dag = dagar[d.getDay()];
+    const datum2 = d.getDate();
+    const manad = d.getMonth()+1;
+    const tid = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+    return { dag, datum:`${datum2}/${manad}`, tid };
+  }
+
+  return(
+    <div style={{border:"2px solid #E5E7EB",borderRadius:12,overflow:"hidden",height:"100%"}}>
+      <div style={{background:NAVY,padding:"10px 14px"}}>
+        <div style={{fontSize:12,fontWeight:700,color:"#fff",letterSpacing:"1px"}}>📅 KOMMANDE SÄNDNINGAR</div>
+      </div>
+      {kommande.length===0?(
+        <div style={{padding:16,fontSize:13,color:GRAY,textAlign:"center"}}>Inga kommande sändningar schemalagda</div>
+      ):(
+        kommande.map((r,i)=>{
+          const {dag,datum,tid} = formatDatum(r.datum);
+          const isNext = i===0;
+          return(
+            <div key={i} style={{
+              display:"flex",gap:10,padding:"10px 14px",
+              borderBottom:i<kommande.length-1?"1px solid #F3F4F6":"none",
+              background:isNext?"#FFF7ED":"#fff",
+              alignItems:"center"
+            }}>
+              <div style={{flexShrink:0,textAlign:"center",minWidth:44}}>
+                <div style={{fontSize:10,fontWeight:700,color:isNext?"#C2410C":BLUE}}>{dag}</div>
+                <div style={{fontSize:11,color:GRAY}}>{datum}</div>
+                <div style={{fontSize:12,fontWeight:700,color:NAVY}}>{tid}</div>
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:700,color:NAVY,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.program}</div>
+                <div style={{fontSize:10,color:GRAY}}>{r.kanal} · {r.beskrivning}</div>
+              </div>
+              {isNext&&<div style={{fontSize:10,background:"#FED7AA",color:"#C2410C",fontWeight:700,borderRadius:4,padding:"2px 6px",flexShrink:0}}>Näst</div>}
+            </div>
+          );
+        })
       )}
     </div>
   );
@@ -2988,6 +3121,21 @@ function HomePage({ articles, onTabChange, loading }) {
       )}
 
       {/* UTFORSKA – valkompass + poll + politikskola */}
+      {/* TV & TABLÅ */}
+      <div style={{marginBottom:40}}>
+        <div style={{fontFamily:"Georgia,serif",fontSize:22,fontWeight:700,color:NAVY,marginBottom:16}}>📺 Politiskt webb-TV</div>
+        <div style={{display:"flex",gap:20,flexWrap:mobile?"wrap":"nowrap",alignItems:"flex-start"}}>
+          {/* TV-spelare */}
+          <div style={{flex:"0 0 auto",width:mobile?"100%":"55%"}}>
+            <TVSpelare/>
+          </div>
+          {/* Tablå */}
+          <div style={{flex:1,minWidth:0}}>
+            <TablaWidget/>
+          </div>
+        </div>
+      </div>
+
       {/* SENASTE OPINION */}
       <div style={{marginBottom:40}}>
         <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:16}}>
@@ -3132,7 +3280,7 @@ export default function App() {
               </button>
             ))}
             {[
-              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"tabla",label:"📺 Politisk tablå"},{id:"live",label:"🎬 Live & Webb-TV"},{id:"veckoanalys",label:"📝 Veckans analys"}]},
+              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"tabla",label:"📺 Politisk tablå"},{id:"veckoanalys",label:"📝 Veckans analys"}]},
               {label:"Riksdag ▾",items:[{id:"omrostningar",label:"⚖️ Omröstningar"},{id:"ledamoter",label:"👤 Ledamöter"}]},
             ].map(group=>(
               <div key={group.label} style={{position:"relative"}}
@@ -3186,8 +3334,6 @@ export default function App() {
         {tab==="quiz"        &&<QuizPage/>}
         {tab==="fordjupning" &&<FordjupningTab/>}
         {tab==="tabla"       &&<TablaTab/>}
-        {tab==="live"        &&<LiveTab/>}
-        {tab==="veckoanalys" &&<VeckoanalysTab/>}
         {tab==="valkompass"  &&(
           <div>
             {/* Hero-header för valkompassen */}
