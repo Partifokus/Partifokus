@@ -3344,7 +3344,7 @@ export default function App() {
               </button>
             ))}
             {[
-              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"},{id:"veckoanalys",label:"📝 Veckans analys"}]},
+              {label:"Utforska ▾",items:[{id:"valkompass",label:"🗳️ Valkompass"},{id:"politikskola",label:"🎓 Politikskolan"},{id:"jamfor",label:"📊 Partierna jämför"},{id:"fordjupning",label:"📖 Fördjupning"}]},
               {label:"Riksdag ▾",items:[{id:"omrostningar",label:"⚖️ Omröstningar"},{id:"ledamoter",label:"👤 Ledamöter"}]},
             ].map(group=>(
               <div key={group.label} style={{position:"relative"}}

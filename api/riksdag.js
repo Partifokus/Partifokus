@@ -21,6 +21,11 @@ export default async function handler(req, res) {
     const listData = await listRes.json();
     const voteringar = listData?.voteringlista?.votering || [];
 
+    // Om ingen data eller tom titel — använd mockdata
+    if (voteringar.length === 0 || !voteringar[0]?.titel) {
+      throw new Error("Empty or invalid data from riksdagen");
+    }
+
     // Hämta partiröster för de 10 senaste
     const results = await Promise.all(voteringar.slice(0, 15).map(async v => {
       try {
